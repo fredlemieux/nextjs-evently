@@ -27,6 +27,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - **Clerk:** Clerk provides a set of hooks and helpers that you can use to access the active
   session and user data in the application.
 - **MongoDB:** NoSQL database for data storage
+- **Docker:** For the development environment, but feel free to just run the app locally too
 
 ## TODOS
 
@@ -40,6 +41,8 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 ## Getting Started
 
 To run Evently locally, follow these steps:
+
+### First Time
 
 1. Clone the repository:
 
@@ -59,10 +62,15 @@ cd nextjs-evently
 npm install
 ```
 
-4. Run the development server:
+4. Copy [.env.template](/.env.template) as `.env.local`
+4. Setup [Clerk](clerk.com/) account, and add keys to `.env.local` file
+
+### Start Development
+
+6. Run the development server:
 
 ```
-npm run dev
+docker compose up
 ```
 
 5. Open your browser and go to http://localhost:3000
