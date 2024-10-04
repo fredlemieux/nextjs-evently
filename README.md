@@ -1,14 +1,20 @@
-# Evently - Event Management Website Built Using Next.js
+# EventosRincon - Events listing for the humble sea side pueblo of Rincon de la Victoria
+
+Forked from [NextJS Evently](https://github.com/Muhammad-Sabir/nextjs-evently), a very special
+thanks to [Muhammad-Sabir](https://github.com/Muhammad-Sabir) for generously sharing this repo.❤️
 
 ## Introduction
 
-Welcome to Evently, an event management website developed using Next.js. This application allows users to discover, explore, and manage events seamlessly. You can access the live deployment of Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sabir.vercel.app/).
+Welcome to Evently, an event management website developed using Next.js. This application allows
+users to discover, explore, and manage events seamlessly. You can access the live deployment of
+Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sabir.vercel.app/).
 
 ## Features
 
 - **Event Discovery:** Browse through a wide range of events by searching and filtering.
 - **User Authentication:** Create an account or log in to access personalized features.
-- **Event Details:** View detailed information about each event, including date, time, location, and description.
+- **Event Details:** View detailed information about each event, including date, time, location, and
+  description.
 - **Event Registration:** Register for events you're interested in attending.
 - **Create Your Own Event:** Host and manage your events on Evently.
 - **Attendee Tracking:** Monitor the list of attendees for your events.
@@ -18,10 +24,24 @@ Welcome to Evently, an event management website developed using Next.js. This ap
 
 - **Next.js:** A React framework for building server-side rendered and static web applications.
 - **Vercel:** Hosting platform for serverless deployment of web applications.
+- **Clerk:** Clerk provides a set of hooks and helpers that you can use to access the active
+  session and user data in the application.
+- **MongoDB:** NoSQL database for data storage
+- **Docker:** For the development environment, but feel free to just run the app locally too
+
+## TODOS
+
+- [ ] Setup Multi Stage build for Docker
+- [ ] Map out app architecture
+- [ ] Testing setup
+- [ ] Github actions for tests
+- [ ] Plan next steps
 
 ## Getting Started
 
 To run Evently locally, follow these steps:
+
+### First Time
 
 1. Clone the repository:
 
@@ -41,10 +61,32 @@ cd nextjs-evently
 npm install
 ```
 
-4. Run the development server:
+4. Copy [.env.template](/.env.template) as `.env.local`
+4. Setup [Clerk](clerk.com/) account, and add keys to `.env.local` file
+
+### Start Development
+
+6. Run the development server:
 
 ```
-npm run dev
+docker compose up
 ```
 
 5. Open your browser and go to http://localhost:3000
+
+## Hosting
+
+The easiest way to host is to use [Varcel](https://vercel.com/)
+and [MongoDB Atlas](https://cloud.mongodb.com):
+
+- Create a DB in Atlas
+- Ensure you have connections from anywhere enabled!!! TODO! Lock this down
+- Create an account
+- Import the github project
+- Use all default builds
+- Make sure you assign all ENV VARS!
+
+## Troublehoot
+
+501 Timeout from Varcel, I got this error due to not enabling connections from anywhere for the
+database. The logs wheren't very helpful, TODO! learn about how to debug using Varcel Logs?!
