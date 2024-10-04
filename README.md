@@ -31,12 +31,11 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 
 ## TODOS
 
-- [ ] Setup dev docker compose environment
-- [ ] Flesh out readme
-- [ ] Include env.template file for easy dev setup
+- [ ] Setup Multi Stage build for Docker
 - [ ] Map out app architecture
+- [ ] Testing setup
+- [ ] Github actions for tests
 - [ ] Plan next steps
-- [ ] Github actions for tests and PR template
 
 ## Getting Started
 
