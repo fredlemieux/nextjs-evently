@@ -69,9 +69,17 @@ npm run dev
 
 ## Hosting
 
-The easiest way to host is to use [Varcel](https://vercel.com/):
+The easiest way to host is to use [Varcel](https://vercel.com/)
+and [MongoDB Atlas](https://cloud.mongodb.com):
 
+- Create a DB in Atlas
+- Ensure you have connections from anywhere enabled!!! TODO! Lock this down
 - Create an account
 - Import the github project
 - Use all default builds
 - Make sure you assign all ENV VARS!
+
+## Troublehoot
+
+501 Timeout from Varcel, I got this error due to not enabling connections from anywhere for the
+database. The logs wheren't very helpful, TODO! learn about how to debug using Varcel Logs?!
