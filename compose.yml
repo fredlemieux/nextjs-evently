@@ -7,3 +7,19 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 27017:27017
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: docker-next
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - ./.env.local
+    environment:
+      MONGODB_URI: mongodb://rqoot:example@mongo:27017/
+    depends_on:
+      - mongo
