@@ -1,5 +1,8 @@
 # Evently - Event Management Website Built Using Next.js
 
+Forked from [NextJS Evently](https://github.com/Muhammad-Sabir/nextjs-evently), a very special
+thanks to [Muhammad-Sabir](https://github.com/Muhammad-Sabir) for generously sharing this repo
+
 ## Introduction
 
 Welcome to Evently, an event management website developed using Next.js. This application allows users to discover, explore, and manage events seamlessly. You can access the live deployment of Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sabir.vercel.app/).
