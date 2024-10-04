@@ -1,7 +1,7 @@
-# Evently - Event Management Website Built Using Next.js
+# EventosRincon - Events listing for the humble sea side pueblo of Rincon de la Victoria
 
 Forked from [NextJS Evently](https://github.com/Muhammad-Sabir/nextjs-evently), a very special
-thanks to [Muhammad-Sabir](https://github.com/Muhammad-Sabir) for generously sharing this repo
+thanks to [Muhammad-Sabir](https://github.com/Muhammad-Sabir) for generously sharing this repo.❤️
 
 ## Introduction
 
