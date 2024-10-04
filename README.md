@@ -66,3 +66,12 @@ npm run dev
 ```
 
 5. Open your browser and go to http://localhost:3000
+
+## Hosting
+
+The easiest way to host is to use [Varcel](https://vercel.com/):
+
+- Create an account
+- Import the github project
+- Use all default builds
+- Make sure you assign all ENV VARS!
