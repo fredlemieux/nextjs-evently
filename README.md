@@ -32,6 +32,9 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 ## TODOS
 
 - [ ] Setup Multi Stage build for Docker
+- [ ] Highlight active Form item
+- [ ] Set up Image Upload
+- [ ] Google maps API for location
 - [ ] Map out app architecture
 - [ ] Testing setup
 - [ ] Github actions for tests
