@@ -3,7 +3,7 @@ import {Button} from '@/app/_components/ui/button';
 import {getEventsByUser} from '@/app/_lib/actions/event.actions';
 import {getOrdersByUser} from '@/app/_lib/actions/order.actions';
 import {IOrder} from '@/app/_lib/database/models/order.model';
-import {SearchParamProps} from '../../../_types';
+import {SearchParamProps} from '@/app/_types';
 import {auth} from '@clerk/nextjs';
 import Link from 'next/link';
 import React from 'react';

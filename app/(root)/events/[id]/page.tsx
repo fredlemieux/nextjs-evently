@@ -5,7 +5,7 @@ import {
   getRelatedEventsByCategory,
 } from '@/app/_lib/actions/event.actions';
 import {formatDateTime} from '@/app/_lib/utils';
-import {SearchParamProps} from '../../../../_types';
+import {SearchParamProps} from '@/app/_types';
 import Image from 'next/image';
 
 const EventDetails = async ({
