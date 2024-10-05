@@ -23,3 +23,19 @@ described in the [docs](https://clerk.com/docs/integrations/webhooks/sync-data)
 2. Create a webhook and add the static ngrok URL to your webhook prepended with `/api/webhook/clerk`
 3. Subscribe to user events (created deleted etc.) see [clerk/route.ts](./route.ts) for events used
 4. Copy signing secret and add it to the [.env.local](/.env.local) file
+
+With clerk setup we can create users and they get saved in the local database, see the createUser
+method in the [api/clerk/route](route.ts). But what you end up with is a clerkId (the userId in
+Clerk)
+but also the id of the userObject in Mongo db. In the createUser method, we then post our (MongoDB)
+id to Clerk as the userId, saves as public metadata.
+
+Next what we need to do is add this userId to the session token.
+
+5. Customise the session token to include the following:
+
+```json
+{
+  "userId": "{{user.public_metadata.userId}}"
+}
+```
