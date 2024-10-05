@@ -19,7 +19,7 @@ import {eventDefaultValues} from '../../_constants';
 import Dropdown from './Dropdown';
 import {Textarea} from '@/app/_components/ui/textarea';
 import {FileUploader} from './FileUploader';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
 import DatePicker from 'react-datepicker';
 import {useUploadThing} from '@/app/_lib/uploadthing';
@@ -55,6 +55,28 @@ const EventForm = ({userId, type, event, eventId}: EventFormProps) => {
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialValues,
   });
+  const {watch, setValue} = form;
+
+
+  const price = form.watch('price');
+  const isFree = form.watch('isFree');
+
+  useEffect(() => {
+    // Check if the "free ticket" checkbox should be updated based on the price
+    if (!price) {
+      setValue('isFree', true); // Check "free ticket" if price is blank
+    } else {
+      setValue('isFree', false); // Uncheck "free ticket" if there's a price
+    }
+  }, [price, setValue]);
+
+
+  useEffect(() => {
+    // Clear the price if "free ticket" is checked
+    if (isFree) {
+      setValue('price', ''); // Clear the price when "free ticket" is selected
+    }
+  }, [isFree, setValue]);
 
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     let uploadedImageUrl = values.imageUrl;
@@ -166,7 +188,6 @@ const EventForm = ({userId, type, event, eventId}: EventFormProps) => {
                     className="textarea rounded-md"
                   />
                 </FormControl>
-                <FormMessage/>
                 <FormMessage/>
               </FormItem>
             )}
@@ -300,7 +321,7 @@ const EventForm = ({userId, type, event, eventId}: EventFormProps) => {
                   <div
                     className="flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2">
                     <Image
-                      src="/assets/icons/dollar.svg"
+                      src="/assets/icons/euro.svg"
                       alt="dollar"
                       width={24}
                       height={24}
