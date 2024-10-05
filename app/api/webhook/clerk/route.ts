@@ -53,12 +53,8 @@ export async function POST(req: Request) {
 
   // Get the ID and type
   const eventType = evt.type;
-  console.log('EVENT_TYPE:', eventType);
-  console.log('EVT_DATA:', evt.data);
-
 
   if (eventType === 'user.created') {
-    console.log('Creating User');
     const user = createUserObject(evt.data);
 
     const newUser = await createUser(user);
