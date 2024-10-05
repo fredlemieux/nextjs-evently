@@ -20,6 +20,6 @@ services:
     env_file:
       - ./.env.local
     environment:
-      MONGODB_URI: mongodb://rqoot:example@mongo:27017/
+      MONGODB_URI: mongodb://root:example@mongo:27017/
     depends_on:
       - mongo
