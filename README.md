@@ -37,6 +37,20 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - [ ] Github actions for tests
 - [ ] Plan next steps
 
+## Project Structure
+
+- [/app](/app) is where all application folders are stored all "_" private prefixed folders are
+  non-route
+    - [/_components](/app/_components) app-wide reusable components are stored here
+    - [/_contants](/app/_constants) app-wide constants are stored here
+    - [/_lib](/app/_lib)
+    - [/_types](/app/_types) app-wide types are stored here
+    - [(auth)](/app/(auth)) auth routes
+    - [(root)](/app/(root)) UI routes
+    - [api](/app/api) api routes (no pages)
+      -[moddleware.ts](/middleware.ts) todo! read clerk docs
+-
+
 ## Getting Started
 
 To run Evently locally, follow these steps:
