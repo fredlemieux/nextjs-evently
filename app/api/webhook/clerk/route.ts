@@ -1,6 +1,6 @@
 import {Webhook} from 'svix';
 import {headers} from 'next/headers';
-import {WebhookEvent} from '@clerk/nextjs/server';
+import {UserJSON, WebhookEvent} from '@clerk/nextjs/server';
 import {createUser, deleteUser, updateUser} from '@/app/_lib/actions/user.actions';
 import {clerkClient} from '@clerk/nextjs';
 import {NextResponse} from 'next/server';
@@ -52,32 +52,15 @@ export async function POST(req: Request) {
   }
 
   // Get the ID and type
-  const {id} = evt.data;
   const eventType = evt.type;
 
   if (eventType === 'user.created') {
-    const {
-      id,
-      email_addresses,
-      image_url,
-      first_name,
-      last_name,
-      username,
-    } = evt.data;
-
-    const user = {
-      clerkId: id,
-      email: email_addresses[0].email_address,
-      username: username!,
-      firstName: first_name,
-      lastName: last_name,
-      photo: image_url,
-    };
+    const user = createUserObject(evt.data);
 
     const newUser = await createUser(user);
 
     if (newUser) {
-      await clerkClient.users.updateUserMetadata(id, {
+      await clerkClient.users.updateUserMetadata(user.clerkId, {
         publicMetadata: {
           userId: newUser._id,
         },
@@ -88,16 +71,9 @@ export async function POST(req: Request) {
   }
 
   if (eventType === 'user.updated') {
-    const {id, image_url, first_name, last_name, username} = evt.data;
+    const {clerkId, ...user} = createUpdateUserObject(evt.data);
 
-    const user = {
-      firstName: first_name,
-      lastName: last_name,
-      username: username!,
-      photo: image_url,
-    };
-
-    const updatedUser = await updateUser(id, user);
+    const updatedUser = await updateUser(clerkId, user);
 
     return NextResponse.json({message: 'OK', user: updatedUser});
   }
@@ -111,4 +87,36 @@ export async function POST(req: Request) {
   }
 
   return new Response('', {status: 200});
+}
+
+function createUserObject(clerkUserJson: UserJSON) {
+  const {
+    id,
+    email_addresses,
+    image_url,
+    first_name,
+    last_name,
+    username,
+  } = clerkUserJson;
+
+  return {
+    clerkId: id,
+    email: email_addresses[0].email_address,
+    username: username!,
+    firstName: first_name,
+    lastName: last_name,
+    photo: image_url,
+  };
+}
+
+function createUpdateUserObject(clerkUserJson: UserJSON) {
+  const {id, image_url, first_name, last_name, username} = clerkUserJson;
+
+  return {
+    clerkId: id,
+    firstName: first_name,
+    lastName: last_name,
+    username: username!,
+    photo: image_url,
+  };
 }
