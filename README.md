@@ -49,7 +49,11 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
     - [(root)](/app/(root)) UI routes
     - [api](/app/api) api routes (no pages)
       -[moddleware.ts](/middleware.ts) todo! read clerk docs
--
+
+## Authentication
+
+The app is authenticated using [Clerk](https://clerk.com) please refer to the clear webhook
+[README.md](./app/api/webhook/clerk/README.md).
 
 ## Getting Started
 
