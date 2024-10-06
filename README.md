@@ -53,10 +53,15 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
     - [api](/app/api) api routes (no pages)
       -[moddleware.ts](/middleware.ts) todo! read clerk docs
 
-## Authentication
+### Authentication
 
 The app is authenticated using [Clerk](https://clerk.com) please refer to the clear webhook
 [README.md](./app/api/webhook/clerk/README.md).
+
+### File Upload
+
+Pictures are uploaded using [UploadThing](https://uploadthing.com/) please refer to the /uploadthing
+api route [README.md]()
 
 ## Getting Started
 

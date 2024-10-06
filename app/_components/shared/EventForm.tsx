@@ -57,9 +57,9 @@ const EventForm = ({userId, type, event, eventId}: EventFormProps) => {
   });
   const {watch, setValue} = form;
 
-
-  const price = form.watch('price');
-  const isFree = form.watch('isFree');
+  console.log(form.getValues());
+  const price = watch('price');
+  const isFree = watch('isFree');
 
   useEffect(() => {
     // Check if the "free ticket" checkbox should be updated based on the price

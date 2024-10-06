@@ -1,6 +1,8 @@
 services:
   mongo:
     image: mongo
+    volumes:
+      - mongo-data:/data/db
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -23,3 +25,6 @@ services:
       MONGODB_URI: mongodb://root:example@mongo:27017/
     depends_on:
       - mongo
+
+volumes:
+  mongo-data:
