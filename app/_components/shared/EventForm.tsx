@@ -57,7 +57,6 @@ const EventForm = ({userId, type, event, eventId}: EventFormProps) => {
   });
   const {watch, setValue} = form;
 
-  console.log(form.getValues());
   const price = watch('price');
   const isFree = watch('isFree');
 
