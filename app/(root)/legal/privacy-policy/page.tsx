@@ -24,8 +24,8 @@ export default function PrivacyPolicy() {
         <p>
           <ul className="list-desc list-inside pl-5">{/*TODO! Fix UL list*/}
             <li className="list-item"><strong>- Personal Information</strong>: When you sign in
-              using
-              Google, we may collect your name, email address, profile picture, and Google ID.
+              using Google/Facebook, we may collect your name, email address,
+              profile picture, and Google/Facebook ID.
             </li>
             <li className="list-item"><strong>- Usage Data</strong>: We may collect information
               about how you interact with the App, including pages visited, features used, and
@@ -36,7 +36,7 @@ export default function PrivacyPolicy() {
         <br/>
         <h2 className="h4-medium">2. How We Use Your Information</h2>
         <p>
-          The personal information we collect through Google Auth is used for the following
+          The personal information we collect through Google/Facebook Auth is used for the following
           purposes:
         </p>
         <ul className="list-disc pl-5">
@@ -63,16 +63,22 @@ export default function PrivacyPolicy() {
         <br/>
         <h2 className="h4-medium">4. Third-Party Services</h2>
         <p>
-          The App integrates Google services such as Google Sign-In. By using these services, you
-          are also subject to Google's Privacy Policy, which can be viewed
+          The App integrates Google services such as Google and Facebook Sign-In. By using these
+          services, you are also subject to
           <Link href="https://policies.google.com/privacy"
-                className="text-blue-600 dark:text-blue-500 hover:underline">{" "}here</Link>.
+                className="text-blue-600 dark:text-blue-500 hover:underline">
+            {" "}Google's Privacy Policy
+          </Link> and
+          <Link href="https://www.facebook.com/privacy/policy/"
+                className="text-blue-600 dark:text-blue-500 hover:underline">
+            {" "}Facebook's Privacy Policy
+          </Link>.
         </p>
         <br/>
         <h2 className="h4-medium">5. Security</h2>
         <p>
           We use industry-standard security measures to protect your personal information from
-          unauthorized access, disclosure, or destruction. However, no method of transmission over
+          unauthorized access, disclosure, or destructin. However, no method of transmission over
           the Internet is entirely secure, so we cannot guarantee absolute security.
         </p>
         <br/>
