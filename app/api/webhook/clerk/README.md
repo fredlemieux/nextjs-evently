@@ -39,3 +39,10 @@ Next what we need to do is add this userId to the session token.
   "userId": "{{user.public_metadata.userId}}"
 }
 ```
+
+## In Production
+
+When deploying this into production you may be surprised to receive a domain not found error. This
+is because there are some extra steps in creating the CNAME records for Clerk to function correctly.
+Goto Settings --> Domains and follow the instructions to add the required CNAME records to your
+domain, the click Verify for Clerk to work correctly.
