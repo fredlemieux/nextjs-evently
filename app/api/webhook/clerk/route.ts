@@ -55,9 +55,12 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   if (eventType === 'user.created') {
+    console.log('creating user');
     const user = createUserObject(evt.data);
 
     const newUser = await createUser(user);
+
+    console.log('NEW_USER:', newUser);
 
     if (newUser) {
       await clerkClient.users.updateUserMetadata(user.clerkId, {

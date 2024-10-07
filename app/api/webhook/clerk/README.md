@@ -39,3 +39,17 @@ Next what we need to do is add this userId to the session token.
   "userId": "{{user.public_metadata.userId}}"
 }
 ```
+
+## In Production
+
+When deploying this into production you may be surprised to receive a domain not found error. This
+is because there are some extra steps in creating the CNAME records for Clerk to function correctly.
+Goto Settings --> Domains and follow the instructions to add the required CNAME records to your
+domain, the click Verify for Clerk to work correctly.
+
+Additionally, (TODO! Understand what is happening here!) there are paths that are set in the
+dashboad for the sign-up and sign-in routes. These are given a sub domain accounts.<domain> which I
+have to add the actual /auth/sign-in etc. domains.
+
+I don't understand what is happening here, and how to best set the up across both dev and prod
+environments.
