@@ -53,3 +53,5 @@ have to add the actual /auth/sign-in etc. domains.
 
 I don't understand what is happening here, and how to best set the up across both dev and prod
 environments.
+
+**REMEMBER:** Don't forget to add the webhook secret!
