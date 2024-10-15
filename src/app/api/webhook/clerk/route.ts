@@ -1,6 +1,6 @@
 import {Webhook} from 'svix';
 import {headers} from 'next/headers';
-import {UserJSON, WebhookEvent} from '@clerk/nextjs/server';
+import {UserJSON, WebhookEvent,} from '@clerk/nextjs/server';
 import {createUser, deleteUser, updateUser} from '@/app/_lib/actions/user.actions';
 import {clerkClient} from '@clerk/nextjs';
 import {NextResponse} from 'next/server';
@@ -55,12 +55,10 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   if (eventType === 'user.created') {
-    console.log('creating user');
+    console.info('Creating user');
     const user = createUserObject(evt.data);
 
     const newUser = await createUser(user);
-
-    console.log('NEW_USER:', newUser);
 
     if (newUser) {
       await clerkClient.users.updateUserMetadata(user.clerkId, {
@@ -69,7 +67,7 @@ export async function POST(req: Request) {
         },
       });
     }
-
+    // TODO! REFRESH SESSION
     return NextResponse.json({message: 'OK', user: newUser});
   }
 

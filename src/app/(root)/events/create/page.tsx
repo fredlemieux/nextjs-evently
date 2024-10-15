@@ -5,7 +5,9 @@ const CreateEvent = () => {
   const {sessionClaims} = auth();
   const userId = sessionClaims?.userId;
 
+
   if (!userId) {
+
     return <h1>Error, no userId found</h1>;
   }
 

@@ -15,7 +15,7 @@ import {
   GetAllEventsParams,
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
-} from '../../_types';
+} from '../../types';
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({name: {$regex: name, $options: 'i'}});

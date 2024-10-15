@@ -6,7 +6,7 @@ import {
   CreateOrderParams,
   GetOrdersByEventParams,
   GetOrdersByUserParams,
-} from '../../_types';
+} from '../../types';
 import {redirect} from 'next/navigation';
 import {handleError} from '../utils';
 import {connectToDatabase} from '../database';

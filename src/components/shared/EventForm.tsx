@@ -15,7 +15,7 @@ import {
 import {Input} from '@/app/_components/ui/input';
 import {eventFormSchema} from '@/app/_lib/validator';
 import * as z from 'zod';
-import {eventDefaultValues} from '../../_constants';
+import {eventDefaultValues} from '../../constants';
 import Dropdown from './Dropdown';
 import {Textarea} from '@/app/_components/ui/textarea';
 import {FileUploader} from './FileUploader';

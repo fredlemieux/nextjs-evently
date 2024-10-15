@@ -32,6 +32,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 ## TODOS
 
 - [ ] Setup Multi Stage build for Docker
+- [ ] Clean up dev environment (clear db and users)
 - [ ] Highlight active Form item
 - [ ] Set up Image Upload
 - [ ] Google maps API for location
@@ -51,7 +52,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
     - [(auth)](/app/(auth)) auth routes
     - [(root)](/app/(root)) UI routes
     - [api](/app/api) api routes (no pages)
-      -[moddleware.ts](/middleware.ts) todo! read clerk docs
+      -[moddleware.ts](/src/middleware.tse.ts) todo! read clerk docs
 
 ### Authentication
 

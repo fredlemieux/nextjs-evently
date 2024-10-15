@@ -1,6 +1,6 @@
 'use client';
 
-import {headerLinks} from '../../_constants';
+import {headerLinks} from '../../constants';
 import link from 'next/link';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
