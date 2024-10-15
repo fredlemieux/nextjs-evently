@@ -8,7 +8,8 @@ import Order from '@/lib/database/models/order.model';
 import Event from '@/lib/database/models/event.model';
 import {handleError} from '@/lib/utils';
 
-import {CreateUserParams, UpdateUserParams} from '../../types';
+import {CreateUserParams, UpdateUserParams} from '@/types';
+import {auth} from "@clerk/nextjs";
 
 export async function createUser(user: CreateUserParams) {
   try {
@@ -83,4 +84,21 @@ export async function deleteUser(clerkId: string) {
   } catch (error) {
     handleError(error);
   }
+}
+
+// This is one of the main arguments to move away from Clerk, new users don't always have the
+// userId in the sessions claims as it requires the webhook to complete before getting userId
+export async function getSessionUserId(): Promise<string | null> {
+  const {sessionClaims, user} = auth();
+
+  if (sessionClaims?.userId) {
+    return sessionClaims.userId;
+  }
+
+  if (sessionClaims?.sub) {
+    const clerkId = sessionClaims.sub;
+    return User.findOne({clerkId});
+  }
+
+  return null;
 }

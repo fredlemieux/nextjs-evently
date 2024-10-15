@@ -1,13 +1,10 @@
 import EventForm from '@/components/shared/EventForm';
-import {auth} from '@clerk/nextjs';
+import {getSessionUserId} from "@/lib/actions/user.actions";
 
-const CreateEvent = () => {
-  const {sessionClaims} = auth();
-  const userId = sessionClaims?.userId;
-
+const CreateEvent = async () => {
+  const userId = await getSessionUserId();
 
   if (!userId) {
-
     return <h1>Error, no userId found</h1>;
   }
 
