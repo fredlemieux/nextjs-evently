@@ -2,11 +2,11 @@
 
 import {revalidatePath} from 'next/cache';
 
-import {connectToDatabase} from '@/app/_lib/database';
-import Event from '@/app/_lib/database/models/event.model';
-import User from '@/app/_lib/database/models/user.model';
-import Category from '@/app/_lib/database/models/category.model';
-import {handleError} from '@/app/_lib/utils';
+import {connectToDatabase} from '@/lib/database';
+import Event from '@/lib/database/models/event.model';
+import User from '@/lib/database/models/user.model';
+import Category from '@/lib/database/models/category.model';
+import {handleError} from '@/lib/utils';
 
 import {
   CreateEventParams,

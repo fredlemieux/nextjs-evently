@@ -1,5 +1,5 @@
-import {IEvent} from '@/app/_lib/database/models/event.model';
-import {formatDateTime} from '@/app/_lib/utils';
+import {IEvent} from '@/lib/database/models/event.model';
+import {formatDateTime} from '@/lib/utils';
 import {auth} from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';

@@ -4,8 +4,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/app/_components/ui/select';
-import {ICategory} from '@/app/_lib/database/models/category.model';
+} from '@/components/ui/select';
+import {ICategory} from '@/lib/database/models/category.model';
 import {startTransition, useEffect, useState} from 'react';
 import {
   AlertDialog,
@@ -17,12 +17,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/app/_components/ui/alert-dialog';
+} from '@/components/ui/alert-dialog';
 import {Input} from '../ui/input';
 import {
   createCategory,
   getAllCategories,
-} from '@/app/_lib/actions/category.actions';
+} from '@/lib/actions/category.actions';
 
 type DropdownProps = {
   value?: string;

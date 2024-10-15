@@ -5,7 +5,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/app/_components/ui/sheet';
+} from '@/components/ui/sheet';
 import Image from 'next/image';
 import {Separator} from '../ui/separator';
 import NavItems from './NavItems';

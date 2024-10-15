@@ -1,4 +1,4 @@
-import {IEvent} from '@/app/_lib/database/models/event.model';
+import {IEvent} from '@/lib/database/models/event.model';
 import React from 'react';
 import Card from './Card';
 import Pagination from './Pagination';

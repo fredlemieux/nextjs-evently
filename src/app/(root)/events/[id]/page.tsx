@@ -1,11 +1,11 @@
-import CheckoutButton from '@/app/_components/shared/CheckoutButton';
-import Collection from '@/app/_components/shared/Collection';
+import CheckoutButton from '@/components/shared/CheckoutButton';
+import Collection from '@/components/shared/Collection';
 import {
   getEventById,
   getRelatedEventsByCategory,
-} from '@/app/_lib/actions/event.actions';
-import {formatDateTime} from '@/app/_lib/utils';
-import {SearchParamProps} from '@/app/_types';
+} from '@/lib/actions/event.actions';
+import {formatDateTime} from '@/lib/utils';
+import {SearchParamProps} from '@/types';
 import Image from 'next/image';
 
 const EventDetails = async ({

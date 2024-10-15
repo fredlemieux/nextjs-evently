@@ -1,9 +1,9 @@
-import CategoryFilter from '@/app/_components/shared/CategoryFilter';
-import Collection from '@/app/_components/shared/Collection';
-import Search from '@/app/_components/shared/Search';
-import {Button} from '@/app/_components/ui/button';
-import {getAllEvents} from '@/app/_lib/actions/event.actions';
-import {SearchParamProps} from '@/app/_types';
+import CategoryFilter from '@/components/shared/CategoryFilter';
+import Collection from '@/components/shared/Collection';
+import Search from '@/components/shared/Search';
+import {Button} from '@/components/ui/button';
+import {getAllEvents} from '@/lib/actions/event.actions';
+import {SearchParamProps} from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 
