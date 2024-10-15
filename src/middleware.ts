@@ -1,7 +1,7 @@
 import {authMiddleware} from '@clerk/nextjs';
 
 export default authMiddleware({
-  debug: true,
+  // debug: true, // Use to debug Auth issues
   publicRoutes: [
     '/',
     'events/:id',
