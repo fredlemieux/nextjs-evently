@@ -4,7 +4,7 @@ import {
   getEventById,
   getRelatedEventsByCategory,
 } from '@/lib/actions/event.actions';
-import { formatDateTime } from '@/lib/utils';
+import { areDatesTheSame, formatDateTime } from '@/lib/utils';
 import { SearchParamProps } from '@/types/parameters.types';
 import Image from 'next/image';
 
@@ -66,14 +66,21 @@ const EventDetails = async ({
                   height={32}
                 />
                 <div className='p-medium-16 lg:p-regular-20 flex flex-wrap items-center'>
-                  <p>
-                    {formatDateTime(event.startDateTime).dateOnly} -{' '}
-                    {formatDateTime(event.startDateTime).timeOnly}
-                  </p>
-                  <p>
-                    {formatDateTime(event.endDateTime).dateOnly} -{' '}
-                    {formatDateTime(event.endDateTime).timeOnly}
-                  </p>
+                  {areDatesTheSame(event.startDateTime, event.endDateTime) ? (
+                    <p>
+                      {formatDateTime(event.startDateTime).dateOnly} -{' '}
+                      {formatDateTime(event.startDateTime).timeOnly} to{' '}
+                      {formatDateTime(event.endDateTime).timeOnly}
+                    </p>
+                  ) : (
+                    <p>
+                      {formatDateTime(event.startDateTime).dateOnly} -{' '}
+                      {formatDateTime(event.startDateTime).timeOnly} to
+                      <br />
+                      {formatDateTime(event.endDateTime).dateOnly} -{' '}
+                      {formatDateTime(event.endDateTime).timeOnly}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -89,7 +96,7 @@ const EventDetails = async ({
             </div>
 
             <div className='flex flex-col gap-2'>
-              <p className='p-bold-20 text-grey-600'>What You'll Learn:</p>
+              <p className='p-bold-20 text-grey-600'>Details:</p>
               <p className='p-medium-16 lg:p-regular-18'>{event.description}</p>
               <p className='p-medium-16 lg:p-regular-18 truncate text-primary-500 underline'>
                 {event.url}
