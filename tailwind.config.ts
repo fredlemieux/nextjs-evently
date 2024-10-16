@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-import {withUt} from 'uploadthing/tw';
+import { withUt } from 'uploadthing/tw';
 import tailwindAnimate from 'tailwindcss-animate';
-
 
 module.exports = withUt({
   darkMode: ['class'],
@@ -82,12 +81,12 @@ module.exports = withUt({
       },
       keyframes: {
         'accordion-down': {
-          from: {height: '0'},
-          to: {height: 'var(--radix-accordion-content-height)'},
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
-          from: {height: 'var(--radix-accordion-content-height)'},
-          to: {height: '0'},
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
       },
       animation: {

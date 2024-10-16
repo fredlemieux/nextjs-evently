@@ -57,6 +57,8 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
 
   const price = watch('price');
   const isFree = watch('isFree');
+  const startDateTime = watch('startDateTime');
+  const endDateTime = watch('endDateTime');
 
   useEffect(() => {
     // Check if the "free ticket" checkbox should be updated based on the price
@@ -73,6 +75,15 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
       setValue('price', ''); // Clear the price when "free ticket" is selected
     }
   }, [isFree, setValue]);
+
+  useEffect(() => {
+    if (startDateTime > endDateTime) {
+      setValue(
+        'endDateTime',
+        new Date(startDateTime.getTime() + 60 * 60 * 1000)
+      );
+    }
+  }, [setValue, startDateTime, endDateTime]);
 
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     let uploadedImageUrl = values.imageUrl;
