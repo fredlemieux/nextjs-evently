@@ -17,7 +17,7 @@ import { eventDefaultValues } from '@/constants';
 import Dropdown from './Dropdown';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploader } from './FileUploader';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import DatePicker from 'react-datepicker';
 import { useUploadThing } from '@/lib/uploadthing';
@@ -27,12 +27,59 @@ import { Checkbox } from '../ui/checkbox';
 import { useRouter } from 'next/navigation';
 import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { IEvent } from '@/lib/database/models/event.model';
+import {
+  APIProvider,
+  useApiIsLoaded,
+  useMapsLibrary,
+} from '@vis.gl/react-google-maps';
 
 type EventFormProps = {
   userId: string;
   type: 'Create' | 'Update';
   event?: IEvent;
   eventId?: string;
+};
+
+console.log(
+  'PROCESS_ENV_NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:',
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+);
+
+interface PlaceAutocompleteProps {
+  onPlaceSelect?: (place: google.maps.places.PlaceResult | null) => void;
+}
+
+const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
+  const [placeAutocomplete, setPlaceAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
+  const isLoaded = useApiIsLoaded();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const places = useMapsLibrary('places');
+
+  useEffect(() => {
+    if (!places || !inputRef.current) return;
+
+    const options = {
+      fields: ['geometry', 'name', 'formatted_address'],
+    };
+
+    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
+  }, [places]);
+
+  useEffect(() => {
+    if (!placeAutocomplete) return;
+
+    placeAutocomplete.addListener('place_changed', () => {
+      onPlaceSelect(placeAutocomplete.getPlace());
+    });
+  }, [onPlaceSelect, placeAutocomplete]);
+
+  return (
+    <div className='autocomplete-container'>
+      {isLoaded ? <p>YAY!!!</p> : <p>BOOO!</p>}
+      <input ref={inputRef} />
+    </div>
+  );
 };
 
 const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
@@ -216,7 +263,16 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             )}
           />
         </div>
-
+        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+          <PlaceAutocomplete onPlaceSelect={(place) => console.log(place)} />
+          {/*<Map*/}
+          {/*  mapId={'bf51a910020fa25a'}*/}
+          {/*  defaultZoom={3}*/}
+          {/*  defaultCenter={{ lat: 22.54992, lng: 0 }}*/}
+          {/*  gestureHandling={'greedy'}*/}
+          {/*  disableDefaultUI={true}*/}
+          {/*/>*/}
+        </APIProvider>
         <div className='flex flex-col gap-5 md:flex-row'>
           <FormField
             control={form.control}
