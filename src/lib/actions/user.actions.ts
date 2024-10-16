@@ -5,7 +5,7 @@ import {connectToDatabase} from '@/lib/database';
 import {User, Order, Event} from '@/lib/database/models';
 import {handleError} from '@/lib/utils';
 
-import {CreateUserParams, UpdateUserParams} from '@/types';
+import {CreateUserParams, UpdateUserParams} from '@/types/parameters.types';
 import {auth} from "@clerk/nextjs";
 
 export async function createUser(user: CreateUserParams) {

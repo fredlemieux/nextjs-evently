@@ -13,7 +13,7 @@ import {
   GetAllEventsParams,
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
-} from '@/types';
+} from '@/types/parameters.types';
 import {Query, RootFilterQuery} from "mongoose";
 
 const getCategoryByName = async (name: string) => {

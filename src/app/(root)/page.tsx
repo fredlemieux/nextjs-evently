@@ -3,7 +3,7 @@ import Collection from '@/components/shared/Collection';
 import Search from '@/components/shared/Search';
 import {Button} from '@/components/ui/button';
 import {getAllEvents} from '@/lib/actions/event.actions';
-import {SearchParamProps} from '@/types';
+import {SearchParamProps} from '@/types/parameters.types';
 import Image from 'next/image';
 import Link from 'next/link';
 

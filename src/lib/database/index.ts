@@ -2,7 +2,9 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-const cached = (global as any).mongoose || {conn: null, promise: null};
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const cached = global.mongoose || {conn: null, promise: null};
 
 export const connectToDatabase = async () => {
   if (cached.conn) return cached.conn;
@@ -18,6 +20,8 @@ export const connectToDatabase = async () => {
 
   cached.conn = await cached.promise;
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   global.mongoose = cached;
 
   return cached.conn;
