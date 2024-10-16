@@ -14,7 +14,7 @@ export interface IEvent extends Document {
   isFree: boolean;
   url?: string;
   category: { _id: Types.ObjectId; name: string };
-  organizer: IUser['_id'];
+  organizer: { _id: string; firstName: string; lastName: string };
 }
 
 const EventSchema = new Schema({
