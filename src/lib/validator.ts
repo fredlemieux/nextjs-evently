@@ -13,7 +13,7 @@ export const eventFormSchema = z.object({
   imageUrl: z.string(),
   startDateTime: z.date().refine(startDateTime => startDateTime > new Date(), {message: "Start of event cannot be in the past"}),
   endDateTime: z.date(),
-  categoryId: z.string().min(1, "Please select a category"),
+  categoryId: z.string().min(1, 'Please select a category'),
   price: z.string(),
   isFree: z.boolean(),
   url: z.string().url().or(z.string().max(0)),

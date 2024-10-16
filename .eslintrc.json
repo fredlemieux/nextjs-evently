@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "prettier"
+  ],
+  "rules": {
+    "no-trailing-spaces": [
+      "error"
+    ],
+    "react/no-unescaped-entities": 0
+  }
+}

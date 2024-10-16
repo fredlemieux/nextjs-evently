@@ -1,9 +1,9 @@
-import {Webhook} from 'svix';
-import {headers} from 'next/headers';
-import {UserJSON, WebhookEvent,} from '@clerk/nextjs/server';
-import {createUser, deleteUser, updateUser} from '@/lib/actions/user.actions';
-import {clerkClient} from '@clerk/nextjs';
-import {NextResponse} from 'next/server';
+import { Webhook } from 'svix';
+import { headers } from 'next/headers';
+import { UserJSON, WebhookEvent } from '@clerk/nextjs/server';
+import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions';
+import { clerkClient } from '@clerk/nextjs';
+import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
@@ -68,37 +68,31 @@ export async function POST(req: Request) {
       });
     }
     // TODO! REFRESH SESSION
-    return NextResponse.json({message: 'OK', user: newUser});
+    return NextResponse.json({ message: 'OK', user: newUser });
   }
 
   if (eventType === 'user.updated') {
-    const {clerkId, ...user} = createUpdateUserObject(evt.data);
+    const { clerkId, ...user } = createUpdateUserObject(evt.data);
 
     const updatedUser = await updateUser(clerkId, user);
 
-    return NextResponse.json({message: 'OK', user: updatedUser});
+    return NextResponse.json({ message: 'OK', user: updatedUser });
   }
 
   if (eventType === 'user.deleted') {
-    const {id} = evt.data;
+    const { id } = evt.data;
 
     const deletedUser = await deleteUser(id!);
 
-    return NextResponse.json({message: 'OK', user: deletedUser});
+    return NextResponse.json({ message: 'OK', user: deletedUser });
   }
 
-  return new Response('', {status: 200});
+  return new Response('', { status: 200 });
 }
 
 function createUserObject(clerkUserJson: UserJSON) {
-  const {
-    id,
-    email_addresses,
-    image_url,
-    first_name,
-    last_name,
-    username,
-  } = clerkUserJson;
+  const { id, email_addresses, image_url, first_name, last_name, username } =
+    clerkUserJson;
 
   return {
     clerkId: id,
@@ -111,7 +105,7 @@ function createUserObject(clerkUserJson: UserJSON) {
 }
 
 function createUpdateUserObject(clerkUserJson: UserJSON) {
-  const {id, image_url, first_name, last_name, username} = clerkUserJson;
+  const { id, image_url, first_name, last_name, username } = clerkUserJson;
 
   return {
     clerkId: id,

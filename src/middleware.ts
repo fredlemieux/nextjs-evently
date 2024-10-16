@@ -1,4 +1,4 @@
-import {authMiddleware} from '@clerk/nextjs';
+import { authMiddleware } from '@clerk/nextjs';
 
 export default authMiddleware({
   // debug: true, // Use to debug Auth issues
