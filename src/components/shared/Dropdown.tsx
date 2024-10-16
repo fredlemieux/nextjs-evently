@@ -37,7 +37,9 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
     createCategory({
       categoryName: newCategory.trim(),
     }).then((category) => {
-      setCategories((prevState) => [...prevState, category]);
+      if (category) {
+        setCategories((prevState) => [...prevState, category]);
+      }
     });
   };
 
