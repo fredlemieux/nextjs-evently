@@ -1,5 +1,4 @@
 import { Document, Schema, model, models, Types } from 'mongoose';
-import { IUser } from './user.model';
 
 export interface IEvent extends Document {
   _id: Types.ObjectId;
