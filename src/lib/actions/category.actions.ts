@@ -3,11 +3,11 @@
 import {CreateCategoryParams} from '@/types/parameters.types';
 import {handleError} from '../utils';
 import {connectToDatabase} from '../database';
-import {Category} from '@/lib/database/models';
+import {Category, ICategory} from '@/lib/database/models';
 
 export const createCategory = async ({
                                        categoryName,
-                                     }: CreateCategoryParams) => {
+                                     }: CreateCategoryParams): Promise<ICategory | undefined> => {
   try {
     await connectToDatabase();
 
@@ -19,7 +19,7 @@ export const createCategory = async ({
   }
 };
 
-export const getAllCategories = async () => {
+export const getAllCategories = async (): Promise<ICategory[] | undefined> => {
   try {
     await connectToDatabase();
 

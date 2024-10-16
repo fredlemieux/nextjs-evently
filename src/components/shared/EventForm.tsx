@@ -6,16 +6,14 @@ import {Button} from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import {Input} from '@/components/ui/input';
 import {eventFormSchema} from '@/lib/validator';
 import * as z from 'zod';
-import {eventDefaultValues} from '../../constants';
+import {eventDefaultValues} from '@/constants';
 import Dropdown from './Dropdown';
 import {Textarea} from '@/components/ui/textarea';
 import {FileUploader} from './FileUploader';

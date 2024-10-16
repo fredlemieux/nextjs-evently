@@ -6,6 +6,7 @@
   "rules": {
     "no-trailing-spaces": [
       "error"
-    ]
+    ],
+    "react/no-unescaped-entities": 0
   }
 }
