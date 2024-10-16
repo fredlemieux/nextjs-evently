@@ -1,12 +1,12 @@
 'use server';
-import {revalidatePath} from 'next/cache';
+import { revalidatePath } from 'next/cache';
 
-import {connectToDatabase} from '@/lib/database';
-import {User, Order, Event} from '@/lib/database/models';
-import {handleError} from '@/lib/utils';
+import { connectToDatabase } from '@/lib/database';
+import { User, Order, Event } from '@/lib/database/models';
+import { handleError } from '@/lib/utils';
 
-import {CreateUserParams, UpdateUserParams} from '@/types/parameters.types';
-import {auth} from "@clerk/nextjs";
+import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
+import { auth } from '@clerk/nextjs';
 
 export async function createUser(user: CreateUserParams) {
   try {
@@ -36,7 +36,7 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
     await connectToDatabase();
 
-    const updatedUser = await User.findOneAndUpdate({clerkId}, user, {
+    const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
       new: true,
     });
 
@@ -52,7 +52,7 @@ export async function deleteUser(clerkId: string) {
     await connectToDatabase();
 
     // Find user to delete
-    const userToDelete = await User.findOne({clerkId});
+    const userToDelete = await User.findOne({ clerkId });
 
     if (!userToDelete) {
       throw new Error('User not found');
@@ -62,14 +62,14 @@ export async function deleteUser(clerkId: string) {
     await Promise.all([
       // Update the 'events' collection to remove references to the user
       Event.updateMany(
-        {_id: {$in: userToDelete.events}},
-        {$pull: {organizer: userToDelete._id}}
+        { _id: { $in: userToDelete.events } },
+        { $pull: { organizer: userToDelete._id } }
       ),
 
       // Update the 'orders' collection to remove references to the user
       Order.updateMany(
-        {_id: {$in: userToDelete.orders}},
-        {$unset: {buyer: 1}}
+        { _id: { $in: userToDelete.orders } },
+        { $unset: { buyer: 1 } }
       ),
     ]);
 
@@ -86,7 +86,7 @@ export async function deleteUser(clerkId: string) {
 // This is one of the main arguments to move away from Clerk, new users don't always have the
 // userId in the sessions claims as it requires the webhook to complete before getting userId
 export async function getSessionUserId(): Promise<string | null> {
-  const {sessionClaims} = auth();
+  const { sessionClaims } = auth();
 
   if (sessionClaims?.userId) {
     return sessionClaims.userId;
@@ -94,7 +94,7 @@ export async function getSessionUserId(): Promise<string | null> {
 
   if (sessionClaims?.sub) {
     const clerkId = sessionClaims.sub;
-    return User.findOne({clerkId});
+    return User.findOne({ clerkId });
   }
 
   return null;

@@ -7,11 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {getAllCategories} from '@/lib/actions/category.actions';
-import {ICategory} from '@/lib/database/models/category.model';
-import {formUrlQuery, removeKeysFromQuery} from '@/lib/utils';
-import {useRouter, useSearchParams} from 'next/navigation';
-import {useEffect, useState} from 'react';
+import { getAllCategories } from '@/lib/actions/category.actions';
+import { ICategory } from '@/lib/database/models/category.model';
+import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const CategoryFilter = () => {
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -46,16 +46,16 @@ const CategoryFilter = () => {
       });
     }
 
-    router.push(newUrl, {scroll: false});
+    router.push(newUrl, { scroll: false });
   };
 
   return (
     <Select onValueChange={(value: string) => onSelectCategory(value)}>
-      <SelectTrigger className="select-field">
-        <SelectValue placeholder="Category"/>
+      <SelectTrigger className='select-field'>
+        <SelectValue placeholder='Category' />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="All" className="select-item p-regular-14">
+        <SelectItem value='All' className='select-item p-regular-14'>
           All
         </SelectItem>
 
@@ -63,7 +63,7 @@ const CategoryFilter = () => {
           <SelectItem
             value={category.name}
             key={category._id}
-            className="select-item p-regular-14"
+            className='select-item p-regular-14'
           >
             {category.name}
           </SelectItem>

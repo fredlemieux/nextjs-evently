@@ -1,9 +1,9 @@
-import {type ClassValue, clsx} from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 
-import {twMerge} from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge';
 import qs from 'query-string';
 
-import {UrlQueryParams, RemoveUrlQueryParams} from '@/types/parameters.types';
+import { UrlQueryParams, RemoveUrlQueryParams } from '@/types/parameters.types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -66,7 +66,7 @@ export const formatPrice = (price: string) => {
   return formattedPrice;
 };
 
-export function formUrlQuery({params, key, value}: UrlQueryParams) {
+export function formUrlQuery({ params, key, value }: UrlQueryParams) {
   const currentUrl = qs.parse(params);
 
   currentUrl[key] = value;
@@ -76,14 +76,14 @@ export function formUrlQuery({params, key, value}: UrlQueryParams) {
       url: window.location.pathname,
       query: currentUrl,
     },
-    {skipNull: true}
+    { skipNull: true }
   );
 }
 
 export function removeKeysFromQuery({
-                                      params,
-                                      keysToRemove,
-                                    }: RemoveUrlQueryParams) {
+  params,
+  keysToRemove,
+}: RemoveUrlQueryParams) {
   const currentUrl = qs.parse(params);
 
   keysToRemove.forEach((key) => {
@@ -95,7 +95,7 @@ export function removeKeysFromQuery({
       url: window.location.pathname,
       query: currentUrl,
     },
-    {skipNull: true}
+    { skipNull: true }
   );
 }
 
