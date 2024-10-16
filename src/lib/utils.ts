@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import qs from 'query-string';
 
-import { UrlQueryParams, RemoveUrlQueryParams } from '@/types/parameters.types';
+import { RemoveUrlQueryParams, UrlQueryParams } from '@/types/parameters.types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,12 +33,12 @@ export const formatDateTime = (dateString: Date) => {
   };
 
   const formattedDateTime: string = new Date(dateString).toLocaleString(
-    'en-US',
+    'en-UK',
     dateTimeOptions
   );
 
   const formattedDate: string = new Date(dateString).toLocaleString(
-    'en-US',
+    'en-UK',
     dateOptions
   );
 
@@ -54,16 +54,32 @@ export const formatDateTime = (dateString: Date) => {
   };
 };
 
+export const areDatesTheSame = (start: string | Date, end: string | Date) => {
+  return (
+    formatDateTime(new Date(start)).dateOnly ===
+    formatDateTime(new Date(end)).dateOnly
+  );
+};
+
+export function formatEventDateTime(startStr: string, endStr: string) {
+  const startDateTime = new Date(startStr);
+  const endDateTime = new Date(endStr);
+  if (endDateTime.getTime() - startDateTime.getTime() < 24 * 60 * 60 * 1000) {
+    return `${formatDateTime(startDateTime).dateOnly} - \
+    ${formatDateTime(startDateTime).timeOnly} to \
+    ${formatDateTime(endDateTime).dateOnly} - \
+    ${formatDateTime(endDateTime).timeOnly}`;
+  }
+}
+
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
 export const formatPrice = (price: string) => {
   const amount = parseFloat(price);
-  const formattedPrice = new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
   }).format(amount);
-
-  return formattedPrice;
 };
 
 export function formUrlQuery({ params, key, value }: UrlQueryParams) {
