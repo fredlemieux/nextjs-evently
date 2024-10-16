@@ -3,9 +3,7 @@
 import {revalidatePath} from 'next/cache';
 
 import {connectToDatabase} from '@/lib/database';
-import Event from '@/lib/database/models/event.model';
-import User from '@/lib/database/models/user.model';
-import Category from '@/lib/database/models/category.model';
+import {Event, IEvent, Category, ICategory, User, IUser} from '@/lib/database/models';
 import {handleError} from '@/lib/utils';
 
 import {
@@ -16,20 +14,31 @@ import {
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
 } from '@/types';
+import {Query, RootFilterQuery} from "mongoose";
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({name: {$regex: name, $options: 'i'}});
 };
 
-const populateEvent = (query: any) => {
+function populateEvent(query: Query<IEvent | null, IEvent>) {
   return query
-    .populate({
+    .populate<IUser>({
       path: 'organizer',
       model: User,
       select: '_id firstName lastName',
     })
-    .populate({path: 'category', model: Category, select: '_id name'});
-};
+    .populate<ICategory>({path: 'category', model: Category, select: '_id name'});
+}
+
+function populateEvents(query: Query<IEvent[] | null, IEvent>) {
+  return query
+    .populate<IUser>({
+      path: 'organizer',
+      model: User,
+      select: '_id firstName lastName',
+    })
+    .populate<ICategory>({path: 'category', model: Category, select: '_id name'});
+}
 
 export async function createEvent({userId, event, path}: CreateEventParams) {
   try {
@@ -83,6 +92,7 @@ export async function updateEvent({userId, event, path}: UpdateEventParams) {
       {...event, category: event.categoryId},
       {new: true}
     );
+
     revalidatePath(path);
 
     return JSON.parse(JSON.stringify(updatedEvent));
@@ -125,18 +135,8 @@ export async function getAllEvents({
     };
 
     const skipAmount = (Number(page) - 1) * limit;
-    const eventsQuery = Event.find(conditions)
-      .sort({createdAt: 'desc'})
-      .skip(skipAmount)
-      .limit(limit);
+    return await queryAndReturnEvents(conditions, skipAmount, limit);
 
-    const events = await populateEvent(eventsQuery);
-    const eventsCount = await Event.countDocuments(conditions);
-
-    return {
-      data: JSON.parse(JSON.stringify(events)),
-      totalPages: Math.ceil(eventsCount / limit),
-    };
   } catch (error) {
     handleError(error);
   }
@@ -153,18 +153,7 @@ export async function getEventsByUser({
     const conditions = {organizer: userId};
     const skipAmount = (page - 1) * limit;
 
-    const eventsQuery = Event.find(conditions)
-      .sort({createdAt: 'desc'})
-      .skip(skipAmount)
-      .limit(limit);
-
-    const events = await populateEvent(eventsQuery);
-    const eventsCount = await Event.countDocuments(conditions);
-
-    return {
-      data: JSON.parse(JSON.stringify(events)),
-      totalPages: Math.ceil(eventsCount / limit),
-    };
+    return await queryAndReturnEvents(conditions, skipAmount, limit);
   } catch (error) {
     handleError(error);
   }
@@ -184,19 +173,23 @@ export async function getRelatedEventsByCategory({
       $and: [{category: categoryId}, {_id: {$ne: eventId}}],
     };
 
-    const eventsQuery = Event.find(conditions)
-      .sort({createdAt: 'desc'})
-      .skip(skipAmount)
-      .limit(limit);
-
-    const events = await populateEvent(eventsQuery);
-    const eventsCount = await Event.countDocuments(conditions);
-
-    return {
-      data: JSON.parse(JSON.stringify(events)),
-      totalPages: Math.ceil(eventsCount / limit),
-    };
+    return await queryAndReturnEvents(conditions, skipAmount, limit);
   } catch (error) {
     handleError(error);
   }
+}
+
+async function queryAndReturnEvents(conditions: RootFilterQuery<IEvent>, skipAmount: number, limit: number) {
+  const eventsQuery = Event.find(conditions)
+    .sort({createdAt: 'desc'})
+    .skip(skipAmount)
+    .limit(limit);
+
+  const events = await populateEvents(eventsQuery);
+  const eventsCount = await Event.countDocuments(conditions);
+
+  return {
+    data: JSON.parse(JSON.stringify(events)),
+    totalPages: Math.ceil(eventsCount / limit),
+  };
 }

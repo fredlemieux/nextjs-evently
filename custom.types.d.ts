@@ -4,4 +4,11 @@ declare namespace NodeJS {
     CLERK_SECRET_KEY: string;
     MONGODB_URI: string;
   }
+
+  // export interface Global {
+  //   mongoose: {
+  //     conn: null | Mongoose,
+  //     promise: Promise<Mongoose>
+  //   };
+  // }
 }

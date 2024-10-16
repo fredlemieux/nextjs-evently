@@ -1,11 +1,8 @@
 'use server';
-
 import {revalidatePath} from 'next/cache';
 
 import {connectToDatabase} from '@/lib/database';
-import User from '@/lib/database/models/user.model';
-import Order from '@/lib/database/models/order.model';
-import Event from '@/lib/database/models/event.model';
+import {User, Order, Event} from '@/lib/database/models';
 import {handleError} from '@/lib/utils';
 
 import {CreateUserParams, UpdateUserParams} from '@/types';
@@ -89,7 +86,7 @@ export async function deleteUser(clerkId: string) {
 // This is one of the main arguments to move away from Clerk, new users don't always have the
 // userId in the sessions claims as it requires the webhook to complete before getting userId
 export async function getSessionUserId(): Promise<string | null> {
-  const {sessionClaims, user} = auth();
+  const {sessionClaims} = auth();
 
   if (sessionClaims?.userId) {
     return sessionClaims.userId;

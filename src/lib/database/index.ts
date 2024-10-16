@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-let cached = (global as any).mongoose || {conn: null, promise: null};
+const cached = (global as any).mongoose || {conn: null, promise: null};
 
 export const connectToDatabase = async () => {
   if (cached.conn) return cached.conn;
@@ -12,11 +12,13 @@ export const connectToDatabase = async () => {
   cached.promise =
     cached.promise ||
     mongoose.connect(MONGODB_URI, {
-      dbName: 'evently',
+      dbName: 'eventos-rincon',
       bufferCommands: false,
     });
 
   cached.conn = await cached.promise;
+
+  global.mongoose = cached;
 
   return cached.conn;
 };
