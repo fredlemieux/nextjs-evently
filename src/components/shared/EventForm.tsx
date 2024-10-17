@@ -1,7 +1,23 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import {
+  APIProvider,
+  useApiIsLoaded,
+  useMapsLibrary,
+} from '@vis.gl/react-google-maps';
+import { eventFormSchema } from '@/lib/validator';
+import { eventDefaultValues } from '@/constants';
+import { useUploadThing } from '@/lib/uploadthing';
+import { createEvent, updateEvent } from '@/lib/actions/event.actions';
+import { IEvent } from '@/lib/database/models/event.model';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -10,28 +26,13 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { eventFormSchema } from '@/lib/validator';
-import * as z from 'zod';
-import { eventDefaultValues } from '@/constants';
 import Dropdown from './Dropdown';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploader } from './FileUploader';
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import DatePicker from 'react-datepicker';
-import { useUploadThing } from '@/lib/uploadthing';
-
-import 'react-datepicker/dist/react-datepicker.css';
 import { Checkbox } from '../ui/checkbox';
-import { useRouter } from 'next/navigation';
-import { createEvent, updateEvent } from '@/lib/actions/event.actions';
-import { IEvent } from '@/lib/database/models/event.model';
-import {
-  APIProvider,
-  useApiIsLoaded,
-  useMapsLibrary,
-} from '@vis.gl/react-google-maps';
+// import { useGooglePlaces } from '@/lib/hooks/useGooglePlaces';
+import * as React from 'react';
 
 type EventFormProps = {
   userId: string;
@@ -40,16 +41,12 @@ type EventFormProps = {
   eventId?: string;
 };
 
-console.log(
-  'PROCESS_ENV_NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:',
-  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-);
-
 interface PlaceAutocompleteProps {
   onPlaceSelect?: (place: google.maps.places.PlaceResult | null) => void;
+  props: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
-const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
+export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   const [placeAutocomplete, setPlaceAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   const isLoaded = useApiIsLoaded();
@@ -59,31 +56,61 @@ const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   useEffect(() => {
     if (!places || !inputRef.current) return;
 
-    const options = {
-      fields: ['geometry', 'name', 'formatted_address'],
+    const rinconBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng({ lat: 36.705586, lng: -4.33327 }),
+      new google.maps.LatLng({ lat: 36.803671, lng: -4.121469 })
+    );
+    const options: google.maps.places.AutocompleteOptions = {
+      bounds: rinconBounds,
+      strictBounds: true,
+      fields: [
+        'geometry',
+        'name',
+        'formatted_address',
+        'url',
+        'international_phone_number',
+        'photos',
+        'place_id',
+      ],
+      componentRestrictions: {
+        country: ['es'],
+      },
     };
 
     setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
   }, [places]);
 
   useEffect(() => {
-    if (!placeAutocomplete) return;
+    console.log('EFFECt');
+    if (!placeAutocomplete || !onPlaceSelect) return;
 
     placeAutocomplete.addListener('place_changed', () => {
-      onPlaceSelect(placeAutocomplete.getPlace());
+      console.log('Place changed');
+      const place = placeAutocomplete.getPlace();
+      console.log(place);
+      onPlaceSelect(place);
     });
   }, [onPlaceSelect, placeAutocomplete]);
 
+  return { isLoaded, inputRef };
+};
+
+const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
+  const { isLoaded, inputRef } = useGooglePlaces(onPlaceSelect);
+
   return (
-    <div className='autocomplete-container'>
+    <>
       {isLoaded ? <p>YAY!!!</p> : <p>BOOO!</p>}
-      <input ref={inputRef} />
-    </div>
+      <Input className='input-field' ref={inputRef} />
+    </>
   );
 };
 
 const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
+  // const { isLoaded, inputRef } = useGooglePlaces(console.log);
+  // console.log('IS_LOADED:', isLoaded);
+
   const initialValues =
     event && type === 'Update'
       ? {
@@ -263,42 +290,49 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             )}
           />
         </div>
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
-          <PlaceAutocomplete onPlaceSelect={(place) => console.log(place)} />
-          {/*<Map*/}
-          {/*  mapId={'bf51a910020fa25a'}*/}
-          {/*  defaultZoom={3}*/}
-          {/*  defaultCenter={{ lat: 22.54992, lng: 0 }}*/}
-          {/*  gestureHandling={'greedy'}*/}
-          {/*  disableDefaultUI={true}*/}
-          {/*/>*/}
-        </APIProvider>
-        <div className='flex flex-col gap-5 md:flex-row'>
-          <FormField
-            control={form.control}
-            name='location'
-            render={({ field }) => (
-              <FormItem className='w-full'>
-                <FormControl>
-                  <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
-                    <Image
-                      src='/assets/icons/location-grey.svg'
-                      alt='calendar'
-                      width={24}
-                      height={24}
-                    />
 
-                    <Input
-                      placeholder='Event location or Online'
-                      {...field}
-                      className='input-field'
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className='flex flex-col gap-5 md:flex-row'>
+          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+            <FormField
+              control={form.control}
+              name='location'
+              render={({ field: { ref, ...restProps } }) => (
+                <FormItem className='w-full'>
+                  <FormControl>
+                    <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
+                      <Image
+                        src='/assets/icons/location-grey.svg'
+                        alt='calendar'
+                        width={24}
+                        height={24}
+                      />
+
+                      <PlaceAutocomplete
+                        onPlaceSelect={(place) => console.log(place)}
+                        props={restProps}
+                      />
+                      {/*{isLoaded ? <p>YAY</p> : <p>NAY</p>}*/}
+                      {/*{isLoaded ? (*/}
+                      {/*  <Input*/}
+                      {/*    ref={inputRef}*/}
+                      {/*    placeholder='Event location or Online'*/}
+                      {/*    className='input-field'*/}
+                      {/*  />*/}
+                      {/*) : (*/}
+                      {/*  <Input*/}
+                      {/*    placeholder='Event location or Online'*/}
+                      {/*    ref={ref}*/}
+                      {/*    {...restProps}*/}
+                      {/*    className='input-field'*/}
+                      {/*  />*/}
+                      {/*)}*/}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </APIProvider>
         </div>
 
         <div className='flex flex-col gap-5 md:flex-row'>

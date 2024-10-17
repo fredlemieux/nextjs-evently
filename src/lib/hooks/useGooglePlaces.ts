@@ -1,0 +1,53 @@
+import { useEffect, useRef, useState } from 'react';
+import { useApiIsLoaded, useMapsLibrary } from '@vis.gl/react-google-maps';
+
+interface PlaceAutocompleteProps {
+  onPlaceSelect?: (place: google.maps.places.PlaceResult | null) => void;
+}
+
+export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
+  const [placeAutocomplete, setPlaceAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
+  const isLoaded = useApiIsLoaded();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const places = useMapsLibrary('places');
+
+  useEffect(() => {
+    if (!places || !inputRef.current) return;
+
+    const rinconBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng({ lat: 36.705586, lng: -4.33327 }),
+      new google.maps.LatLng({ lat: 36.803671, lng: -4.121469 })
+    );
+    const options: google.maps.places.AutocompleteOptions = {
+      bounds: rinconBounds,
+      strictBounds: true,
+      fields: [
+        'geometry',
+        'name',
+        'formatted_address',
+        'url',
+        'international_phone_number',
+        'photos',
+        'place_id',
+      ],
+      componentRestrictions: {
+        country: ['es'],
+      },
+    };
+
+    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
+  }, [places]);
+
+  useEffect(() => {
+    console.log('EFFECt');
+    if (!placeAutocomplete || !onPlaceSelect) return;
+
+    placeAutocomplete.addListener('place_changed', () => {
+      console.log('Place changed');
+      onPlaceSelect(placeAutocomplete.getPlace());
+    });
+  }, [onPlaceSelect, placeAutocomplete]);
+
+  return { isLoaded, inputRef };
+};
