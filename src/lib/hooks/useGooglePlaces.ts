@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { useApiIsLoaded, useMapsLibrary } from '@vis.gl/react-google-maps';
 
 interface PlaceAutocompleteProps {
-  onPlaceSelect?: (place: google.maps.places.PlaceResult | null) => void;
+  onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
 }
 
 export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
@@ -13,7 +13,7 @@ export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   const places = useMapsLibrary('places');
 
   useEffect(() => {
-    if (!places || !inputRef.current) return;
+    if (!places || !inputRef?.current) return;
 
     const rinconBounds = new google.maps.LatLngBounds(
       new google.maps.LatLng({ lat: 36.705586, lng: -4.33327 }),
@@ -37,15 +37,15 @@ export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
     };
 
     setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-  }, [places]);
+  }, [places, inputRef]);
 
   useEffect(() => {
-    console.log('EFFECt');
-    if (!placeAutocomplete || !onPlaceSelect) return;
+    if (!placeAutocomplete) return;
 
     placeAutocomplete.addListener('place_changed', () => {
-      console.log('Place changed');
-      onPlaceSelect(placeAutocomplete.getPlace());
+      const place = placeAutocomplete.getPlace();
+      console.log(place);
+      onPlaceSelect(place);
     });
   }, [onPlaceSelect, placeAutocomplete]);
 

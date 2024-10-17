@@ -1,16 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { InputHTMLAttributes, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import {
-  APIProvider,
-  useApiIsLoaded,
-  useMapsLibrary,
-} from '@vis.gl/react-google-maps';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import { eventFormSchema } from '@/lib/validator';
 import { eventDefaultValues } from '@/constants';
 import { useUploadThing } from '@/lib/uploadthing';
@@ -31,7 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploader } from './FileUploader';
 import { Checkbox } from '../ui/checkbox';
-// import { useGooglePlaces } from '@/lib/hooks/useGooglePlaces';
+import { useGooglePlaces } from '@/lib/hooks/useGooglePlaces';
 import * as React from 'react';
 
 type EventFormProps = {
@@ -42,66 +38,22 @@ type EventFormProps = {
 };
 
 interface PlaceAutocompleteProps {
-  onPlaceSelect?: (place: google.maps.places.PlaceResult | null) => void;
-  props: React.InputHTMLAttributes<HTMLInputElement>;
+  onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+  props: InputHTMLAttributes<HTMLInputElement>;
 }
 
-export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
-  const [placeAutocomplete, setPlaceAutocomplete] =
-    useState<google.maps.places.Autocomplete | null>(null);
-  const isLoaded = useApiIsLoaded();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const places = useMapsLibrary('places');
+const PlaceAutocomplete = ({
+  onPlaceSelect,
+  props,
+}: PlaceAutocompleteProps) => {
+  console.log('PROPS:', props);
 
-  useEffect(() => {
-    if (!places || !inputRef.current) return;
-
-    const rinconBounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng({ lat: 36.705586, lng: -4.33327 }),
-      new google.maps.LatLng({ lat: 36.803671, lng: -4.121469 })
-    );
-    const options: google.maps.places.AutocompleteOptions = {
-      bounds: rinconBounds,
-      strictBounds: true,
-      fields: [
-        'geometry',
-        'name',
-        'formatted_address',
-        'url',
-        'international_phone_number',
-        'photos',
-        'place_id',
-      ],
-      componentRestrictions: {
-        country: ['es'],
-      },
-    };
-
-    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-  }, [places]);
-
-  useEffect(() => {
-    console.log('EFFECt');
-    if (!placeAutocomplete || !onPlaceSelect) return;
-
-    placeAutocomplete.addListener('place_changed', () => {
-      console.log('Place changed');
-      const place = placeAutocomplete.getPlace();
-      console.log(place);
-      onPlaceSelect(place);
-    });
-  }, [onPlaceSelect, placeAutocomplete]);
-
-  return { isLoaded, inputRef };
-};
-
-const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
-  const { isLoaded, inputRef } = useGooglePlaces(onPlaceSelect);
+  const { isLoaded, inputRef } = useGooglePlaces({ onPlaceSelect });
 
   return (
     <>
       {isLoaded ? <p>YAY!!!</p> : <p>BOOO!</p>}
-      <Input className='input-field' ref={inputRef} />
+      <Input className='input-field' ref={inputRef} {...props} />
     </>
   );
 };
@@ -127,7 +79,8 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialValues,
   });
-  const { watch, setValue } = form;
+  const { watch, setValue, getValues } = form;
+  console.log('GET_VALUES_:', getValues());
 
   const price = watch('price');
   const isFree = watch('isFree');
@@ -306,11 +259,11 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                         width={24}
                         height={24}
                       />
-
                       <PlaceAutocomplete
-                        onPlaceSelect={(place) => console.log(place)}
+                        onPlaceSelect={console.log}
                         props={restProps}
                       />
+
                       {/*{isLoaded ? <p>YAY</p> : <p>NAY</p>}*/}
                       {/*{isLoaded ? (*/}
                       {/*  <Input*/}
