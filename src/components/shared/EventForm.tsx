@@ -157,8 +157,8 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   }
 
   return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
-      <Form {...form}>
+    <Form {...form}>
+      <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className='flex flex-col gap-5'
@@ -419,8 +419,8 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             {form.formState.isSubmitting ? 'Submitting...' : `${type} Event `}
           </Button>
         </form>
-      </Form>
-    </APIProvider>
+      </APIProvider>
+    </Form>
   );
 };
 
