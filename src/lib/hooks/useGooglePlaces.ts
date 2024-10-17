@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApiIsLoaded, useMapsLibrary } from '@vis.gl/react-google-maps';
 
 interface PlaceAutocompleteProps {
@@ -13,6 +13,8 @@ export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
   const places = useMapsLibrary('places');
 
   useEffect(() => {
+    console.log('PLACES_INPUT_REF:', places, inputRef);
+
     if (!places || !inputRef?.current) return;
 
     const rinconBounds = new google.maps.LatLngBounds(
@@ -35,12 +37,14 @@ export const useGooglePlaces = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
         country: ['es'],
       },
     };
-
+    console.log('Setting Place autocomplete');
     setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
   }, [places, inputRef]);
 
   useEffect(() => {
     if (!placeAutocomplete) return;
+
+    console.log('_ADDING_LISTENER_:', 'adding listener');
 
     placeAutocomplete.addListener('place_changed', () => {
       const place = placeAutocomplete.getPlace();
