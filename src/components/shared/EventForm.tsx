@@ -1,30 +1,31 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
+import { Libraries, useLoadScript } from '@react-google-maps/api';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+import { Button } from '../ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { eventFormSchema } from '@/lib/validator';
-import * as z from 'zod';
+} from '../ui/form';
 import { eventDefaultValues } from '@/constants';
 import Dropdown from './Dropdown';
-import { Textarea } from '@/components/ui/textarea';
-import { FileUploader } from './FileUploader';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import DatePicker from 'react-datepicker';
+import { eventFormSchema } from '@/lib/validator';
 import { useUploadThing } from '@/lib/uploadthing';
-
-import 'react-datepicker/dist/react-datepicker.css';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
 import { Checkbox } from '../ui/checkbox';
-import { useRouter } from 'next/navigation';
+import { FileUploader } from './FileUploader';
 import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { IEvent } from '@/lib/database/models/event.model';
 
@@ -35,7 +36,15 @@ type EventFormProps = {
   eventId?: string;
 };
 
+const libraries: Libraries = ['places'];
+
 const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+    libraries,
+  });
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [files, setFiles] = useState<File[]>([]);
   const initialValues =
     event && type === 'Update'
@@ -59,6 +68,44 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   const isFree = watch('isFree');
   const startDateTime = watch('startDateTime');
   const endDateTime = watch('endDateTime');
+
+  useEffect(() => {
+    if (!isLoaded || loadError || !inputRef.current) return;
+    const rinconBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng({ lat: 36.705586, lng: -4.33327 }),
+      new google.maps.LatLng({ lat: 36.803671, lng: -4.121469 })
+    );
+
+    const options = {
+      bounds: rinconBounds,
+      strictBounds: true,
+      componentRestrictions: { country: 'es' },
+      fields: [
+        'geometry',
+        'name',
+        'formatted_address',
+        'url',
+        'international_phone_number',
+        'photos',
+        'place_id',
+      ],
+    };
+
+    const autocomplete = new google.maps.places.Autocomplete(
+      inputRef.current,
+      options
+    );
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      console.log('PLACE:', place);
+
+      if (place.formatted_address) {
+        setValue('location', place.formatted_address);
+      }
+    });
+
+    // return () => autocomplete.removeListener("place_changed", handlePlaceChanged);
+  }, [isLoaded, loadError]);
 
   useEffect(() => {
     // Check if the "free ticket" checkbox should be updated based on the price
@@ -221,7 +268,9 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           <FormField
             control={form.control}
             name='location'
-            render={({ field }) => (
+            render={({
+              field: { onBlur, onChange, disabled, name, value },
+            }) => (
               <FormItem className='w-full'>
                 <FormControl>
                   <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
@@ -233,8 +282,13 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                     />
 
                     <Input
+                      ref={inputRef}
+                      name={name}
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      disabled={disabled}
                       placeholder='Event location or Online'
-                      {...field}
                       className='input-field'
                     />
                   </div>
