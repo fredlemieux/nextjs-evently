@@ -1,6 +1,6 @@
 'use client';
 
-import { InputHTMLAttributes, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import * as z from 'zod';
@@ -27,8 +27,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploader } from './FileUploader';
 import { Checkbox } from '../ui/checkbox';
-import { useGooglePlaces } from '@/lib/hooks/useGooglePlaces';
 import * as React from 'react';
+import { PlaceAutocompleteInput } from '@/components/shared/PlacesAutocompleteInput';
 
 type EventFormProps = {
   userId: string;
@@ -37,31 +37,12 @@ type EventFormProps = {
   eventId?: string;
 };
 
-interface PlaceAutocompleteProps {
-  onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
-  props: InputHTMLAttributes<HTMLInputElement>;
-}
-
-const PlaceAutocomplete = ({
-  onPlaceSelect,
-  props,
-}: PlaceAutocompleteProps) => {
-  console.log('PROPS:', props);
-
-  const { isLoaded, inputRef } = useGooglePlaces({ onPlaceSelect });
-
-  return (
-    <>
-      {isLoaded ? <p>YAY!!!</p> : <p>BOOO!</p>}
-      <Input className='input-field' ref={inputRef} {...props} />
-    </>
-  );
-};
-
 const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  // const { isLoaded, inputRef } = useGooglePlaces(console.log);
-  // console.log('IS_LOADED:', isLoaded);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [place, setPlace] = useState<
+    google.maps.places.PlaceResult | undefined
+  >(undefined);
 
   const initialValues =
     event && type === 'Update'
@@ -80,7 +61,6 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
     defaultValues: initialValues,
   });
   const { watch, setValue, getValues } = form;
-  console.log('GET_VALUES_:', getValues());
 
   const price = watch('price');
   const isFree = watch('isFree');
@@ -169,6 +149,13 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
     }
   }
 
+  function onPlaceSelect(place: google.maps.places.PlaceResult | null) {
+    if (place && place?.formatted_address) {
+      setValue('location', place.formatted_address);
+      setPlace(place);
+    }
+  }
+
   return (
     <Form {...form}>
       <form
@@ -245,47 +232,36 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         </div>
 
         <div className='flex flex-col gap-5 md:flex-row'>
-          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
-            <FormField
-              control={form.control}
-              name='location'
-              render={({ field: { ref, ...restProps } }) => (
-                <FormItem className='w-full'>
-                  <FormControl>
-                    <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
-                      <Image
-                        src='/assets/icons/location-grey.svg'
-                        alt='calendar'
-                        width={24}
-                        height={24}
-                      />
-                      <PlaceAutocomplete
-                        onPlaceSelect={console.log}
-                        props={restProps}
-                      />
-
-                      {/*{isLoaded ? <p>YAY</p> : <p>NAY</p>}*/}
-                      {/*{isLoaded ? (*/}
-                      {/*  <Input*/}
-                      {/*    ref={inputRef}*/}
-                      {/*    placeholder='Event location or Online'*/}
-                      {/*    className='input-field'*/}
-                      {/*  />*/}
-                      {/*) : (*/}
-                      {/*  <Input*/}
-                      {/*    placeholder='Event location or Online'*/}
-                      {/*    ref={ref}*/}
-                      {/*    {...restProps}*/}
-                      {/*    className='input-field'*/}
-                      {/*  />*/}
-                      {/*)}*/}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </APIProvider>
+          <FormField
+            control={form.control}
+            name='location'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormControl>
+                  <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
+                    <Image
+                      src='/assets/icons/location-grey.svg'
+                      alt='calendar'
+                      width={24}
+                      height={24}
+                    />
+                    <PlaceAutocompleteInput
+                      onPlaceSelect={onPlaceSelect}
+                      props={field}
+                      fallback={
+                        <Input
+                          placeholder='Event location or Online'
+                          {...field}
+                          className='input-field'
+                        />
+                      }
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <div className='flex flex-col gap-5 md:flex-row'>
