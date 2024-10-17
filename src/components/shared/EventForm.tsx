@@ -268,8 +268,9 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           <FormField
             control={form.control}
             name='location'
-            {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-            render={({ field: { ref, ...restProps } }) => (
+            render={({
+              field: { onBlur, onChange, disabled, name, value },
+            }) => (
               <FormItem className='w-full'>
                 <FormControl>
                   <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
@@ -281,8 +282,12 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                     />
 
                     <Input
-                      {...restProps}
                       ref={inputRef}
+                      name={name}
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      disabled={disabled}
                       placeholder='Event location or Online'
                       className='input-field'
                     />
