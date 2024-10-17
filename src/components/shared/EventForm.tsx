@@ -268,6 +268,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           <FormField
             control={form.control}
             name='location'
+            {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
             render={({ field: { ref, ...restProps } }) => (
               <FormItem className='w-full'>
                 <FormControl>
