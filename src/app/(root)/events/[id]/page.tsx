@@ -7,6 +7,7 @@ import {
 import { areDatesTheSame, formatDateTime } from '@/lib/utils';
 import { SearchParamProps } from '@/types/parameters.types';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const EventDetails = async ({
   params: { id },
@@ -24,13 +25,15 @@ const EventDetails = async ({
     <>
       <section className='flex justify-center bg-primary-50 bg-dotted-pattern bg-contain'>
         <div className='grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl'>
-          <Image
-            src={event.imageUrl}
-            alt='hero image'
-            width={1000}
-            height={1000}
-            className='h-full min-h-[300px] object-cover object-center'
-          />
+          {event.imageUrl && (
+            <Image
+              src={event.imageUrl}
+              alt='hero image'
+              width={1000}
+              height={1000}
+              className='h-full min-h-[300px] object-cover object-center'
+            />
+          )}
 
           <div className='flex w-full flex-col gap-8 p-5 md:p-10'>
             <div className='flex flex-col gap-6'>
@@ -85,13 +88,17 @@ const EventDetails = async ({
               </div>
 
               <div className='p-regular-20 flex items-center gap-3'>
-                <Image
-                  src='/assets/icons/location.svg'
-                  alt='location'
-                  width={32}
-                  height={32}
-                />
-                <p className='p-medium-16 lg:p-regular-20'>{event.location}</p>
+                <Link href={event.location.url}>
+                  <Image
+                    src='/assets/icons/location.svg'
+                    alt='location'
+                    width={32}
+                    height={32}
+                  />
+                </Link>
+                <p className='p-medium-16 lg:p-regular-20'>
+                  {event.location.name}
+                </p>
               </div>
             </div>
 
