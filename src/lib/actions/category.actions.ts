@@ -13,7 +13,7 @@ export const createCategory = async ({
 
     const newCategory = await Category.create({ name: categoryName });
 
-    return JSON.parse(JSON.stringify(newCategory));
+    return newCategory.toJSON();
   } catch (error) {
     handleError(error);
   }

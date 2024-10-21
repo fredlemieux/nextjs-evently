@@ -22,6 +22,8 @@ import {
   GetRelatedEventsByCategoryParams,
 } from '@/types/parameters.types';
 import { Query, RootFilterQuery } from 'mongoose';
+import { ILocation } from '@/lib/database/models/location.model';
+// import { createLocation } from '@/lib/actions/location.actions';
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: 'i' } });
@@ -38,7 +40,8 @@ function populateEvent(query: Query<IEvent | null, IEvent>) {
       path: 'category',
       model: Category,
       select: '_id name',
-    });
+    })
+    .populate<ILocation>('location');
 }
 
 function populateEvents(query: Query<IEvent[] | null, IEvent>) {
@@ -52,7 +55,8 @@ function populateEvents(query: Query<IEvent[] | null, IEvent>) {
       path: 'category',
       model: Category,
       select: '_id name',
-    });
+    })
+    .populate<ILocation>('location');
 }
 
 export async function createEvent({ userId, event, path }: CreateEventParams) {
@@ -68,6 +72,7 @@ export async function createEvent({ userId, event, path }: CreateEventParams) {
       category: event.categoryId,
       organizer: userId,
     });
+
     revalidatePath(path);
 
     return JSON.parse(JSON.stringify(newEvent));
@@ -90,12 +95,14 @@ export async function getEventById(eventId: string) {
   }
 }
 
-export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+// export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+export async function updateEvent({ event, path }: UpdateEventParams) {
   try {
     await connectToDatabase();
 
     const eventToUpdate = await Event.findById(event._id);
-    if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
+    // if (!eventToUpdate || eventToUpdate.organizer !== userId) {
+    if (!eventToUpdate) {
       throw new Error('Unauthorized or event not found');
     }
 
@@ -107,7 +114,9 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
 
     revalidatePath(path);
 
-    return JSON.parse(JSON.stringify(updatedEvent));
+    if (updatedEvent) {
+      return updatedEvent.toJSON();
+    }
   } catch (error) {
     handleError(error);
   }
