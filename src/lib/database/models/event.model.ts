@@ -1,5 +1,4 @@
-import { Schema, model, models, PopulatedDoc, Document, Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
+import { Schema, model, models } from 'mongoose';
 import { ILocation } from '@/lib/database/models/location.model';
 import { ICategory } from './category.model';
 import { IUser } from '@/lib/database/models/user.model';

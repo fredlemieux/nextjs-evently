@@ -28,7 +28,8 @@ import { Checkbox } from '../ui/checkbox';
 import { FileUploader } from './FileUploader';
 import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { IEvent } from '@/lib/database/models/event.model';
-import { createLocationFromPlace } from '@/lib/actions/location.actions';
+import { createLocationIfNotExists } from '@/lib/actions/location.actions';
+import { getLocationParamsFromPlace } from '@/lib/utils';
 
 type EventFormProps = {
   userId: string;
@@ -161,7 +162,8 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
     if (type === 'Create') {
       try {
         if (!place) throw new Error('No location selected!!');
-        const location = await createLocationFromPlace(place);
+        const locationParams = getLocationParamsFromPlace(place);
+        const location = await createLocationIfNotExists(locationParams);
         if (!location) throw new Error('No location could be created');
 
         const newEvent = await createEvent({

@@ -25,4 +25,4 @@ const locationSchema = new Schema<ILocation>({
 locationSchema.index({ googlePlaceId: 1 });
 
 export const Location: Model<ILocation> =
-  models.Venue || model<ILocation>('Location', locationSchema);
+  models.Location || model<ILocation>('Location', locationSchema);
