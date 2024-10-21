@@ -1,3 +1,16 @@
+// ====== VENUE PARAMS
+
+export interface CreateLocationParams {
+  googlePlaceId: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  url: string;
+  phone: string;
+  photos: string[];
+}
+
 // ====== USER PARAMS
 export type CreateUserParams = {
   clerkId: string;

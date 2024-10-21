@@ -28,6 +28,7 @@ import { Checkbox } from '../ui/checkbox';
 import { FileUploader } from './FileUploader';
 import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { IEvent } from '@/lib/database/models/event.model';
+import { createLocationFromPlace } from '@/lib/actions/location.actions';
 
 type EventFormProps = {
   userId: string;
@@ -43,13 +44,21 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
     libraries,
   });
+
+  const [place, setPlace] = useState<
+    google.maps.places.PlaceResult | undefined
+  >();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [files, setFiles] = useState<File[]>([]);
+
   const initialValues =
     event && type === 'Update'
       ? {
           ...event,
+          location: event.location
+            ? `${event.location.name}, ${event.location.address}`
+            : '',
           startDateTime: new Date(event.startDateTime),
           endDateTime: new Date(event.endDateTime),
         }
@@ -96,11 +105,15 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
       options
     );
     autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      console.log('PLACE:', place);
+      const placeResult = autocomplete.getPlace();
+      console.log('PLACE:', placeResult);
 
-      if (place.formatted_address) {
-        setValue('location', place.formatted_address);
+      if (placeResult.formatted_address) {
+        setPlace(placeResult);
+        setValue(
+          'location',
+          `${placeResult.name}, ${placeResult.formatted_address}`
+        );
       }
     });
 
@@ -147,8 +160,16 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
 
     if (type === 'Create') {
       try {
+        if (!place) throw new Error('No location selected!!');
+        const location = await createLocationFromPlace(place);
+        if (!location) throw new Error('No location could be created');
+
         const newEvent = await createEvent({
-          event: { ...values, imageUrl: uploadedImageUrl },
+          event: {
+            ...values,
+            location: location._id.toString(),
+            imageUrl: uploadedImageUrl,
+          },
           userId,
           path: '/profile',
         });
