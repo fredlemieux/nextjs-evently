@@ -42,8 +42,7 @@ export async function createEvent({
   userId,
   event,
   path,
-  // This return is wrong Invent is not populated :-(
-}: CreateEventParams): Promise<IEvent | null> {
+}: CreateEventParams): Promise<IEvent | undefined> {
   try {
     await connectToDatabase();
 
@@ -64,17 +63,19 @@ export async function createEvent({
     return documentToJson(newEvent);
   } catch (error) {
     handleError(error);
-    return null;
   }
 }
 
 export async function getEventDetailsData(
   eventId: string,
   searchParams: { [key: string]: string | string[] | undefined }
-) {
+): Promise<{
+  event: IEvent;
+  relatedEvents?: { data?: IEvent[]; totalPages: number };
+}> {
   const event = await getEventById(eventId);
 
-  if (!event) return null;
+  if (!event) throw new Error();
 
   const relatedEvents = await getRelatedEventsByCategory({
     eventId: event._id,
@@ -85,7 +86,9 @@ export async function getEventDetailsData(
   return { event, relatedEvents };
 }
 
-export async function getEventById(eventId: string) {
+export async function getEventById(
+  eventId: string
+): Promise<IEvent | undefined> {
   try {
     await connectToDatabase();
 
@@ -97,11 +100,14 @@ export async function getEventById(eventId: string) {
     return event;
   } catch (error) {
     handleError(error);
-    return null;
   }
 }
 
-export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+export async function updateEvent({
+  userId,
+  event,
+  path,
+}: UpdateEventParams): Promise<IEvent | undefined> {
   try {
     await connectToDatabase();
 
@@ -123,9 +129,7 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
 
     revalidatePath(path);
 
-    if (updatedEvent) {
-      return updatedEvent.toJSON();
-    }
+    return updatedEvent.toJSON();
   } catch (error) {
     handleError(error);
   }
@@ -193,7 +197,13 @@ export async function getRelatedEventsByCategory({
   eventId,
   limit = 3,
   page = 1,
-}: GetRelatedEventsByCategoryParams) {
+}: GetRelatedEventsByCategoryParams): Promise<
+  | {
+      data?: IEvent[];
+      totalPages: number;
+    }
+  | undefined
+> {
   try {
     await connectToDatabase();
 
@@ -212,7 +222,7 @@ async function queryAndReturnEvents(
   conditions: RootFilterQuery<IEvent>,
   skipAmount: number,
   limit: number
-) {
+): Promise<{ data?: IEvent[]; totalPages: number }> {
   const eventsQuery = Event.find(conditions)
     .sort({ createdAt: 'desc' })
     .skip(skipAmount)
@@ -223,7 +233,7 @@ async function queryAndReturnEvents(
   const eventsCount = await Event.countDocuments(conditions);
 
   return {
-    data: events,
+    data: events ? events : undefined,
     totalPages: Math.ceil(eventsCount / limit),
   };
 }

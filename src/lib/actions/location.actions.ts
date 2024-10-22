@@ -8,7 +8,7 @@ import { HydratedDocument } from 'mongoose';
 
 export async function createLocation(
   location: CreateLocationParams
-): Promise<ILocation | null> {
+): Promise<ILocation | undefined> {
   try {
     await connectToDatabase();
 
@@ -18,13 +18,12 @@ export async function createLocation(
     return documentToJson(createdLocation);
   } catch (error) {
     handleError(error);
-    return null;
   }
 }
 
 export async function createLocationIfNotExists(
   locationParams: CreateLocationParams
-): Promise<ILocation | null> {
+): Promise<ILocation | undefined> {
   const location = await findLocationByGooglePlaceId(
     locationParams.googlePlaceId
   );

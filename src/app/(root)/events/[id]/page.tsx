@@ -12,8 +12,6 @@ const EventDetails = async ({
 }: SearchParamProps) => {
   const eventDetailsData = await getEventDetailsData(id, searchParams);
 
-  if (!eventDetailsData) return <div>TODO! Error</div>;
-
   const { event, relatedEvents } = eventDetailsData;
 
   return (
