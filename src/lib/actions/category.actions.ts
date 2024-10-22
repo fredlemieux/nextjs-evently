@@ -13,9 +13,11 @@ export const createCategory = async ({
   try {
     await connectToDatabase();
 
-    const newCategory = await Category.create({ name: categoryName });
+    const newCategory: HydratedDocument<ICategory> = await Category.create({
+      name: categoryName,
+    });
 
-    return newCategory.toJSON();
+    return documentToJson(newCategory);
   } catch (error) {
     handleError(error);
   }
