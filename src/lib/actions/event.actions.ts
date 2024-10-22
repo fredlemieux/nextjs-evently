@@ -67,6 +67,20 @@ export async function createEvent({
   }
 }
 
+export async function getEventDetailsData(eventId: string, searchParams: { [key: string]: string | string[] | undefined };) {
+  const event = await getEventById(eventId);
+
+  if (!event) return null;
+
+  const relatedEvents = await getRelatedEventsByCategory({
+    eventId: event._id,
+    categoryId: event.category._id,
+    page: searchParams.page as string,
+  });
+
+  return { event, relatedEvents };
+}
+
 export async function getEventById(eventId: string) {
   try {
     await connectToDatabase();

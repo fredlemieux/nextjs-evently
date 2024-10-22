@@ -1,9 +1,6 @@
 import CheckoutButton from '@/components/shared/CheckoutButton';
 import Collection from '@/components/shared/Collection';
-import {
-  getEventById,
-  getRelatedEventsByCategory,
-} from '@/lib/actions/event.actions';
+import { getEventDetailsData } from '@/lib/actions/event.actions';
 import { areDatesTheSame, formatDateTime } from '@/lib/utils';
 import { SearchParamProps } from '@/types/parameters.types';
 import Image from 'next/image';
@@ -13,13 +10,11 @@ const EventDetails = async ({
   params: { id },
   searchParams,
 }: SearchParamProps) => {
-  const event = await getEventById(id);
+  const eventDetailsData = await getEventDetailsData(id, searchParams);
 
-  const relatedEvents = await getRelatedEventsByCategory({
-    categoryId: event.category._id,
-    eventId: event._id,
-    page: searchParams.page as string,
-  });
+  if (!eventDetailsData) return <div>TODO! Error</div>;
+
+  const { event, relatedEvents } = eventDetailsData;
 
   return (
     <>
