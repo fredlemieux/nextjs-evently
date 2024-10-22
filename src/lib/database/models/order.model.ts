@@ -1,5 +1,4 @@
-import { Schema, model, models, Document, PopulatedDoc, Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
+import { Schema, model, models, Model } from 'mongoose';
 import { IEvent } from '@/lib/database/models/event.model';
 import { IUser } from '@/lib/database/models/user.model';
 
@@ -8,8 +7,8 @@ export interface IOrder {
   createdAt: Date;
   stripeId: string;
   totalAmount: string;
-  event: PopulatedDoc<Document<ObjectId> & IEvent>;
-  buyer: PopulatedDoc<Document<ObjectId> & IUser>;
+  event: IEvent;
+  buyer: IUser;
 }
 
 export type IOrderItem = {
