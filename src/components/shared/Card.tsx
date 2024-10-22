@@ -8,11 +8,9 @@ import { DeleteConfirmation } from './DeleteConfirmation';
 
 type CardProps = {
   event: IEvent;
-  hasOrderLink?: boolean;
-  hidePrice?: boolean;
 };
 
-const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
+const Card = ({ event }: CardProps) => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
 
@@ -26,7 +24,7 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
         className='flex-center flex-grow bg-gray-50 bg-cover bg-center text-grey-500'
       />
 
-      {isEventCreator && !hidePrice && (
+      {isEventCreator && (
         <div className='absolute right-2 top-2 flex flex-col gap-4 rounded-md bg-white p-3 shadow-sm transition-all'>
           <Link href={`/events/${event._id}/update`}>
             <Image
@@ -42,16 +40,14 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
       )}
 
       <div className='flex min-h-[230px] flex-col gap-3 p-5 md:gap-4'>
-        {!hidePrice && (
-          <div className='flex gap-2'>
-            <span className='p-semibold-14 text-green-60 w-min rounded-md bg-green-100 px-4 py-1'>
-              {event.isFree ? 'FREE' : `$${event.price}`}
-            </span>
-            <p className='p-semibold-14 line-clamp-1 w-min rounded-md bg-grey-500/10 px-4 py-1 text-grey-500'>
-              {event.category.name}
-            </p>
-          </div>
-        )}
+        <div className='flex gap-2'>
+          <span className='p-semibold-14 text-green-60 w-min rounded-md bg-green-100 px-4 py-1'>
+            {event.isFree ? 'FREE' : `$${event.price}`}
+          </span>
+          <p className='p-semibold-14 line-clamp-1 w-min rounded-md bg-grey-500/10 px-4 py-1 text-grey-500'>
+            {event.category.name}
+          </p>
+        </div>
 
         <p className='p-medium-16 p-medium-18 text-grey-500'>
           {formatDateTime(event.startDateTime).dateTime}
@@ -67,18 +63,6 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
           <p className='p-medium-14 md:p-medium-16 text-grey-600'>
             {event.organizer.firstName} {event.organizer.lastName}
           </p>
-
-          {hasOrderLink && (
-            <Link href={`/orders?eventId=${event._id}`} className='flex gap-2'>
-              <p className='text-primary-500'>Order Details</p>
-              <Image
-                src='/assets/icons/arrow.svg'
-                alt='search'
-                width={10}
-                height={10}
-              />
-            </Link>
-          )}
         </div>
       </div>
     </div>
