@@ -93,11 +93,16 @@ export async function getEventById(
     await connectToDatabase();
 
     const eventObjectId = checkAndReturnObjectId(eventId);
-    const event = await populateEventReturnJson(Event.findById(eventObjectId));
+    // TODO! We're still not getting these types right!
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const event: HydratedDocument<IEvent> | null = await populateEvent(
+      Event.findById(eventObjectId)
+    );
 
     if (!event) throw new Error('Event not found');
 
-    return event;
+    return documentToJson<IEvent>(event);
   } catch (error) {
     handleError(error);
   }
@@ -228,18 +233,18 @@ async function queryAndReturnEvents(
     .skip(skipAmount)
     .limit(limit);
 
-  const events = await populateEventsReturnJson(eventsQuery);
+  const events = await populateEvents(eventsQuery);
 
   const eventsCount = await Event.countDocuments(conditions);
 
   return {
-    data: events ? events : undefined,
+    data: events ? JSON.parse(JSON.stringify(events)) : undefined,
     totalPages: Math.ceil(eventsCount / limit),
   };
 }
 
 // TODO! Use overloading and remove duplicate
-function populateEventReturnJson(
+function populateEvent(
   query: Query<IEvent | null, IEvent>
 ): Promise<IEvent | null> {
   return query
@@ -253,12 +258,10 @@ function populateEventReturnJson(
       model: Category,
       select: '_id name',
     })
-    .populate<ILocation>('location')
-    .lean<IEvent>()
-    .exec();
+    .populate<ILocation>('location');
 }
 
-function populateEventsReturnJson(
+function populateEvents(
   query: Query<IEvent[] | null, IEvent>
 ): Promise<IEvent[] | null> {
   return query
