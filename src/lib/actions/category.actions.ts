@@ -13,7 +13,7 @@ export const createCategory = async ({
 
     const newCategory = await Category.create({ name: categoryName });
 
-    return newCategory.toJSON();
+    return JSON.parse(JSON.stringify(newCategory));
   } catch (error) {
     handleError(error);
   }
@@ -23,7 +23,9 @@ export const getAllCategories = async (): Promise<ICategory[] | undefined> => {
   try {
     await connectToDatabase();
 
-    return Category.find().lean();
+    const categories = await Category.find();
+
+    return JSON.parse(JSON.stringify(categories));
   } catch (error) {
     handleError(error);
   }

@@ -10,13 +10,8 @@ import {
   ICategory,
   User,
   IUser,
-  eventSchema,
 } from '@/lib/database/models';
-import {
-  checkAndReturnObjectId,
-  documentToJson,
-  handleError,
-} from '@/lib/utils';
+import { handleError } from '@/lib/utils';
 
 import {
   CreateEventParams,
@@ -26,110 +21,93 @@ import {
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
 } from '@/types/parameters.types';
-import {
-  HydratedDocument,
-  Query,
-  RootFilterQuery,
-  InferSchemaType,
-} from 'mongoose';
-import { ILocation } from '@/lib/database/models/location.model';
+import { Query, RootFilterQuery } from 'mongoose';
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: 'i' } });
 };
 
-export async function createEvent({
-  userId,
-  event,
-  path,
-}: CreateEventParams): Promise<IEvent | undefined> {
+function populateEvent(query: Query<IEvent | null, IEvent>) {
+  return query
+    .populate<IUser>({
+      path: 'organizer',
+      model: User,
+      select: '_id firstName lastName',
+    })
+    .populate<ICategory>({
+      path: 'category',
+      model: Category,
+      select: '_id name',
+    });
+}
+
+function populateEvents(query: Query<IEvent[] | null, IEvent>) {
+  return query
+    .populate<IUser>({
+      path: 'organizer',
+      model: User,
+      select: '_id firstName lastName',
+    })
+    .populate<ICategory>({
+      path: 'category',
+      model: Category,
+      select: '_id name',
+    });
+}
+
+export async function createEvent({ userId, event, path }: CreateEventParams) {
   try {
     await connectToDatabase();
 
-    const userObjectId = checkAndReturnObjectId(userId);
-
-    const organizer = await User.findById(userObjectId);
+    const organizer = await User.findById(userId);
 
     if (!organizer) throw new Error('Organizer not found');
 
-    const newEvent: HydratedDocument<IEvent> = await Event.create({
+    const newEvent = await Event.create({
       ...event,
-      category: checkAndReturnObjectId(event.categoryId),
-      organizer: userObjectId,
+      category: event.categoryId,
+      organizer: userId,
     });
-
     revalidatePath(path);
 
-    return documentToJson(newEvent);
+    return JSON.parse(JSON.stringify(newEvent));
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function getEventDetailsData(
-  eventId: string,
-  searchParams: { [key: string]: string | string[] | undefined }
-): Promise<{
-  event: IEvent;
-  relatedEvents?: { data?: IEvent[]; totalPages: number };
-}> {
-  const event = await getEventById(eventId);
-
-  if (!event) throw new Error();
-
-  const relatedEvents = await getRelatedEventsByCategory({
-    eventId: event._id,
-    categoryId: event.category._id,
-    page: searchParams.page as string,
-  });
-
-  return { event, relatedEvents };
-}
-
-export async function getEventById(
-  eventId: string
-): Promise<IEvent | undefined> {
+export async function getEventById(eventId: string) {
   try {
     await connectToDatabase();
 
-    const eventObjectId = checkAndReturnObjectId(eventId);
-    const event = await populateEventReturnJson(Event.findById(eventObjectId));
+    const event = await populateEvent(Event.findById(eventId));
 
     if (!event) throw new Error('Event not found');
 
-    return event;
+    return JSON.parse(JSON.stringify(event));
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function updateEvent({
-  userId,
-  event,
-  path,
-}: UpdateEventParams): Promise<IEvent | undefined> {
+export async function updateEvent({ userId, event, path }: UpdateEventParams) {
   try {
     await connectToDatabase();
 
-    const eventObjectId = checkAndReturnObjectId(event._id);
-    const userObjectId = checkAndReturnObjectId(userId);
-
-    const eventToUpdate: InferSchemaType<typeof eventSchema> | null =
-      await Event.findById(eventObjectId);
-
-    if (!eventToUpdate || eventToUpdate.organizer !== userObjectId) {
+    const eventToUpdate = await Event.findById(event._id);
+    if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
       throw new Error('Unauthorized or event not found');
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(
-      eventObjectId,
+      event._id,
       { ...event, category: event.categoryId },
       { new: true }
     );
 
     revalidatePath(path);
 
-    return updatedEvent.toJSON();
+    return JSON.parse(JSON.stringify(updatedEvent));
   } catch (error) {
     handleError(error);
   }
@@ -197,13 +175,7 @@ export async function getRelatedEventsByCategory({
   eventId,
   limit = 3,
   page = 1,
-}: GetRelatedEventsByCategoryParams): Promise<
-  | {
-      data?: IEvent[];
-      totalPages: number;
-    }
-  | undefined
-> {
+}: GetRelatedEventsByCategoryParams) {
   try {
     await connectToDatabase();
 
@@ -222,57 +194,17 @@ async function queryAndReturnEvents(
   conditions: RootFilterQuery<IEvent>,
   skipAmount: number,
   limit: number
-): Promise<{ data?: IEvent[]; totalPages: number }> {
+) {
   const eventsQuery = Event.find(conditions)
     .sort({ createdAt: 'desc' })
     .skip(skipAmount)
     .limit(limit);
 
-  const events = await populateEventsReturnJson(eventsQuery);
-
+  const events = await populateEvents(eventsQuery);
   const eventsCount = await Event.countDocuments(conditions);
 
   return {
-    data: events ? events : undefined,
+    data: JSON.parse(JSON.stringify(events)),
     totalPages: Math.ceil(eventsCount / limit),
   };
-}
-
-// TODO! Use overloading and remove duplicate
-function populateEventReturnJson(
-  query: Query<IEvent | null, IEvent>
-): Promise<IEvent | null> {
-  return query
-    .populate<IUser>({
-      path: 'organizer',
-      model: User,
-      select: '_id firstName lastName',
-    })
-    .populate<ICategory>({
-      path: 'category',
-      model: Category,
-      select: '_id name',
-    })
-    .populate<ILocation>('location')
-    .lean<IEvent>()
-    .exec();
-}
-
-function populateEventsReturnJson(
-  query: Query<IEvent[] | null, IEvent>
-): Promise<IEvent[] | null> {
-  return query
-    .populate<IUser>({
-      path: 'organizer',
-      model: User,
-      select: '_id firstName lastName',
-    })
-    .populate<ICategory>({
-      path: 'category',
-      model: Category,
-      select: '_id name',
-    })
-    .populate<ILocation>('location')
-    .lean<IEvent[]>()
-    .exec();
 }

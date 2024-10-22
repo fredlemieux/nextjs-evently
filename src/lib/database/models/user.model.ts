@@ -1,7 +1,7 @@
-import { Schema, model, models, Model } from 'mongoose';
+import { Schema, Document, model, models, Types } from 'mongoose';
 
-export interface IUser {
-  _id: string;
+export interface IUser extends Document {
+  _id: Types.ObjectId;
   clerkId: string;
   email: string;
   username: string;
@@ -10,7 +10,7 @@ export interface IUser {
   photo: string;
 }
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   clerkId: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
@@ -19,5 +19,4 @@ const userSchema = new Schema({
   photo: { type: String, required: true },
 });
 
-export const User: Model<IUser> =
-  models.User || model<IUser>('User', userSchema);
+export const User = models.User || model('User', UserSchema);
