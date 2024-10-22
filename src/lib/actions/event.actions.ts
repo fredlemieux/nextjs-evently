@@ -258,7 +258,9 @@ function populateEvent(
       model: Category,
       select: '_id name',
     })
-    .populate<ILocation>('location');
+    .populate<ILocation>('location')
+    .lean<IEvent>()
+    .exec();
 }
 
 function populateEvents(
