@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import { Order, User, Event } from '@/lib/database/models';
+import { User, Event } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 
 import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
@@ -67,12 +67,6 @@ export async function deleteUser(clerkId: string) {
       Event.updateMany(
         { organizer: { $in: userToDelete._id } },
         { $pull: { organizer: userToDelete._id } }
-      ),
-
-      // Update the 'orders' collection to remove references to the user
-      Order.updateMany(
-        { organizer: { $in: userToDelete._id } },
-        { $unset: { buyer: 1 } }
       ),
     ]);
 
