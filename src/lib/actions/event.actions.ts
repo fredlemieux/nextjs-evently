@@ -42,6 +42,7 @@ export async function createEvent({
   userId,
   event,
   path,
+  // This return is wrong Invent is not populated :-(
 }: CreateEventParams): Promise<IEvent | null> {
   try {
     await connectToDatabase();
@@ -60,7 +61,7 @@ export async function createEvent({
 
     revalidatePath(path);
 
-    return documentToJson<IEvent>(newEvent);
+    return documentToJson(newEvent);
   } catch (error) {
     handleError(error);
     return null;
@@ -227,6 +228,7 @@ async function queryAndReturnEvents(
   };
 }
 
+// TODO! Use overloading and remove duplicate
 function populateEventReturnJson(
   query: Query<IEvent | null, IEvent>
 ): Promise<IEvent | null> {

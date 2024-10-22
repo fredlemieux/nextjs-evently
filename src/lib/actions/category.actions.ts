@@ -23,9 +23,7 @@ export const getAllCategories = async (): Promise<ICategory[] | undefined> => {
   try {
     await connectToDatabase();
 
-    const categories = await Category.find();
-
-    return JSON.parse(JSON.stringify(categories));
+    return Category.find().lean();
   } catch (error) {
     handleError(error);
   }

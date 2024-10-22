@@ -34,8 +34,10 @@ export async function createLocationIfNotExists(
   return await createLocation(locationParams);
 }
 
-export async function findLocationByGooglePlaceId(googlePlaceId: string) {
+export async function findLocationByGooglePlaceId(
+  googlePlaceId: string
+): Promise<ILocation | null> {
   await connectToDatabase();
 
-  return Location.findOne({ googlePlaceId });
+  return Location.findOne({ googlePlaceId }).lean();
 }
