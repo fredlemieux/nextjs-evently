@@ -2,9 +2,10 @@
 
 import { ILocation, Location } from '@/lib/database/models/location.model';
 import { connectToDatabase } from '@/lib/database';
-import { documentToJson, handleError } from '@/lib/utils';
+import { handleError } from '@/lib/utils';
 import { CreateLocationParams } from '@/types/parameters.types';
 import { HydratedDocument } from 'mongoose';
+import { documentToJson } from '@/lib/actions/utils.actions';
 
 export async function createLocation(
   location: CreateLocationParams
@@ -38,5 +39,9 @@ export async function findLocationByGooglePlaceId(
 ): Promise<ILocation | null> {
   await connectToDatabase();
 
-  return Location.findOne({ googlePlaceId }).lean();
+  const location = await Location.findOne({
+    googlePlaceId,
+  });
+
+  return JSON.parse(JSON.stringify(location));
 }

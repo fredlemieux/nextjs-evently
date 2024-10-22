@@ -2,7 +2,6 @@ import { type ClassValue, clsx } from 'clsx';
 
 import { twMerge } from 'tailwind-merge';
 import qs from 'query-string';
-import { HydratedDocument, Types } from 'mongoose';
 
 import {
   CreateLocationParams,
@@ -125,7 +124,7 @@ export const handleError = (error: unknown) => {
   throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
 };
 
-export function getLocationParamsFromPlace({
+export async function getLocationParamsFromPlace({
   place_id,
   name,
   formatted_address,
@@ -133,7 +132,7 @@ export function getLocationParamsFromPlace({
   international_phone_number,
   photos,
   url,
-}: google.maps.places.PlaceResult): CreateLocationParams {
+}: google.maps.places.PlaceResult): Promise<CreateLocationParams> {
   if (
     !place_id ||
     !name ||
@@ -158,21 +157,4 @@ export function getLocationParamsFromPlace({
     photos: photos.map((photo) => photo.getUrl()),
     url,
   };
-}
-export function documentToJson<T>(document: HydratedDocument<T>): T;
-export function documentToJson<T>(document: HydratedDocument<T>[]): T[];
-export function documentToJson<T>(
-  document: HydratedDocument<T> | HydratedDocument<T>[]
-): T | T[] {
-  if (Array.isArray(document)) {
-    return document.map((doc) => JSON.parse(JSON.stringify(doc)));
-  } else {
-    return JSON.parse(JSON.stringify(document));
-  }
-}
-
-export function checkAndReturnObjectId(
-  id: Types.ObjectId | string
-): Types.ObjectId {
-  return typeof id === 'string' ? new Types.ObjectId(id) : id;
 }

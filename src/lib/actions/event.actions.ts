@@ -12,11 +12,7 @@ import {
   IUser,
   eventSchema,
 } from '@/lib/database/models';
-import {
-  checkAndReturnObjectId,
-  documentToJson,
-  handleError,
-} from '@/lib/utils';
+import { handleError } from '@/lib/utils';
 
 import {
   CreateEventParams,
@@ -33,6 +29,10 @@ import {
   InferSchemaType,
 } from 'mongoose';
 import { ILocation } from '@/lib/database/models/location.model';
+import {
+  checkAndReturnObjectId,
+  documentToJson,
+} from '@/lib/actions/utils.actions';
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: 'i' } });

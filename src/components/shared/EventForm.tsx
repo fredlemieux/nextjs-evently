@@ -162,7 +162,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
     if (type === 'Create') {
       try {
         if (!place) throw new Error('No location selected!!');
-        const locationParams = getLocationParamsFromPlace(place);
+        const locationParams = await getLocationParamsFromPlace(place);
         const location = await createLocationIfNotExists(locationParams);
         if (!location) throw new Error('No location could be created');
 
