@@ -67,7 +67,10 @@ export async function createEvent({
   }
 }
 
-export async function getEventDetailsData(eventId: string, searchParams: { [key: string]: string | string[] | undefined };) {
+export async function getEventDetailsData(
+  eventId: string,
+  searchParams: { [key: string]: string | string[] | undefined }
+) {
   const event = await getEventById(eventId);
 
   if (!event) return null;
