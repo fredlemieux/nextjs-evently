@@ -31,6 +31,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 
 ## TODOS
 
+- [ ] Update event not working correctly
 - [ ] Setup Multi Stage build for Docker
 - [ ] Clean up dev environment (clear db and users)
 - [ ] Highlight active Form item
