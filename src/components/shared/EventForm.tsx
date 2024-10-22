@@ -66,7 +66,9 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
       : eventDefaultValues;
   const router = useRouter();
 
-  const { startUpload } = useUploadThing('imageUploader');
+  const { startUpload } = useUploadThing('imageUploader', {
+    headers: { userId },
+  });
 
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
@@ -177,7 +179,6 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         });
 
         if (newEvent) {
-          form.reset();
           router.push(`/events/${newEvent._id}`);
         }
       } catch (error) {
@@ -203,7 +204,6 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         });
 
         if (updatedEvent) {
-          form.reset();
           router.push(`/events/${updatedEvent._id}`);
         }
       } catch (error) {
