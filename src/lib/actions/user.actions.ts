@@ -8,6 +8,7 @@ import { handleError } from '@/lib/utils';
 
 import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
 import { auth } from '@clerk/nextjs';
+import { JwtPayload } from '@clerk/types';
 
 export async function createUser(user: CreateUserParams) {
   try {
@@ -89,19 +90,24 @@ export async function deleteUser(clerkId: string) {
 // userId in the sessions claims as it requires the webhook to complete before getting userId
 export async function getSessionUserId(): Promise<string | null> {
   const { sessionClaims } = auth();
+  if (!sessionClaims) return null;
 
+  return await getUserIdFromSessionClaims(sessionClaims);
+}
+
+export async function getUserIdFromSessionClaims(
+  sessionClaims: JwtPayload
+): Promise<string | null> {
   if (sessionClaims?.userId) {
     return sessionClaims.userId;
   }
 
-  if (sessionClaims?.sub) {
-    const clerkId = sessionClaims.sub;
-    const user = await User.findOne({ clerkId });
+  if (!sessionClaims?.sub) return null;
 
-    if (!user) return null;
+  const clerkId = sessionClaims.sub;
+  const user = await User.findOne({ clerkId });
 
-    return user.toJSON()._id.toString();
-  }
+  if (!user) return null;
 
-  return null;
+  return user._id.toString();
 }

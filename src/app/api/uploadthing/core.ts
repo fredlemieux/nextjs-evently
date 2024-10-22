@@ -1,5 +1,6 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
-// import {getAuth} from "@clerk/nextjs/server";
+import { getAuth } from '@clerk/nextjs/server';
+import { getUserIdFromSessionClaims } from '@/lib/actions/user.actions';
 
 const f = createUploadthing();
 
@@ -8,16 +9,17 @@ export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   imageUploader: f({ image: { maxFileSize: '4MB' } })
     // Set permissions and file types for this FileRoute
-    .middleware(async () => {
+    .middleware(async ({ req }) => {
       // This code runs on your server before upload
-      // const {sessionClaims} = getAuth(req);
+      const { sessionClaims } = getAuth(req);
 
-      // If you throw, the user will not be able to upload
-      // if (!sessionClaims?.userId) throw new Error('Unauthorized');
+      if (!sessionClaims) throw new Error('JwtToken required');
 
-      // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      // return {userId: sessionClaims.userId};
-      return { userId: 'TODO!' };
+      const userId = await getUserIdFromSessionClaims(sessionClaims);
+
+      if (!userId) throw new Error('Unauthorized');
+
+      return { userId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
