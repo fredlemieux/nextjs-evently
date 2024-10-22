@@ -10,7 +10,7 @@ import {
 import { redirect } from 'next/navigation';
 import { handleError } from '../utils';
 import { connectToDatabase } from '../database';
-import { Order, Event, User, IOrder } from '../database/models';
+import { Order, Event, User, IOrder, IOrderItem } from '../database/models';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 import { documentToJson } from '@/lib/actions/utils.actions';
@@ -71,14 +71,14 @@ export const createOrder = async (
 export async function getOrdersByEvent({
   searchString,
   eventId,
-}: GetOrdersByEventParams): Promise<IOrder[] | undefined> {
+}: GetOrdersByEventParams): Promise<IOrderItem[] | undefined> {
   try {
     await connectToDatabase();
 
     if (!eventId) throw new Error('Event ID is required');
     const eventObjectId = new ObjectId(eventId);
 
-    const orders: HydratedDocument<IOrder>[] = await Order.aggregate([
+    const orders: HydratedDocument<IOrderItem>[] = await Order.aggregate([
       {
         $lookup: {
           from: 'users',
