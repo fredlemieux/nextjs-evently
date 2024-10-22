@@ -2,13 +2,8 @@ import { type ClassValue, clsx } from 'clsx';
 
 import { twMerge } from 'tailwind-merge';
 import qs from 'query-string';
-import { HydratedDocument, Types } from 'mongoose';
 
-import {
-  CreateLocationParams,
-  RemoveUrlQueryParams,
-  UrlQueryParams,
-} from '@/types/parameters.types';
+import { RemoveUrlQueryParams, UrlQueryParams } from '@/types/parameters.types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -124,55 +119,3 @@ export const handleError = (error: unknown) => {
   console.error(error);
   throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
 };
-
-export function getLocationParamsFromPlace({
-  place_id,
-  name,
-  formatted_address,
-  geometry,
-  international_phone_number,
-  photos,
-  url,
-}: google.maps.places.PlaceResult): CreateLocationParams {
-  if (
-    !place_id ||
-    !name ||
-    !formatted_address ||
-    !geometry ||
-    !geometry.location?.lat() ||
-    !geometry.location?.lng() ||
-    !international_phone_number ||
-    !photos ||
-    !url
-  ) {
-    throw new Error('Missing Params!!');
-  }
-
-  return {
-    name,
-    address: formatted_address,
-    lat: geometry?.location?.lat(),
-    lng: geometry?.location?.lng(),
-    googlePlaceId: place_id,
-    phone: international_phone_number,
-    photos: photos.map((photo) => photo.getUrl()),
-    url,
-  };
-}
-export function documentToJson<T>(document: HydratedDocument<T>): T;
-export function documentToJson<T>(document: HydratedDocument<T>[]): T[];
-export function documentToJson<T>(
-  document: HydratedDocument<T> | HydratedDocument<T>[]
-): T | T[] {
-  if (Array.isArray(document)) {
-    return document.map((doc) => JSON.parse(JSON.stringify(doc)));
-  } else {
-    return JSON.parse(JSON.stringify(document));
-  }
-}
-
-export function checkAndReturnObjectId(
-  id: Types.ObjectId | string
-): Types.ObjectId {
-  return typeof id === 'string' ? new Types.ObjectId(id) : id;
-}
