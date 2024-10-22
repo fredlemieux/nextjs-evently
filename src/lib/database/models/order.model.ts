@@ -1,18 +1,15 @@
-import { Schema, model, models, Document, Types } from 'mongoose';
+import { Schema, model, models, Document, PopulatedDoc, Model } from 'mongoose';
+import { ObjectId } from 'mongodb';
+import { IEvent } from '@/lib/database/models/event.model';
+import { IUser } from '@/lib/database/models/user.model';
 
-export interface IOrder extends Document {
+export interface IOrder {
+  _id: string;
   createdAt: Date;
   stripeId: string;
   totalAmount: string;
-  event: {
-    _id: Types.ObjectId;
-    title: string;
-  };
-  buyer: {
-    _id: Types.ObjectId;
-    firstName: string;
-    lastName: string;
-  };
+  event: PopulatedDoc<Document<ObjectId> & IEvent>;
+  buyer: PopulatedDoc<Document<ObjectId> & IUser>;
 }
 
 export type IOrderItem = {
@@ -20,11 +17,11 @@ export type IOrderItem = {
   totalAmount: string;
   createdAt: Date;
   eventTitle: string;
-  eventId: string;
+  event: string;
   buyer: string;
 };
 
-const OrderSchema = new Schema({
+const orderSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
@@ -47,4 +44,5 @@ const OrderSchema = new Schema({
   },
 });
 
-export const Order = models.Order || model('Order', OrderSchema);
+export const Order: Model<IOrder> =
+  models.Order || model<IOrder>('Order', orderSchema);
