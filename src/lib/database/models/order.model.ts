@@ -4,6 +4,7 @@ import { IEvent } from '@/lib/database/models/event.model';
 import { IUser } from '@/lib/database/models/user.model';
 
 export interface IOrder {
+  _id: string;
   createdAt: Date;
   stripeId: string;
   totalAmount: string;

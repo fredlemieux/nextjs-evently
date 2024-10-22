@@ -1,6 +1,7 @@
 import { Schema, model, models, Model } from 'mongoose';
 
 export interface ILocation {
+  _id: string;
   googlePlaceId: string;
   name: string;
   address: string;

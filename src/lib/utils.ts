@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 
 import { twMerge } from 'tailwind-merge';
 import qs from 'query-string';
+import { HydratedDocument, Types } from 'mongoose';
 
 import {
   CreateLocationParams,
@@ -157,4 +158,14 @@ export function getLocationParamsFromPlace({
     photos: photos.map((photo) => photo.getUrl()),
     url,
   };
+}
+
+export function documentToJson<T>(document: HydratedDocument<T>): T {
+  return JSON.parse(JSON.stringify(document));
+}
+
+export function checkAndReturnObjectId(
+  id: Types.ObjectId | string
+): Types.ObjectId {
+  return typeof id === 'string' ? new Types.ObjectId(id) : id;
 }

@@ -169,7 +169,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         const newEvent = await createEvent({
           event: {
             ...values,
-            location: location._id.toString(),
+            location: location._id,
             imageUrl: uploadedImageUrl,
           },
           userId,

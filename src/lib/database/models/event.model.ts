@@ -4,6 +4,7 @@ import { ICategory } from './category.model';
 import { IUser } from '@/lib/database/models/user.model';
 
 export interface IEvent {
+  _id: string;
   title: string;
   description?: string;
   location: ILocation;
@@ -18,7 +19,7 @@ export interface IEvent {
   organizer: IUser;
 }
 
-const eventSchema = new Schema<IEvent>({
+export const eventSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },
   createdAt: { type: Date, default: Date.now },
