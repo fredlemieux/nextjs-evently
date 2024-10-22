@@ -1,4 +1,5 @@
 'use server';
+
 import Stripe from 'stripe';
 import {
   CheckoutOrderParams,
@@ -9,8 +10,10 @@ import {
 import { redirect } from 'next/navigation';
 import { handleError } from '../utils';
 import { connectToDatabase } from '../database';
-import { Order, Event, User } from '../database/models';
+import { Order, Event, User, IOrder, IOrderItem } from '../database/models';
 import { ObjectId } from 'mongodb';
+import { HydratedDocument } from 'mongoose';
+import { documentToJson } from '@/lib/actions/utils.actions';
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -46,17 +49,19 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
   }
 };
 
-export const createOrder = async (order: CreateOrderParams) => {
+export const createOrder = async (
+  order: CreateOrderParams
+): Promise<IOrder | undefined> => {
   try {
     await connectToDatabase();
 
-    const newOrder = await Order.create({
+    const newOrder: HydratedDocument<IOrder> = await Order.create({
       ...order,
       event: order.eventId,
       buyer: order.buyerId,
     });
 
-    return JSON.parse(JSON.stringify(newOrder));
+    return documentToJson(newOrder);
   } catch (error) {
     handleError(error);
   }
@@ -66,14 +71,14 @@ export const createOrder = async (order: CreateOrderParams) => {
 export async function getOrdersByEvent({
   searchString,
   eventId,
-}: GetOrdersByEventParams) {
+}: GetOrdersByEventParams): Promise<IOrderItem[] | undefined> {
   try {
     await connectToDatabase();
 
     if (!eventId) throw new Error('Event ID is required');
     const eventObjectId = new ObjectId(eventId);
 
-    const orders = await Order.aggregate([
+    const orders: HydratedDocument<IOrderItem>[] = await Order.aggregate([
       {
         $lookup: {
           from: 'users',
@@ -118,7 +123,7 @@ export async function getOrdersByEvent({
       },
     ]);
 
-    return JSON.parse(JSON.stringify(orders));
+    return documentToJson(orders);
   } catch (error) {
     handleError(error);
   }

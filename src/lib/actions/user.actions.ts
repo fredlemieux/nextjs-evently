@@ -1,8 +1,9 @@
 'use server';
+
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import { User, Order, Event } from '@/lib/database/models';
+import { Order, User, Event } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 
 import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
@@ -13,7 +14,7 @@ export async function createUser(user: CreateUserParams) {
     await connectToDatabase();
 
     const newUser = await User.create(user);
-    return JSON.parse(JSON.stringify(newUser));
+    return newUser.toJSON();
   } catch (error) {
     handleError(error);
   }
@@ -26,7 +27,7 @@ export async function getUserById(userId: string) {
     const user = await User.findById(userId);
 
     if (!user) throw new Error('User not found');
-    return JSON.parse(JSON.stringify(user));
+    return user.toJSON();
   } catch (error) {
     handleError(error);
   }
@@ -41,12 +42,13 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     });
 
     if (!updatedUser) throw new Error('User update failed');
-    return JSON.parse(JSON.stringify(updatedUser));
+    return updatedUser.toJSON();
   } catch (error) {
     handleError(error);
   }
 }
 
+// TODO! Fix issues
 export async function deleteUser(clerkId: string) {
   try {
     await connectToDatabase();
@@ -62,13 +64,13 @@ export async function deleteUser(clerkId: string) {
     await Promise.all([
       // Update the 'events' collection to remove references to the user
       Event.updateMany(
-        { _id: { $in: userToDelete.events } },
+        { organizer: { $in: userToDelete._id } },
         { $pull: { organizer: userToDelete._id } }
       ),
 
       // Update the 'orders' collection to remove references to the user
       Order.updateMany(
-        { _id: { $in: userToDelete.orders } },
+        { organizer: { $in: userToDelete._id } },
         { $unset: { buyer: 1 } }
       ),
     ]);
@@ -77,7 +79,7 @@ export async function deleteUser(clerkId: string) {
     const deletedUser = await User.findByIdAndDelete(userToDelete._id);
     revalidatePath('/');
 
-    return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
+    return deletedUser ? deletedUser.toJSON() : null;
   } catch (error) {
     handleError(error);
   }
@@ -94,7 +96,11 @@ export async function getSessionUserId(): Promise<string | null> {
 
   if (sessionClaims?.sub) {
     const clerkId = sessionClaims.sub;
-    return User.findOne({ clerkId });
+    const user = await User.findOne({ clerkId });
+
+    if (!user) return null;
+
+    return user.toJSON()._id.toString();
   }
 
   return null;

@@ -4,6 +4,8 @@ import { CreateCategoryParams } from '@/types/parameters.types';
 import { handleError } from '../utils';
 import { connectToDatabase } from '../database';
 import { Category, ICategory } from '@/lib/database/models';
+import { HydratedDocument } from 'mongoose';
+import { documentToJson } from '@/lib/actions/utils.actions';
 
 export const createCategory = async ({
   categoryName,
@@ -11,9 +13,11 @@ export const createCategory = async ({
   try {
     await connectToDatabase();
 
-    const newCategory = await Category.create({ name: categoryName });
+    const newCategory: HydratedDocument<ICategory> = await Category.create({
+      name: categoryName,
+    });
 
-    return JSON.parse(JSON.stringify(newCategory));
+    return documentToJson(newCategory);
   } catch (error) {
     handleError(error);
   }
@@ -23,9 +27,9 @@ export const getAllCategories = async (): Promise<ICategory[] | undefined> => {
   try {
     await connectToDatabase();
 
-    const categories = await Category.find();
+    const categories: HydratedDocument<ICategory>[] = await Category.find();
 
-    return JSON.parse(JSON.stringify(categories));
+    return documentToJson(categories);
   } catch (error) {
     handleError(error);
   }
