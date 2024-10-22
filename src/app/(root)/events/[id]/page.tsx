@@ -1,4 +1,3 @@
-import CheckoutButton from '@/components/shared/CheckoutButton';
 import Collection from '@/components/shared/Collection';
 import { getEventDetailsData } from '@/lib/actions/event.actions';
 import { areDatesTheSame, formatDateTime } from '@/lib/utils';
