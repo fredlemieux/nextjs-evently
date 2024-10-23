@@ -28,6 +28,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
   session and user data in the application.
 - **MongoDB:** NoSQL database for data storage
 - **Docker:** For the development environment, but feel free to just run the app locally too
+- **Google Maps API:** Using the places API for autocompletion of Event locations
 
 ## TODOS
 
@@ -36,7 +37,6 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - [ ] Clean up dev environment (clear db and users)
 - [ ] Highlight active Form item
 - [ ] Set up Image Upload
-- [ ] Google maps API for location
 - [ ] Map out app architecture
 - [ ] Testing setup
 - [ ] Github actions for tests
@@ -112,6 +112,20 @@ and [MongoDB Atlas](https://cloud.mongodb.com):
 - Import the github project
 - Use all default builds
 - Make sure you assign all ENV VARS!
+
+## Testing
+For testing with a MongoDb instance we are using [mongodb-memory-server](https://typegoose.github.io/mongodb-memory-server/),
+see the [test README.md](./test/README.md) file for more details.
+
+To run tests:
+```bash
+npm run test
+```
+
+and in watch mode:
+```bash
+npm run test:watch
+```
 
 ## Troublehoot
 
