@@ -9,14 +9,14 @@ export default async function globalSetup() {
     const instance = await MongoMemoryServer.create();
     const uri = instance.getUri();
     (global as any).__MONGOINSTANCE = instance;
-    process.env.MONGO_URI = uri.slice(0, uri.lastIndexOf('/'));
+    process.env.MONGODB_URI = uri.slice(0, uri.lastIndexOf('/'));
   } else {
-    process.env.MONGO_URI = `mongodb://${config.IP}:${config.Port}`;
+    process.env.MONGODB_URI = `mongodb://${config.IP}:${config.Port}`;
   }
 
   // The following is to make sure the database is clean before a test suite starts
   const conn = await mongoose.connect(
-    `${process.env.MONGO_URI}/${config.Database}`
+    `${process.env.MONGODB_URI}/${config.Database}`
   );
 
   await conn?.connection?.db?.dropDatabase();
