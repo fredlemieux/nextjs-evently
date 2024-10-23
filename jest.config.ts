@@ -9,10 +9,10 @@ const jestConfig: JestConfigWithTsJest = {
   transform: {
     '^.+.tsx?$': ['ts-jest', {}],
   },
-  roots: ['<rootDir>'],
-  globalSetup: '/test/globalSetup.ts',
-  globalTeardown: '/test/globalTeardown.ts',
-  setupFilesAfterEnv: ['/test/setupFile.ts'],
+  roots: ['<rootDir>/src'],
+  globalSetup: '<rootDir>/test/globalSetup.ts',
+  globalTeardown: '<rootDir>/test/globalTeardown.ts',
+  setupFilesAfterEnv: ['<rootDir>/test/setupFile.ts'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 };
 
