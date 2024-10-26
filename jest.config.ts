@@ -7,7 +7,6 @@ const createJestConfig = nextJest({
   dir: './',
 });
 
-// And add any cu
 const customJestConfig: Config = {
   testEnvironment: 'node',
   coverageProvider: 'v8',
