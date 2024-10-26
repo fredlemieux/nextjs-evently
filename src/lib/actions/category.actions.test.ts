@@ -1,5 +1,5 @@
 import { Mongoose } from 'mongoose';
-import { connectToDatabase } from '../database';
+import { connectToDatabase } from '@/lib/database';
 
 describe('Category Actions', () => {
   let mongoose: Mongoose | undefined;

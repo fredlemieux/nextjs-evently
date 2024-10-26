@@ -1,20 +1,18 @@
-import { pathsToModuleNameMapper } from 'ts-jest';
-import { compilerOptions } from './tsconfig.json';
+import { Config } from 'jest';
+import nextJest from 'next/jest';
 
-import type { JestConfigWithTsJest } from 'ts-jest';
+// https://nextjs.org/docs/pages/building-your-application/testing/jest#manual-setup
+// use the next/jest rust compiler
+const createJestConfig = nextJest({
+  dir: './',
+});
 
-const jestConfig: JestConfigWithTsJest = {
-  preset: 'ts-jest',
+// And add any cu
+const customJestConfig: Config = {
   testEnvironment: 'node',
-  transform: {
-    '^.+.tsx?$': ['ts-jest', {}],
-  },
-
-  roots: ['<rootDir>/src'],
   globalSetup: '<rootDir>/test/globalSetup.ts',
   globalTeardown: '<rootDir>/test/globalTeardown.ts',
   setupFilesAfterEnv: ['<rootDir>/test/setupFile.ts'],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 };
 
-export default jestConfig;
+export default createJestConfig(customJestConfig);
