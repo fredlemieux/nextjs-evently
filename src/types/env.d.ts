@@ -4,6 +4,7 @@ declare namespace NodeJS {
     CLERK_SECRET_KEY: string;
     WEBHOOK_SECRET: string;
     MONGODB_URI: string;
+    MONGO_DEBUG?: string;
     UPLOADTHING_TOKEN: string;
     UPLOADTHING_SECRET: string;
     UPLOADTHING_APP_ID: string;
