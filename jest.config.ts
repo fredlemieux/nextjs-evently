@@ -10,6 +10,7 @@ const createJestConfig = nextJest({
 // And add any cu
 const customJestConfig: Config = {
   testEnvironment: 'node',
+  coverageProvider: 'v8',
   globalSetup: '<rootDir>/test/globalSetup.ts',
   globalTeardown: '<rootDir>/test/globalTeardown.ts',
   setupFilesAfterEnv: ['<rootDir>/test/setupFile.ts'],
