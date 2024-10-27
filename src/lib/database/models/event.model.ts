@@ -5,19 +5,19 @@ import { IUser } from '@/lib/database/models/user.model';
 
 export const eventSchema = new Schema({
   title: { type: String, required: true },
-  description: { type: String },
+  description: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   location: {
     type: Schema.Types.ObjectId,
     ref: 'Location',
     required: true,
   },
-  imageUrl: { type: String },
+  imageUrl: { type: String, default: '' },
   startDateTime: { type: Date, default: Date.now },
   endDateTime: { type: Date, default: Date.now },
-  price: { type: String },
+  price: { type: String, default: '' },
   isFree: { type: Boolean, default: false },
-  url: { type: String },
+  url: { type: String, default: '' },
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 });

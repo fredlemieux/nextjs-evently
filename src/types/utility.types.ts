@@ -1,14 +1,16 @@
 // Utility type to transform Mongoose document to JSON representation
 import { Types } from 'mongoose';
 
-type ConvertObjectId<T> = T extends Types.ObjectId ? string : T;
-
-type ConvertDate<T> = T extends Date ? string : T;
-
-// Utility type for non-populated documents
-export type ToJSON<T> = {
-  [K in keyof T]: ConvertObjectId<ConvertDate<T>>;
-};
+// Utility type for non-populated flat documents
+export type ToJSON<T> = T extends object
+  ? T extends Types.ObjectId
+    ? string
+    : T extends (infer U)[]
+      ? ToJSON<U>[]
+      : {
+          [K in keyof T]: ToJSON<T[K]>;
+        }
+  : T;
 
 export type RecursiveToJSON<T> = {
   [K in keyof T]: T[K] extends Types.ObjectId

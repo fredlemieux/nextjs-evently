@@ -27,15 +27,16 @@ export const createCategory = async ({
 };
 
 export const getAllCategories = async (): Promise<
-  ToJSON<ICategory>[] | undefined
+  ToJSON<ICategory[]> | undefined
 > => {
   try {
     await connectToDatabase();
 
     const categories = await Category.find();
 
-    return documentToJson<ICategory>(categories);
+    return documentToJson(categories);
   } catch (error) {
     handleError(error);
+    return undefined;
   }
 };

@@ -1,3 +1,4 @@
+import { startTransition, useEffect, useRef, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -5,8 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ICategory } from '@/lib/database/models/category.model';
-import { startTransition, useEffect, useRef, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +22,9 @@ import {
   createCategory,
   getAllCategories,
 } from '@/lib/actions/category.actions';
-import { ToJSON } from '@/types/utility.types';
+
+import type { ToJSON } from '@/types/utility.types';
+import type { ICategory } from '@/lib/database/models/category.model';
 
 type DropdownProps = {
   value?: string;

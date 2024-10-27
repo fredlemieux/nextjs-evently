@@ -10,6 +10,9 @@ import { Libraries, useLoadScript } from '@react-google-maps/api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+import { eventDefaultValues } from '@/constants';
+import { eventFormSchema } from '@/lib/validator';
+import { useUploadThing } from '@/lib/uploadthing';
 import { Button } from '../ui/button';
 import {
   Form,
@@ -18,24 +21,21 @@ import {
   FormItem,
   FormMessage,
 } from '../ui/form';
-import { eventDefaultValues } from '@/constants';
 import Dropdown from './Dropdown';
-import { eventFormSchema } from '@/lib/validator';
-import { useUploadThing } from '@/lib/uploadthing';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Checkbox } from '../ui/checkbox';
 import { FileUploader } from './FileUploader';
 import { createEvent, updateEvent } from '@/lib/actions/event.actions';
-import { IEvent } from '@/lib/database/models/event.model';
 import { createLocationIfNotExists } from '@/lib/actions/location.actions';
 import { getLocationParamsFromPlace } from '@/lib/utils';
-import { ToJSON } from '@/types/utility.types';
+import type { IEventPopulated } from '@/lib/database/models/event.model';
+import type { RecursiveToJSON } from '@/types/utility.types';
 
 type EventFormProps = {
   userId: string;
   type: 'Create' | 'Update';
-  event?: ToJSON<IEvent>;
+  event?: RecursiveToJSON<IEventPopulated>;
   eventId?: string;
 };
 
@@ -61,6 +61,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           location: event.location
             ? `${event.location.name}, ${event.location.address}`
             : '',
+          imageUrl: event.imageUrl || '',
           startDateTime: new Date(event.startDateTime),
           endDateTime: new Date(event.endDateTime),
         }
