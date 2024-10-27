@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Input } from '../ui/input';
-import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
+import { Input } from '../ui/input';
 
 const Search = ({
   placeholder = 'Search title...',

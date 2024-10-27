@@ -1,9 +1,9 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
-import { Button } from '../ui/button';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { formUrlQuery } from '@/lib/utils';
+import { Button } from '../ui/button';
 
 type PaginationProps = {
   page: number | string;

@@ -1,3 +1,4 @@
+import { startTransition, useEffect, useRef, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -5,8 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ICategory } from '@/lib/database/models/category.model';
-import { startTransition, useEffect, useRef, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,13 +23,16 @@ import {
   getAllCategories,
 } from '@/lib/actions/category.actions';
 
+import type { ToJSON } from '@/types/utility.types';
+import type { ICategory } from '@/lib/database/models/category.model';
+
 type DropdownProps = {
   value?: string;
   onChangeHandler?: () => void;
 };
 
 const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [categories, setCategories] = useState<ToJSON<ICategory>[]>([]);
   const [newCategory, setNewCategory] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +40,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const handleAddCategory = () =>
     startTransition(() => {
       createCategory({
-        categoryName: newCategory.trim(),
+        name: newCategory.trim(),
       }).then((category) => {
         if (category) {
           setCategories((prevState) => [...prevState, category]);

@@ -1,20 +1,22 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-
 import { connectToDatabase } from '@/lib/database';
 import {
   Event,
   IEvent,
   Category,
-  ICategory,
   User,
-  IUser,
-  eventSchema,
+  Location,
+  IEventPopulated,
 } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
-
 import {
+  checkAndReturnObjectId,
+  documentToJson,
+} from '@/lib/utils/mongoose.utils';
+
+import type {
   CreateEventParams,
   UpdateEventParams,
   DeleteEventParams,
@@ -22,17 +24,8 @@ import {
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
 } from '@/types/parameters.types';
-import {
-  HydratedDocument,
-  Query,
-  RootFilterQuery,
-  InferSchemaType,
-} from 'mongoose';
-import { ILocation } from '@/lib/database/models/location.model';
-import {
-  checkAndReturnObjectId,
-  documentToJson,
-} from '@/lib/actions/utils.actions';
+import type { ToJSON } from '@/types/utility.types';
+import type { Query, RootFilterQuery } from 'mongoose';
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: 'i' } });
@@ -42,7 +35,7 @@ export async function createEvent({
   userId,
   event,
   path,
-}: CreateEventParams): Promise<IEvent | undefined> {
+}: CreateEventParams): Promise<ToJSON<IEvent> | undefined> {
   try {
     await connectToDatabase();
 
@@ -52,7 +45,7 @@ export async function createEvent({
 
     if (!organizer) throw new Error('Organizer not found');
 
-    const newEvent: HydratedDocument<IEvent> = await Event.create({
+    const newEvent: IEvent = await Event.create({
       ...event,
       category: checkAndReturnObjectId(event.categoryId),
       organizer: userObjectId,
@@ -70,8 +63,11 @@ export async function getEventDetailsData(
   eventId: string,
   searchParams: { [key: string]: string | string[] | undefined }
 ): Promise<{
-  event: IEvent;
-  relatedEvents?: { data?: IEvent[]; totalPages: number };
+  event: ToJSON<IEventPopulated>;
+  relatedEvents?: {
+    data?: ToJSON<IEventPopulated>[];
+    totalPages: number;
+  };
 }> {
   const event = await getEventById(eventId);
 
@@ -80,7 +76,7 @@ export async function getEventDetailsData(
   const relatedEvents = await getRelatedEventsByCategory({
     eventId: event._id,
     categoryId: event.category._id,
-    page: searchParams.page as string,
+    page: searchParams.page as string, // TODO! Type properly
   });
 
   return { event, relatedEvents };
@@ -88,21 +84,18 @@ export async function getEventDetailsData(
 
 export async function getEventById(
   eventId: string
-): Promise<IEvent | undefined> {
+): Promise<ToJSON<IEventPopulated> | undefined> {
   try {
     await connectToDatabase();
 
     const eventObjectId = checkAndReturnObjectId(eventId);
-    // TODO! We're still not getting these types right!
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const event: HydratedDocument<IEvent> | null = await populateEvent(
-      Event.findById(eventObjectId)
-    );
+
+    const query = Event.findById(eventObjectId);
+    const event = await populateEvents(query);
 
     if (!event) throw new Error('Event not found');
 
-    return documentToJson<IEvent>(event);
+    return documentToJson(event);
   } catch (error) {
     handleError(error);
   }
@@ -112,15 +105,14 @@ export async function updateEvent({
   userId,
   event,
   path,
-}: UpdateEventParams): Promise<IEvent | undefined> {
+}: UpdateEventParams): Promise<ToJSON<IEvent> | undefined> {
   try {
     await connectToDatabase();
 
     const eventObjectId = checkAndReturnObjectId(event._id);
     const userObjectId = checkAndReturnObjectId(userId);
 
-    const eventToUpdate: InferSchemaType<typeof eventSchema> | null =
-      await Event.findById(eventObjectId);
+    const eventToUpdate = await Event.findById(eventObjectId);
 
     if (!eventToUpdate || eventToUpdate.organizer !== userObjectId) {
       throw new Error('Unauthorized or event not found');
@@ -134,13 +126,16 @@ export async function updateEvent({
 
     revalidatePath(path);
 
-    return updatedEvent.toJSON();
+    return documentToJson<IEvent>(updatedEvent);
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function deleteEvent({ eventId, path }: DeleteEventParams) {
+export async function deleteEvent({
+  eventId,
+  path,
+}: DeleteEventParams): Promise<void> {
   try {
     await connectToDatabase();
 
@@ -204,7 +199,7 @@ export async function getRelatedEventsByCategory({
   page = 1,
 }: GetRelatedEventsByCategoryParams): Promise<
   | {
-      data?: IEvent[];
+      data?: ToJSON<IEventPopulated>[];
       totalPages: number;
     }
   | undefined
@@ -227,7 +222,7 @@ async function queryAndReturnEvents(
   conditions: RootFilterQuery<IEvent>,
   skipAmount: number,
   limit: number
-): Promise<{ data?: IEvent[]; totalPages: number }> {
+): Promise<{ data?: ToJSON<IEventPopulated>[]; totalPages: number }> {
   const eventsQuery = Event.find(conditions)
     .sort({ createdAt: 'desc' })
     .skip(skipAmount)
@@ -238,46 +233,32 @@ async function queryAndReturnEvents(
   const eventsCount = await Event.countDocuments(conditions);
 
   return {
-    data: events ? JSON.parse(JSON.stringify(events)) : undefined,
+    data: events ? documentToJson(events) : undefined,
     totalPages: Math.ceil(eventsCount / limit),
   };
 }
 
-// TODO! Use overloading and remove duplicate
-function populateEvent(
+function populateEvents(
   query: Query<IEvent | null, IEvent>
-): Promise<IEvent | null> {
-  return query
-    .populate<IUser>({
-      path: 'organizer',
-      model: User,
-      select: '_id firstName lastName',
-    })
-    .populate<ICategory>({
-      path: 'category',
-      model: Category,
-      select: '_id name',
-    })
-    .populate<ILocation>('location')
-    .lean<IEvent>()
-    .exec();
-}
-
+): Promise<IEventPopulated | null>;
 function populateEvents(
   query: Query<IEvent[] | null, IEvent>
-): Promise<IEvent[] | null> {
+): Promise<IEventPopulated[] | null>;
+function populateEvents(
+  query: Query<IEvent | null, IEvent> | Query<IEvent[] | null, IEvent>
+): Promise<IEventPopulated | null | IEventPopulated[]> {
   return query
-    .populate<IUser>({
+    .populate({
       path: 'organizer',
       model: User,
       select: '_id firstName lastName',
     })
-    .populate<ICategory>({
+    .populate({
       path: 'category',
       model: Category,
       select: '_id name',
     })
-    .populate<ILocation>('location')
-    .lean<IEvent[]>()
+    .populate({ path: 'location', model: Location })
+    .lean<IEventPopulated>()
     .exec();
 }

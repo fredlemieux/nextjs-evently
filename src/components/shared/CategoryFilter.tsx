@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Select,
   SelectContent,
@@ -8,13 +10,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getAllCategories } from '@/lib/actions/category.actions';
-import { ICategory } from '@/lib/database/models/category.model';
 import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+import type { ICategory } from '@/lib/database/models/category.model';
+import type { ToJSON } from '@/types/utility.types';
 
 const CategoryFilter = () => {
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [categories, setCategories] = useState<ToJSON<ICategory>[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -23,7 +25,7 @@ const CategoryFilter = () => {
       const categoryList = await getAllCategories();
 
       if (categoryList) {
-        setCategories(categoryList as ICategory[]);
+        setCategories(categoryList);
       }
     };
 

@@ -1,14 +1,4 @@
-import { Schema, model, models, Model } from 'mongoose';
-
-export interface IUser {
-  _id: string;
-  clerkId: string;
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  photo: string;
-}
+import { Schema, model, models, Model, InferSchemaType, Types } from 'mongoose';
 
 const userSchema = new Schema({
   clerkId: { type: String, required: true, unique: true },
@@ -18,6 +8,12 @@ const userSchema = new Schema({
   lastName: { type: String, required: true },
   photo: { type: String, required: true },
 });
+
+type CreateUserParams = InferSchemaType<typeof userSchema>;
+
+export type IUser = CreateUserParams & {
+  _id: Types.ObjectId;
+};
 
 export const User: Model<IUser> =
   models.User || model<IUser>('User', userSchema);
