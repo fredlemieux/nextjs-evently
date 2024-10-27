@@ -41,7 +41,7 @@ export async function createEvent({
 
     const userObjectId = checkAndReturnObjectId(userId);
 
-    const organizer: IUser | null = await User.findById(userObjectId);
+    const organizer = await User.findById(userObjectId);
 
     if (!organizer) throw new Error('Organizer not found');
 
