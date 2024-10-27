@@ -6,10 +6,10 @@ import { formatDateTime } from '@/lib/utils';
 import { DeleteConfirmation } from './DeleteConfirmation';
 
 import type { IEventPopulated } from '@/lib/database/models/event.model';
-import type { RecursiveToJSON } from '@/types/utility.types';
+import type { ToJSON } from '@/types/utility.types';
 
 type CardProps = {
-  event: RecursiveToJSON<IEventPopulated>;
+  event: ToJSON<IEventPopulated>;
 };
 
 const Card = ({ event }: CardProps) => {

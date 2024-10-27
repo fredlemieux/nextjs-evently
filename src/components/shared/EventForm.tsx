@@ -30,12 +30,12 @@ import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { createLocationIfNotExists } from '@/lib/actions/location.actions';
 import { getLocationParamsFromPlace } from '@/lib/utils';
 import type { IEventPopulated } from '@/lib/database/models/event.model';
-import type { RecursiveToJSON } from '@/types/utility.types';
+import type { ToJSON } from '@/types/utility.types';
 
 type EventFormProps = {
   userId: string;
   type: 'Create' | 'Update';
-  event?: RecursiveToJSON<IEventPopulated>;
+  event?: ToJSON<IEventPopulated>;
   eventId?: string;
 };
 

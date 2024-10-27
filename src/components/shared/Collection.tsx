@@ -2,10 +2,10 @@ import { IEventPopulated } from '@/lib/database/models/event.model';
 import React from 'react';
 import Card from './Card';
 import Pagination from './Pagination';
-import { RecursiveToJSON } from '@/types/utility.types';
+import { ToJSON } from '@/types/utility.types';
 
 type CollectionProps = {
-  data?: RecursiveToJSON<IEventPopulated>[];
+  data?: ToJSON<IEventPopulated>[];
   emptyTitle: string;
   emptyStateSubtext: string;
   limit: number;
