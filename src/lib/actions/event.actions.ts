@@ -25,7 +25,7 @@ import type {
   GetRelatedEventsByCategoryParams,
 } from '@/types/parameters.types';
 import type { ToJSON } from '@/types/utility.types';
-import type { Query, RootFilterQuery, InferSchemaType } from 'mongoose';
+import type { Query, RootFilterQuery } from 'mongoose';
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: 'i' } });
