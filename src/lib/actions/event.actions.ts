@@ -200,7 +200,7 @@ export async function getRelatedEventsByCategory({
   page = 1,
 }: GetRelatedEventsByCategoryParams): Promise<
   | {
-      data?: ToJSON<IEvent>[];
+      data?: RecursiveToJSON<IEvent>[];
       totalPages: number;
     }
   | undefined
