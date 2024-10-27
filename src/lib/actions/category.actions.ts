@@ -1,20 +1,23 @@
 'use server';
 
-import { CreateCategoryParams } from '@/types/parameters.types';
-import { handleError } from '../utils';
 import { connectToDatabase } from '../database';
-import { Category, ICategory } from '@/lib/database/models';
-import { HydratedDocument } from 'mongoose';
-import { documentToJson } from '@/lib/actions/utils.actions';
+import {
+  Category,
+  CreateCategoryParams,
+  ICategory,
+} from '@/lib/database/models';
+import { ToJSON } from '@/types/utility.types';
+import { handleError } from '../utils';
+import { documentToJson } from '@/lib/utils/mongoose.utils';
 
 export const createCategory = async ({
-  categoryName,
-}: CreateCategoryParams): Promise<ICategory | undefined> => {
+  name,
+}: CreateCategoryParams): Promise<ToJSON<ICategory> | undefined> => {
   try {
     await connectToDatabase();
 
-    const newCategory: HydratedDocument<ICategory> = await Category.create({
-      name: categoryName,
+    const newCategory = await Category.create({
+      name,
     });
 
     return documentToJson(newCategory);
@@ -23,13 +26,15 @@ export const createCategory = async ({
   }
 };
 
-export const getAllCategories = async (): Promise<ICategory[] | undefined> => {
+export const getAllCategories = async (): Promise<
+  ToJSON<ICategory>[] | undefined
+> => {
   try {
     await connectToDatabase();
 
-    const categories: HydratedDocument<ICategory>[] = await Category.find();
+    const categories = await Category.find();
 
-    return documentToJson(categories);
+    return documentToJson<ICategory>(categories);
   } catch (error) {
     handleError(error);
   }

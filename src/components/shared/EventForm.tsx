@@ -30,11 +30,12 @@ import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { IEvent } from '@/lib/database/models/event.model';
 import { createLocationIfNotExists } from '@/lib/actions/location.actions';
 import { getLocationParamsFromPlace } from '@/lib/utils';
+import { ToJSON } from '@/types/utility.types';
 
 type EventFormProps = {
   userId: string;
   type: 'Create' | 'Update';
-  event?: IEvent;
+  event?: ToJSON<IEvent>;
   eventId?: string;
 };
 

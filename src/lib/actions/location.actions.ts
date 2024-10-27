@@ -1,20 +1,23 @@
 'use server';
 
-import { ILocation, Location } from '@/lib/database/models/location.model';
 import { connectToDatabase } from '@/lib/database';
 import { handleError } from '@/lib/utils';
-import { CreateLocationParams } from '@/types/parameters.types';
-import { HydratedDocument } from 'mongoose';
-import { documentToJson } from '@/lib/actions/utils.actions';
+import { documentToJson } from '@/lib/utils/mongoose.utils';
+import {
+  ILocation,
+  Location,
+  CreateLocationParams,
+} from '@/lib/database/models/location.model';
+
+import type { ToJSON } from '@/types/utility.types';
 
 export async function createLocation(
   location: CreateLocationParams
-): Promise<ILocation | undefined> {
+): Promise<ToJSON<ILocation> | undefined> {
   try {
     await connectToDatabase();
 
-    const createdLocation: HydratedDocument<ILocation> | undefined =
-      await Location.create(location);
+    const createdLocation = await Location.create(location);
 
     return documentToJson(createdLocation);
   } catch (error) {
@@ -24,7 +27,7 @@ export async function createLocation(
 
 export async function createLocationIfNotExists(
   locationParams: CreateLocationParams
-): Promise<ILocation | undefined> {
+): Promise<ToJSON<ILocation> | undefined> {
   const location = await findLocationByGooglePlaceId(
     locationParams.googlePlaceId
   );
@@ -36,12 +39,12 @@ export async function createLocationIfNotExists(
 
 export async function findLocationByGooglePlaceId(
   googlePlaceId: string
-): Promise<ILocation | null> {
+): Promise<ToJSON<ILocation> | null> {
   await connectToDatabase();
 
   const location = await Location.findOne({
     googlePlaceId,
   });
 
-  return JSON.parse(JSON.stringify(location));
+  return documentToJson(location);
 }

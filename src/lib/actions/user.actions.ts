@@ -3,38 +3,48 @@
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import { User, Event } from '@/lib/database/models';
+import { User, Event, IUser } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 
 import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
 import { auth } from '@clerk/nextjs';
 import { JwtPayload } from '@clerk/types';
+import { ToJSON } from '@/types/utility.types';
+import { documentToJson } from '@/lib/utils/mongoose.utils';
 
-export async function createUser(user: CreateUserParams) {
+export async function createUser(
+  user: CreateUserParams
+): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
     const newUser = await User.create(user);
-    return newUser.toJSON();
+    return documentToJson(newUser);
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function getUserById(userId: string) {
+export async function getUserById(
+  userId: string
+): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
     const user = await User.findById(userId);
 
     if (!user) throw new Error('User not found');
-    return user.toJSON();
+
+    return documentToJson(user);
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function updateUser(clerkId: string, user: UpdateUserParams) {
+export async function updateUser(
+  clerkId: string,
+  user: UpdateUserParams
+): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
@@ -43,14 +53,16 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     });
 
     if (!updatedUser) throw new Error('User update failed');
-    return updatedUser.toJSON();
+
+    return documentToJson(updatedUser);
   } catch (error) {
     handleError(error);
   }
 }
 
-// TODO! Fix issues
-export async function deleteUser(clerkId: string) {
+export async function deleteUser(
+  clerkId: string
+): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
@@ -72,9 +84,12 @@ export async function deleteUser(clerkId: string) {
 
     // Delete user
     const deletedUser = await User.findByIdAndDelete(userToDelete._id);
+
+    if (!deletedUser) throw new Error('Problem deleting user');
+
     revalidatePath('/');
 
-    return deletedUser ? deletedUser.toJSON() : null;
+    return documentToJson<IUser>(deletedUser);
   } catch (error) {
     handleError(error);
   }

@@ -23,6 +23,7 @@ import {
   createCategory,
   getAllCategories,
 } from '@/lib/actions/category.actions';
+import { ToJSON } from '@/types/utility.types';
 
 type DropdownProps = {
   value?: string;
@@ -30,7 +31,7 @@ type DropdownProps = {
 };
 
 const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [categories, setCategories] = useState<ToJSON<ICategory>[]>([]);
   const [newCategory, setNewCategory] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +39,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const handleAddCategory = () =>
     startTransition(() => {
       createCategory({
-        categoryName: newCategory.trim(),
+        name: newCategory.trim(),
       }).then((category) => {
         if (category) {
           setCategories((prevState) => [...prevState, category]);

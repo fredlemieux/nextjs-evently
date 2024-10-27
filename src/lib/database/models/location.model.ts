@@ -1,18 +1,6 @@
-import { Schema, model, models, Model } from 'mongoose';
+import { Schema, model, models, Model, InferSchemaType, Types } from 'mongoose';
 
-export interface ILocation {
-  _id: string;
-  googlePlaceId: string;
-  name: string;
-  address: string;
-  lat: number;
-  lng: number;
-  url: string;
-  phone: string;
-  photos: string[];
-}
-
-const locationSchema = new Schema<ILocation>({
+const locationSchema = new Schema({
   googlePlaceId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   address: { type: String, required: true },
@@ -24,6 +12,12 @@ const locationSchema = new Schema<ILocation>({
 });
 
 locationSchema.index({ googlePlaceId: 1 });
+
+export type CreateLocationParams = InferSchemaType<typeof locationSchema>;
+
+export type ILocation = CreateLocationParams & {
+  _id: Types.ObjectId;
+};
 
 export const Location: Model<ILocation> =
   models.Location || model<ILocation>('Location', locationSchema);

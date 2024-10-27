@@ -1,23 +1,7 @@
-import { Schema, model, models } from 'mongoose';
+import { Schema, model, models, InferSchemaType, Types } from 'mongoose';
 import { ILocation } from '@/lib/database/models/location.model';
 import { ICategory } from './category.model';
 import { IUser } from '@/lib/database/models/user.model';
-
-export interface IEvent {
-  _id: string;
-  title: string;
-  description?: string;
-  location: ILocation;
-  createdAt: Date;
-  imageUrl: string;
-  startDateTime: Date;
-  endDateTime: Date;
-  price: string;
-  isFree: boolean;
-  url?: string;
-  category: ICategory;
-  organizer: IUser;
-}
 
 export const eventSchema = new Schema({
   title: { type: String, required: true },
@@ -37,5 +21,18 @@ export const eventSchema = new Schema({
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 });
+
+export type CreateEventParams = InferSchemaType<typeof eventSchema>;
+
+export type IEvent = CreateEventParams & {
+  _id: Types.ObjectId;
+};
+
+export interface IEventPopulated
+  extends Omit<IEvent, 'location' | 'category' | 'organizer'> {
+  location: ILocation;
+  category: ICategory;
+  organizer: IUser;
+}
 
 export const Event = models.Event || model<IEvent>('Event', eventSchema);
