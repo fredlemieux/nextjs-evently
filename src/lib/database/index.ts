@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { set } from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -10,6 +10,10 @@ export const connectToDatabase = async () => {
   if (cached.conn) return cached.conn;
 
   if (!MONGODB_URI) throw new Error('MONGODB_URI is missing');
+
+  if (process.env.MONGO_DEBUG) {
+    set('debug', true);
+  }
 
   cached.promise =
     cached.promise ||
