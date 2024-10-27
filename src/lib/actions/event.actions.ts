@@ -76,7 +76,7 @@ export async function getEventDetailsData(
   const relatedEvents = await getRelatedEventsByCategory({
     eventId: event._id,
     categoryId: event.category._id,
-    page: searchParams.page,
+    page: searchParams.page as string, // TODO! Type properly
   });
 
   return { event, relatedEvents };
