@@ -24,7 +24,7 @@ import type {
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
 } from '@/types/parameters.types';
-import type { ToJSON } from '@/types/utility.types';
+import type { RecursiveToJSON, ToJSON } from '@/types/utility.types';
 import type { Query, RootFilterQuery } from 'mongoose';
 
 const getCategoryByName = async (name: string) => {
@@ -63,8 +63,11 @@ export async function getEventDetailsData(
   eventId: string,
   searchParams: { [key: string]: string | string[] | undefined }
 ): Promise<{
-  event: ToJSON<IEventPopulated>;
-  relatedEvents?: { data?: ToJSON<IEventPopulated>[]; totalPages: number };
+  event: RecursiveToJSON<IEventPopulated>;
+  relatedEvents?: {
+    data?: RecursiveToJSON<IEventPopulated>[];
+    totalPages: number;
+  };
 }> {
   const event = await getEventById(eventId);
 
@@ -81,7 +84,7 @@ export async function getEventDetailsData(
 
 export async function getEventById(
   eventId: string
-): Promise<ToJSON<IEventPopulated> | undefined> {
+): Promise<RecursiveToJSON<IEventPopulated> | undefined> {
   try {
     await connectToDatabase();
 
@@ -220,7 +223,7 @@ async function queryAndReturnEvents(
   conditions: RootFilterQuery<IEvent>,
   skipAmount: number,
   limit: number
-): Promise<{ data?: ToJSON<IEventPopulated>[]; totalPages: number }> {
+): Promise<{ data?: RecursiveToJSON<IEventPopulated>[]; totalPages: number }> {
   const eventsQuery = Event.find(conditions)
     .sort({ createdAt: 'desc' })
     .skip(skipAmount)

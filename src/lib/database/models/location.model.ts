@@ -6,7 +6,7 @@ const locationSchema = new Schema({
   address: { type: String, required: true },
   lat: { type: Number, required: false },
   lng: { type: Number, required: false },
-  url: { type: String, required: false },
+  url: { type: String, required: true },
   phone: { type: String, required: false },
   photos: { type: [String], required: false },
 });

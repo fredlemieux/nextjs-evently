@@ -1,13 +1,15 @@
-import { IEvent } from '@/lib/database/models/event.model';
-import { formatDateTime } from '@/lib/utils';
-import { auth } from '@clerk/nextjs';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import { auth } from '@clerk/nextjs';
+import { IEventPopulated } from '@/lib/database/models/event.model';
+import { formatDateTime } from '@/lib/utils';
 import { DeleteConfirmation } from './DeleteConfirmation';
 
+import type { RecursiveToJSON } from '@/types/utility.types';
+
 type CardProps = {
-  event: IEvent;
+  event: RecursiveToJSON<IEventPopulated>;
 };
 
 const Card = ({ event }: CardProps) => {

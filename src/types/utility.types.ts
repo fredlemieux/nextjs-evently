@@ -1,31 +1,26 @@
 // Utility type to transform Mongoose document to JSON representation
 import { Types } from 'mongoose';
 
-type ReplaceObjectId<T> = T extends Types.ObjectId ? string : T;
-type ReplaceObjectIdInArray<T> =
-  T extends Array<infer U> ? Array<ReplaceObjectId<U>> : T;
+type ConvertObjectId<T> = T extends Types.ObjectId ? string : T;
 
-export type FlatToJSON<T> = {
-  [K in keyof T]: ReplaceObjectIdInArray<ReplaceObjectId<T[K]>>;
+type ConvertDate<T> = T extends Date ? string : T;
+
+// Utility type for non-populated documents
+export type ToJSON<T> = {
+  [K in keyof T]: ConvertObjectId<ConvertDate<T>>;
 };
 
-// // Utility type to apply FlatToJSON recursively on nested objects
-export type ToJSON<T> = T extends object
-  ? T extends Types.ObjectId
-    ? string
-    : T extends (infer U)[]
-      ? ToJSON<U>[]
-      : {
-          [K in keyof T]: ToJSON<T[K]>;
-        }
-  : T;
-// export type ToJSON<T> = {
-//   [K in keyof T]: T[K] extends Document
-//     ? ToJSON<T[K]>
-//     : T[K] extends Types.ObjectId
-//       ? string
-//       : T[K];
-// };
+export type RecursiveToJSON<T> = {
+  [K in keyof T]: T[K] extends Types.ObjectId
+    ? string // Directly convert ObjectId to string
+    : T[K] extends Date
+      ? string // Convert Date to string
+      : T[K] extends Array<infer U>
+        ? RecursiveToJSON<U>[] // Handle arrays recursively
+        : T[K] extends object
+          ? RecursiveToJSON<T[K]> // Handle nested objects
+          : T[K]; // For other types, retain as-is
+};
 export type ModelCreateParams<T> = Omit<T, '_id'>;
 
 export type WithMongooseId<T> = T & { _id: Types.ObjectId };

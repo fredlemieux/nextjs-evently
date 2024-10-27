@@ -1,10 +1,10 @@
+import React from 'react';
+import Link from 'next/link';
+import { auth } from '@clerk/nextjs';
+import { getEventsByUser } from '@/lib/actions/event.actions';
 import Collection from '@/components/shared/Collection';
 import { Button } from '@/components/ui/button';
-import { getEventsByUser } from '@/lib/actions/event.actions';
-import { SearchParamProps } from '@/types/parameters.types';
-import { auth } from '@clerk/nextjs';
-import Link from 'next/link';
-import React from 'react';
+import type { SearchParamProps } from '@/types/parameters.types';
 
 const ProfilePage = async ({ searchParams }: SearchParamProps) => {
   const { sessionClaims } = auth();
