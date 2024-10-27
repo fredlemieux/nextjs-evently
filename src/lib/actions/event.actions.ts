@@ -63,8 +63,8 @@ export async function getEventDetailsData(
   eventId: string,
   searchParams: { [key: string]: string | string[] | undefined }
 ): Promise<{
-  event: IEvent;
-  relatedEvents?: { data?: IEvent[]; totalPages: number };
+  event: ToJSON<IEventPopulated>;
+  relatedEvents?: { data?: ToJSON<IEventPopulated>[]; totalPages: number };
 }> {
   const event = await getEventById(eventId);
 
@@ -197,7 +197,7 @@ export async function getRelatedEventsByCategory({
   page = 1,
 }: GetRelatedEventsByCategoryParams): Promise<
   | {
-      data?: IEvent[];
+      data?: ToJSON<IEvent>[];
       totalPages: number;
     }
   | undefined
@@ -220,7 +220,7 @@ async function queryAndReturnEvents(
   conditions: RootFilterQuery<IEvent>,
   skipAmount: number,
   limit: number
-): Promise<{ data?: ToJSON<IEvent>[]; totalPages: number }> {
+): Promise<{ data?: ToJSON<IEventPopulated>[]; totalPages: number }> {
   const eventsQuery = Event.find(conditions)
     .sort({ createdAt: 'desc' })
     .skip(skipAmount)
