@@ -90,9 +90,8 @@ export async function getEventById(
 
     const eventObjectId = checkAndReturnObjectId(eventId);
 
-    const event: IEventPopulated | null = await populateEvents(
-      Event.findById(eventObjectId)
-    );
+    const query = Event.findById(eventObjectId);
+    const event = await populateEvents(query);
 
     if (!event) throw new Error('Event not found');
 
@@ -106,14 +105,14 @@ export async function updateEvent({
   userId,
   event,
   path,
-}: UpdateEventParams): Promise<IEvent | undefined> {
+}: UpdateEventParams): Promise<ToJSON<IEvent> | undefined> {
   try {
     await connectToDatabase();
 
     const eventObjectId = checkAndReturnObjectId(event._id);
     const userObjectId = checkAndReturnObjectId(userId);
 
-    const eventToUpdate: IEvent = await Event.findById(eventObjectId);
+    const eventToUpdate = await Event.findById(eventObjectId);
 
     if (!eventToUpdate || eventToUpdate.organizer !== userObjectId) {
       throw new Error('Unauthorized or event not found');
@@ -229,7 +228,7 @@ async function queryAndReturnEvents(
     .skip(skipAmount)
     .limit(limit);
 
-  const events: IEventPopulated[] = await populateEvents(eventsQuery);
+  const events = await populateEvents(eventsQuery);
 
   const eventsCount = await Event.countDocuments(conditions);
 
