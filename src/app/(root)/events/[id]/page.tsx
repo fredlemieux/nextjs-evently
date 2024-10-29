@@ -1,16 +1,23 @@
+import React from 'react';
+import Image from 'next/image';
+import { auth } from '@clerk/nextjs/server';
 import Collection from '@/components/shared/Collection';
+import EditAndDeleteEventButtons from '@/components/shared/EditAndDeleteEventButtons';
 import { getEventDetailsData } from '@/lib/actions/event.actions';
 import { areDatesTheSame, formatDateTime } from '@/lib/utils';
-import { SearchParamProps } from '@/types/parameters.types';
-import Image from 'next/image';
+import type { SearchParamProps } from '@/types/parameters.types';
 
 const EventDetails = async ({
   params: { id },
   searchParams,
 }: SearchParamProps) => {
-  const eventDetailsData = await getEventDetailsData(id, searchParams);
+  const { sessionClaims } = await auth();
+  const userId = sessionClaims?.userId;
 
+  const eventDetailsData = await getEventDetailsData(id, searchParams);
   const { event, relatedEvents } = eventDetailsData;
+
+  const isEventCreator = userId === event.organizer._id;
 
   return (
     <>
@@ -28,7 +35,14 @@ const EventDetails = async ({
 
           <div className='flex w-full flex-col gap-8 p-5 md:p-10'>
             <div className='flex flex-col gap-6'>
-              <h2 className='h2-bold'>{event.title}</h2>
+              <div className='flex-between flex flex-row'>
+                <h2 className='h2-bold'>{event.title}</h2>
+                {isEventCreator && (
+                  <div className='flex flex-row'>
+                    <EditAndDeleteEventButtons eventId={event._id} />
+                  </div>
+                )}
+              </div>
 
               <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
                 <div className='flex gap-3'>

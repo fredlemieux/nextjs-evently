@@ -7,7 +7,7 @@ import { User, Event, IUser } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 
 import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { JwtPayload } from '@clerk/types';
 import { ToJSON } from '@/types/utility.types';
 import { documentToJson } from '@/lib/utils/mongoose.utils';
@@ -98,7 +98,7 @@ export async function deleteUser(
 // This is one of the main arguments to move away from Clerk, new users don't always have the
 // userId in the sessions claims as it requires the webhook to complete before getting userId
 export async function getSessionUserId(): Promise<string | null> {
-  const { sessionClaims } = auth();
+  const { sessionClaims } = await auth();
   if (!sessionClaims) return null;
 
   return await getUserIdFromSessionClaims(sessionClaims);
