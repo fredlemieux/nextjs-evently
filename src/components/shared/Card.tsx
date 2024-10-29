@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { formatDateTime } from '@/lib/utils';
 import { DeleteConfirmation } from './DeleteConfirmation';
 
@@ -12,9 +12,9 @@ type CardProps = {
   event: ToJSON<IEventPopulated>;
 };
 
-const Card = ({ event }: CardProps) => {
-  const { sessionClaims } = auth();
-  const userId = sessionClaims?.userId as string;
+const Card = async ({ event }: CardProps) => {
+  const { sessionClaims } = await auth();
+  const userId = sessionClaims?.userId;
 
   const isEventCreator = userId === event.organizer._id;
 
