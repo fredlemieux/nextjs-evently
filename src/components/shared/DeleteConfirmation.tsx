@@ -25,7 +25,7 @@ export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
       <AlertDialogTrigger>
         <Image
           src='/assets/icons/delete.svg'
-          alt='edit'
+          alt='delete'
           width={20}
           height={20}
         />
