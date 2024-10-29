@@ -6,8 +6,6 @@ declare namespace NodeJS {
     MONGODB_URI: string;
     MONGO_DEBUG?: string;
     UPLOADTHING_TOKEN: string;
-    UPLOADTHING_SECRET: string;
-    UPLOADTHING_APP_ID: string;
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: string;
   }
 }
