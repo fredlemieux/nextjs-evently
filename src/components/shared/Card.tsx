@@ -1,12 +1,11 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
 import { formatDateTime } from '@/lib/utils';
-import { DeleteConfirmation } from './DeleteConfirmation';
 
 import type { IEventPopulated } from '@/lib/database/models/event.model';
 import type { ToJSON } from '@/types/utility.types';
+import EditAndDeleteEventButtons from '@/components/shared/EditAndDeleteEventButtons';
 
 type CardProps = {
   event: ToJSON<IEventPopulated>;
@@ -28,16 +27,7 @@ const Card = async ({ event }: CardProps) => {
 
       {isEventCreator && (
         <div className='absolute right-2 top-2 flex flex-col gap-4 rounded-md bg-white p-3 shadow-sm transition-all'>
-          <Link href={`/events/${event._id}/update`}>
-            <Image
-              src='/assets/icons/edit.svg'
-              alt='edit'
-              width={20}
-              height={20}
-            />
-          </Link>
-
-          <DeleteConfirmation eventId={event._id.toString()} />
+          <EditAndDeleteEventButtons eventId={event._id} />
         </div>
       )}
 
