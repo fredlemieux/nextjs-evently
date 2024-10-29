@@ -61,6 +61,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           location: event.location
             ? `${event.location.name}, ${event.location.address}`
             : '',
+          categoryId: event.category._id, // CategoryId is seperate.
           imageUrl: event.imageUrl || '',
           startDateTime: new Date(event.startDateTime),
           endDateTime: new Date(event.endDateTime),

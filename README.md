@@ -33,10 +33,10 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 ## TODOS
 
 - [ ] Update event not working correctly
+- [ ] Duplicate Event name issue.  Maybe we have repeat event with the same name. Remove?
 - [ ] Setup Multi Stage build for Docker
 - [ ] Clean up dev environment (clear db and users)
 - [ ] Highlight active Form item
-- [ ] Set up Image Upload
 - [ ] Map out app architecture
 - [ ] Testing setup
 - [ ] Github actions for tests
