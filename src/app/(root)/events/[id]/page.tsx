@@ -4,8 +4,6 @@ import { areDatesTheSame, formatDateTime } from '@/lib/utils';
 import { SearchParamProps } from '@/types/parameters.types';
 import Image from 'next/image';
 import { auth } from '@clerk/nextjs/server';
-import Link from 'next/link';
-import { DeleteConfirmation } from '@/components/shared/DeleteConfirmation';
 import React from 'react';
 import EditAndDeleteEventButtons from '@/components/shared/EditAndDeleteEventButtons';
 
