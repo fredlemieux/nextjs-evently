@@ -1,11 +1,11 @@
-import Collection from '@/components/shared/Collection';
-import { getEventDetailsData } from '@/lib/actions/event.actions';
-import { areDatesTheSame, formatDateTime } from '@/lib/utils';
-import { SearchParamProps } from '@/types/parameters.types';
+import React from 'react';
 import Image from 'next/image';
 import { auth } from '@clerk/nextjs/server';
-import React from 'react';
+import Collection from '@/components/shared/Collection';
 import EditAndDeleteEventButtons from '@/components/shared/EditAndDeleteEventButtons';
+import { getEventDetailsData } from '@/lib/actions/event.actions';
+import { areDatesTheSame, formatDateTime } from '@/lib/utils';
+import type { SearchParamProps } from '@/types/parameters.types';
 
 const EventDetails = async ({
   params: { id },
