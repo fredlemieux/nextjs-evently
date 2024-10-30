@@ -7,7 +7,7 @@ describe('Category Actions', () => {
   describe('createCategory()', () => {
     it('should create a user', async () => {
       const category = 'Club night';
-      await createCategory({ categoryName: category });
+      await createCategory({ name: category });
       const categories = await CategoryModel.find({});
 
       expect(categories.length).toBe(1);
@@ -16,7 +16,7 @@ describe('Category Actions', () => {
 
     it('should return a JSON not Mongoose Document', async () => {
       const category = 'Club night';
-      const res = await createCategory({ categoryName: category });
+      const res = await createCategory({ name: category });
 
       expect(res).not.toBeInstanceOf(CategoryModel);
     });
