@@ -9,7 +9,7 @@ import {
   UserModel,
   LocationModel,
   IEventPopulated,
-  CreateEventParams,
+  CreateEventModelParams,
 } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 import {
@@ -17,40 +17,50 @@ import {
   documentToJson,
 } from '@/lib/utils/mongoose.utils';
 
-import type {
-  CreateEventParams,
+import {
   UpdateEventParams,
   DeleteEventParams,
   GetAllEventsParams,
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
 } from '@/types/parameters.types';
-import type { ToJSON } from '@/types/utility.types';
+import { ToJSON, TransformObjectIdKeys } from '@/types/utility.types';
 import type { Query, RootFilterQuery } from 'mongoose';
 
 const getCategoryByName = async (name: string) => {
-  return Category.findOne({ name: { $regex: name, $options: 'i' } });
+  return CategoryModel.findOne({ name: { $regex: name, $options: 'i' } });
+};
+
+export type CreateEventActionParams = {
+  event: TransformObjectIdKeys<CreateEventModelParams>;
+  path: string;
 };
 
 export async function createEvent({
-  userId,
   event,
   path,
-}: CreateEventParams): Promise<ToJSON<IEvent> | undefined> {
+}: CreateEventActionParams): Promise<ToJSON<IEvent> | undefined> {
   try {
     await connectToDatabase();
 
-    const userObjectId = checkAndReturnObjectId(userId);
+    const { organizerId, categoryId, locationId, ...restEvent } = event;
 
-    const organizer = await User.findById(userObjectId);
+    const organizerObjectId = checkAndReturnObjectId(organizerId);
+    const categoryObjectId = checkAndReturnObjectId(categoryId);
+    const locationObjectId = checkAndReturnObjectId(locationId);
+
+    const organizer = await UserModel.findById(organizerObjectId);
 
     if (!organizer) throw new Error('Organizer not found');
 
-    const newEvent: IEvent = await Event.create({
-      ...event,
-      category: checkAndReturnObjectId(event.categoryId),
-      organizer: userObjectId,
-    });
+    const createEventParams: CreateEventModelParams = {
+      ...restEvent,
+      category: categoryObjectId,
+      organizer: organizerObjectId,
+      location: locationObjectId,
+    };
+
+    const newEvent: IEvent = await EventModel.create(createEventParams);
 
     revalidatePath(path);
 

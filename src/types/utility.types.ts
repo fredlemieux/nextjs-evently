@@ -14,6 +14,14 @@ export type ToJSON<T> = {
           : T[K]; // For other types, retain as-is
 };
 
+export type TransformObjectIdKeys<T> = {
+  [K in keyof T as K extends string
+    ? T[K] extends Types.ObjectId
+      ? `${K}Id`
+      : K
+    : K]: T[K] extends Types.ObjectId ? string : T[K];
+};
+
 export type ModelCreateParams<T> = Omit<T, '_id'>;
 
 export type WithMongooseId<T> = T & { _id: Types.ObjectId };

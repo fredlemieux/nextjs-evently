@@ -15,16 +15,16 @@ export const eventSchema = new Schema({
   imageUrl: { type: String, default: '' },
   startDateTime: { type: Date, default: Date.now },
   endDateTime: { type: Date, default: Date.now },
-  price: { type: String, default: '' },
+  price: { type: Number, default: null },
   isFree: { type: Boolean, default: false },
   url: { type: String, default: '' },
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
-export type CreateEventParams = InferSchemaType<typeof eventSchema>;
+export type CreateEventModelParams = InferSchemaType<typeof eventSchema>;
 
-export type IEvent = CreateEventParams & {
+export type IEvent = CreateEventModelParams & {
   _id: Types.ObjectId;
 };
 
