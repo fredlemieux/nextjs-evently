@@ -3,12 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { connectToDatabase } from '@/lib/database';
 import {
-  Event,
+  EventModel,
   IEvent,
-  Category,
-  User,
-  Location,
+  CategoryModel,
+  UserModel,
+  LocationModel,
   IEventPopulated,
+  CreateEventParams,
 } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 import {
@@ -90,7 +91,7 @@ export async function getEventById(
 
     const eventObjectId = checkAndReturnObjectId(eventId);
 
-    const query = Event.findById(eventObjectId);
+    const query = EventModel.findById(eventObjectId);
     const event = await populateEvents(query);
 
     if (!event) throw new Error('Event not found');
@@ -112,13 +113,13 @@ export async function updateEvent({
     const eventObjectId = checkAndReturnObjectId(event._id);
     const userObjectId = checkAndReturnObjectId(userId);
 
-    const eventToUpdate = await Event.findById(eventObjectId);
+    const eventToUpdate = await EventModel.findById(eventObjectId);
 
     if (!eventToUpdate || eventToUpdate.organizer !== userObjectId) {
       throw new Error('Unauthorized or event not found');
     }
 
-    const updatedEvent = await Event.findByIdAndUpdate(
+    const updatedEvent = await EventModel.findByIdAndUpdate(
       eventObjectId,
       { ...event, category: event.categoryId },
       { new: true }
@@ -139,7 +140,7 @@ export async function deleteEvent({
   try {
     await connectToDatabase();
 
-    const deletedEvent = await Event.findByIdAndDelete(eventId);
+    const deletedEvent = await EventModel.findByIdAndDelete(eventId);
     if (deletedEvent) revalidatePath(path);
   } catch (error) {
     handleError(error);
@@ -223,14 +224,14 @@ async function queryAndReturnEvents(
   skipAmount: number,
   limit: number
 ): Promise<{ data?: ToJSON<IEventPopulated>[]; totalPages: number }> {
-  const eventsQuery = Event.find(conditions)
+  const eventsQuery = EventModel.find(conditions)
     .sort({ createdAt: 'desc' })
     .skip(skipAmount)
     .limit(limit);
 
   const events = await populateEvents(eventsQuery);
 
-  const eventsCount = await Event.countDocuments(conditions);
+  const eventsCount = await EventModel.countDocuments(conditions);
 
   return {
     data: events ? documentToJson(events) : undefined,
@@ -250,15 +251,15 @@ function populateEvents(
   return query
     .populate({
       path: 'organizer',
-      model: User,
+      model: UserModel,
       select: '_id firstName lastName',
     })
     .populate({
       path: 'category',
-      model: Category,
+      model: CategoryModel,
       select: '_id name',
     })
-    .populate({ path: 'location', model: Location })
+    .populate({ path: 'location', model: LocationModel })
     .lean<IEventPopulated>()
     .exec();
 }

@@ -35,4 +35,4 @@ export interface IEventPopulated
   organizer: IUser;
 }
 
-export const Event = models.Event || model<IEvent>('Event', eventSchema);
+export const EventModel = models.Event || model<IEvent>('Event', eventSchema);

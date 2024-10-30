@@ -5,19 +5,19 @@ import { handleError } from '@/lib/utils';
 import { documentToJson } from '@/lib/utils/mongoose.utils';
 import {
   ILocation,
-  Location,
-  CreateLocationParams,
+  LocationModel,
+  CreateLocationMongoParams,
 } from '@/lib/database/models/location.model';
 
 import type { ToJSON } from '@/types/utility.types';
 
 export async function createLocation(
-  location: CreateLocationParams
+  location: CreateLocationMongoParams
 ): Promise<ToJSON<ILocation> | undefined> {
   try {
     await connectToDatabase();
 
-    const createdLocation = await Location.create(location);
+    const createdLocation = await LocationModel.create(location);
 
     return documentToJson(createdLocation);
   } catch (error) {
@@ -26,7 +26,7 @@ export async function createLocation(
 }
 
 export async function createLocationIfNotExists(
-  locationParams: CreateLocationParams
+  locationParams: CreateLocationMongoParams
 ): Promise<ToJSON<ILocation> | undefined> {
   const location = await findLocationByGooglePlaceId(
     locationParams.googlePlaceId
@@ -42,7 +42,7 @@ export async function findLocationByGooglePlaceId(
 ): Promise<ToJSON<ILocation> | null> {
   await connectToDatabase();
 
-  const location = await Location.findOne({
+  const location = await LocationModel.findOne({
     googlePlaceId,
   });
 

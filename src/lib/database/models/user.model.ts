@@ -9,11 +9,11 @@ const userSchema = new Schema({
   photo: { type: String, required: true },
 });
 
-type CreateUserParams = InferSchemaType<typeof userSchema>;
+export type CreateUserMongoParams = InferSchemaType<typeof userSchema>;
 
-export type IUser = CreateUserParams & {
+export type IUser = CreateUserMongoParams & {
   _id: Types.ObjectId;
 };
 
-export const User: Model<IUser> =
+export const UserModel: Model<IUser> =
   models.User || model<IUser>('User', userSchema);

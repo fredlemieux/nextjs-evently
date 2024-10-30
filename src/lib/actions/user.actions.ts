@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import { User, Event, IUser } from '@/lib/database/models';
+import { UserModel, EventModel, IUser } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 
 import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
@@ -18,7 +18,7 @@ export async function createUser(
   try {
     await connectToDatabase();
 
-    const newUser = await User.create(user);
+    const newUser = await UserModel.create(user);
     return documentToJson(newUser);
   } catch (error) {
     handleError(error);
@@ -31,7 +31,7 @@ export async function getUserById(
   try {
     await connectToDatabase();
 
-    const user = await User.findById(userId);
+    const user = await UserModel.findById(userId);
 
     if (!user) throw new Error('User not found');
 
@@ -48,7 +48,7 @@ export async function updateUser(
   try {
     await connectToDatabase();
 
-    const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
+    const updatedUser = await UserModel.findOneAndUpdate({ clerkId }, user, {
       new: true,
     });
 
@@ -67,7 +67,7 @@ export async function deleteUser(
     await connectToDatabase();
 
     // Find user to delete
-    const userToDelete = await User.findOne({ clerkId });
+    const userToDelete = await UserModel.findOne({ clerkId });
 
     if (!userToDelete) {
       throw new Error('User not found');
@@ -76,14 +76,14 @@ export async function deleteUser(
     // Unlink relationships
     await Promise.all([
       // Update the 'events' collection to remove references to the user
-      Event.updateMany(
+      EventModel.updateMany(
         { organizer: { $in: userToDelete._id } },
         { $pull: { organizer: userToDelete._id } }
       ),
     ]);
 
     // Delete user
-    const deletedUser = await User.findByIdAndDelete(userToDelete._id);
+    const deletedUser = await UserModel.findByIdAndDelete(userToDelete._id);
 
     if (!deletedUser) throw new Error('Problem deleting user');
 
@@ -114,7 +114,7 @@ export async function getUserIdFromSessionClaims(
   if (!sessionClaims?.sub) return null;
 
   const clerkId = sessionClaims.sub;
-  const user = await User.findOne({ clerkId });
+  const user = await UserModel.findOne({ clerkId });
 
   if (!user) return null;
 
