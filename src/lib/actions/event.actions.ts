@@ -29,7 +29,7 @@ import type { Query, RootFilterQuery } from 'mongoose';
 import { getCategoryByName } from '@/lib/actions/category.actions';
 
 export type CreateEventActionParams = {
-  event: TransformObjectIdKeys<CreateEventModelParams>;
+  event: Omit<TransformObjectIdKeys<CreateEventModelParams>, 'createAt'>;
   path: string;
 };
 
@@ -41,6 +41,10 @@ export async function createEvent({
     await connectToDatabase();
 
     const { organizerId, categoryId, locationId, ...restEvent } = event;
+
+    if (!organizerId || !categoryId || !locationId) {
+      throw new Error('organizerId, categoryId and locationId are required!');
+    }
 
     const organizerObjectId = checkAndReturnObjectId(organizerId);
     const categoryObjectId = checkAndReturnObjectId(categoryId);
