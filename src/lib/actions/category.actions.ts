@@ -40,3 +40,7 @@ export const getAllCategories = async (): Promise<
     return undefined;
   }
 };
+
+export const getCategoryByName = async (name: string) => {
+  return CategoryModel.findOne({ name: { $regex: name, $options: 'i' } });
+};

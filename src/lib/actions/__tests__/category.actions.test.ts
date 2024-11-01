@@ -1,10 +1,12 @@
 import {
   createCategory,
   getAllCategories,
+  getCategoryByName,
 } from '@/lib/actions/category.actions';
 import { CategoryModel } from '@/lib/database/models';
 import { setupDatabaseTest } from '@test/utils/setupDatabaseTest';
 import { genCategoryMock } from '@test/data/category.data';
+import { seedCategory } from '@test/seeds/category.seed';
 
 describe('Category Actions', () => {
   setupDatabaseTest();
@@ -48,6 +50,18 @@ describe('Category Actions', () => {
       const res = await getAllCategories();
 
       expect(res).not.toBeInstanceOf(CategoryModel);
+    });
+  });
+
+  describe('getCategoryByName()', () => {
+    it('should return the category using the name', async () => {
+      const categorySeed = await seedCategory();
+
+      const getCategoryRes = await getCategoryByName(categorySeed.name);
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      expect(getCategoryRes.name).toEqual(categorySeed.name);
     });
   });
 });

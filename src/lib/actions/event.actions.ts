@@ -26,10 +26,7 @@ import {
 } from '@/types/parameters.types';
 import { ToJSON, TransformObjectIdKeys } from '@/types/utility.types';
 import type { Query, RootFilterQuery } from 'mongoose';
-
-const getCategoryByName = async (name: string) => {
-  return CategoryModel.findOne({ name: { $regex: name, $options: 'i' } });
-};
+import { getCategoryByName } from '@/lib/actions/category.actions';
 
 export type CreateEventActionParams = {
   event: TransformObjectIdKeys<CreateEventModelParams>;
