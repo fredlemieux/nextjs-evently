@@ -1,5 +1,7 @@
 // ====== VENUE PARAMS
 
+import { CreateUserMongoParams } from '@/lib/database/models';
+
 export interface CreateLocationParams {
   googlePlaceId: string;
   name: string;

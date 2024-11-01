@@ -3,17 +3,25 @@
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import { UserModel, EventModel, IUser } from '@/lib/database/models';
+import {
+  UserModel,
+  EventModel,
+  IUser,
+  CreateUserMongoParams,
+} from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 
-import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
 import { auth } from '@clerk/nextjs/server';
 import { JwtPayload } from '@clerk/types';
 import { ToJSON } from '@/types/utility.types';
-import { documentToJson } from '@/lib/utils/mongoose.utils';
+import {
+  checkAndReturnObjectId,
+  documentToJson,
+} from '@/lib/utils/mongoose.utils';
+import { Types } from 'mongoose';
 
 export async function createUser(
-  user: CreateUserParams
+  user: CreateUserMongoParams
 ): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
@@ -26,12 +34,14 @@ export async function createUser(
 }
 
 export async function getUserById(
-  userId: string
+  userId: string | Types.ObjectId
 ): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
-    const user = await UserModel.findById(userId);
+    const userObjectId = checkAndReturnObjectId(userId);
+
+    const user = await UserModel.findById(userObjectId);
 
     if (!user) throw new Error('User not found');
 
@@ -41,9 +51,9 @@ export async function getUserById(
   }
 }
 
-export async function updateUser(
+export async function updateUserByClerkId(
   clerkId: string,
-  user: UpdateUserParams
+  user: Partial<CreateUserMongoParams>
 ): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
