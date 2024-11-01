@@ -19,7 +19,7 @@ describe('Location Actions', () => {
       const allLocations = await LocationModel.find();
 
       expect(allLocations).toHaveLength(1);
-      expect(allLocations[0].name).toEqual(locationMock.name);
+      expect(allLocations[0]).toMatchObject(locationMock);
     });
 
     it('should return JSON not a MongoDb Model', async () => {
@@ -39,7 +39,7 @@ describe('Location Actions', () => {
       const allLocations = await LocationModel.find();
 
       expect(allLocations).toHaveLength(1);
-      expect(allLocations[0].name).toEqual(locationMock.name);
+      expect(allLocations[0]).toMatchObject(locationMock);
     });
 
     it('should not create a new location if it exists in db', async () => {
@@ -53,7 +53,7 @@ describe('Location Actions', () => {
       const allLocations = await LocationModel.find();
 
       expect(allLocations).toHaveLength(1);
-      expect(allLocations[0].name).toEqual(locationSeedJson.name);
+      expect(allLocations[0]).toMatchObject(locationSeedJson);
     });
 
     it('should not return JSON not MongoDb model', async () => {
