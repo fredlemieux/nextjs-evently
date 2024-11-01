@@ -1,7 +1,9 @@
 import { genUserMock } from '@test/data/user.data';
-import { IUser, UserModel } from '@/lib/database/models';
+import { CreateUserMongoParams, IUser, UserModel } from '@/lib/database/models';
 
-export async function seedUser(): Promise<IUser> {
-  const userMock = genUserMock();
+export async function seedUser(
+  seedData?: CreateUserMongoParams
+): Promise<IUser> {
+  const userMock = seedData ? seedData : genUserMock();
   return await UserModel.create(userMock);
 }
