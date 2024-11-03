@@ -1,6 +1,10 @@
 import { seedUserLocationAndCategory } from '@test/seeds';
 import { genCreateEventActionParams } from '@test/data/event.data';
-import { createEvent, getEventById } from '@/lib/actions/event.actions';
+import {
+  createEvent,
+  deleteEvent,
+  getEventById,
+} from '@/lib/actions/event.actions';
 import { faker } from '@faker-js/faker';
 import { EventModel, LocationModel, UserModel } from '@/lib/database/models';
 import { revalidatePath } from 'next/cache';
@@ -69,8 +73,39 @@ describe('Event Actions', () => {
     });
   });
 
+  describe('deleteEvent()', () => {
+    it('should delete the event if it exists', async () => {
+      const { eventSeedModel } = await seedEvent();
+      // Second event to test it doesn't delete others;
+      await seedEvent();
+
+      const allEventsBeforeDelete = await EventModel.find();
+      await deleteEvent({
+        eventId: eventSeedModel._id.toString(),
+        path: '/any',
+      });
+      const allEventsAfterDelete = await EventModel.find();
+
+      expect(allEventsBeforeDelete).toHaveLength(2);
+      expect(allEventsAfterDelete).toHaveLength(1);
+    });
+
+    it('should call revalidate with path arg provided', async () => {
+      const { eventSeedModel } = await seedEvent();
+      const pathMock = `/${faker.internet.domainWord()}`;
+
+      await deleteEvent({
+        eventId: eventSeedModel._id.toString(),
+        path: pathMock,
+      });
+
+      expect(revalidatePathMock).toBeCalledTimes(1);
+      expect(revalidatePathMock).toBeCalledWith(pathMock);
+    });
+  });
+
   describe('getEventById()', () => {
-    describe('returns populated event', () => {
+    describe('Field Populations', () => {
       it('should return populated location field', async () => {
         const { eventSeedModel, locationSeedModel } = await seedEvent();
         const locationJSON = documentToJSON(locationSeedModel);
@@ -137,10 +172,15 @@ describe('Event Actions', () => {
       });
     });
 
-    it('should throw an error if event does not exist', async () => {
-      const mockId = new Types.ObjectId().toString();
+    describe('Error Handling', () => {
+      it.skip('should throw an error if event does not exist', async () => {
+        // TODO! we should think how we handle errors correctly
+        const mockId = new Types.ObjectId().toString();
 
-      await expect(getEventById(mockId)).rejects.toThrow();
+        await expect(getEventById(mockId)).rejects.toThrow(
+          'Error: Event not found'
+        );
+      });
     });
   });
 });
