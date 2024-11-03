@@ -6,15 +6,15 @@ import { IUser } from '@/lib/database/models/user.model';
 export const eventSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now, required: false },
   location: {
     type: Schema.Types.ObjectId,
     ref: 'Location',
     required: true,
   },
   imageUrl: { type: String, default: '' },
-  startDateTime: { type: Date, default: Date.now },
-  endDateTime: { type: Date, default: Date.now },
+  startDateTime: { type: Date, required: true },
+  endDateTime: { type: Date, required: true },
   price: { type: Number, default: null },
   isFree: { type: Boolean, default: false },
   url: { type: String, default: '' },

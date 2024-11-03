@@ -29,9 +29,11 @@ import type { Query, RootFilterQuery } from 'mongoose';
 import { getCategoryByName } from '@/lib/actions/category.actions';
 
 export type CreateEventActionParams = {
-  event: Omit<TransformObjectIdKeys<CreateEventModelParams>, 'createAt'>;
+  event: CreateEventParams;
   path: string;
 };
+
+export type CreateEventParams = TransformObjectIdKeys<CreateEventModelParams>;
 
 export async function createEvent({
   event,
@@ -40,28 +42,9 @@ export async function createEvent({
   try {
     await connectToDatabase();
 
-    const { organizerId, categoryId, locationId, ...restEvent } = event;
+    const createEventModelParams = await getCreateEventModelParams(event);
 
-    if (!organizerId || !categoryId || !locationId) {
-      throw new Error('organizerId, categoryId and locationId are required!');
-    }
-
-    const organizerObjectId = checkAndReturnObjectId(organizerId);
-    const categoryObjectId = checkAndReturnObjectId(categoryId);
-    const locationObjectId = checkAndReturnObjectId(locationId);
-
-    const organizer = await UserModel.findById(organizerObjectId);
-
-    if (!organizer) throw new Error('Organizer not found');
-
-    const createEventParams: CreateEventModelParams = {
-      ...restEvent,
-      category: categoryObjectId,
-      organizer: organizerObjectId,
-      location: locationObjectId,
-    };
-
-    const newEvent: IEvent = await EventModel.create(createEventParams);
+    const newEvent: IEvent = await EventModel.create(createEventModelParams);
 
     revalidatePath(path);
 
@@ -71,9 +54,36 @@ export async function createEvent({
   }
 }
 
+async function getCreateEventModelParams(
+  event: CreateEventParams
+): Promise<CreateEventModelParams> {
+  const { organizerId, categoryId, locationId, ...restEvent } = event;
+
+  if (!organizerId || !categoryId || !locationId) {
+    throw new Error('organizerId, categoryId and locationId are required!');
+  }
+
+  const organizerObjectId = checkAndReturnObjectId(organizerId);
+  const categoryObjectId = checkAndReturnObjectId(categoryId);
+  const locationObjectId = checkAndReturnObjectId(locationId);
+
+  const organizer = await UserModel.findById(organizerObjectId);
+
+  if (!organizer) throw new Error('Organizer not found');
+
+  return {
+    ...restEvent,
+    category: categoryObjectId,
+    organizer: organizerObjectId,
+    location: locationObjectId,
+  };
+}
+
+// TODO! Fetching new page for related event fetches event data again...
+// Seperate?
 export async function getEventDetailsData(
   eventId: string,
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: { page: string } | undefined
 ): Promise<{
   event: ToJSON<IEventPopulated>;
   relatedEvents?: {
@@ -88,7 +98,7 @@ export async function getEventDetailsData(
   const relatedEvents = await getRelatedEventsByCategory({
     eventId: event._id,
     categoryId: event.category._id,
-    page: searchParams.page as string, // TODO! Type properly
+    page: searchParams?.page as string,
   });
 
   return { event, relatedEvents };
