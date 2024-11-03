@@ -2,7 +2,7 @@
 
 import { connectToDatabase } from '@/lib/database';
 import { handleError } from '@/lib/utils';
-import { documentToJson } from '@/lib/utils/mongoose.utils';
+import { documentToJSON } from '@/lib/utils/mongoose.utils';
 import {
   ILocation,
   LocationModel,
@@ -19,7 +19,7 @@ export async function createLocation(
 
     const createdLocation = await LocationModel.create(location);
 
-    return documentToJson(createdLocation);
+    return documentToJSON(createdLocation);
   } catch (error) {
     handleError(error);
   }
@@ -46,5 +46,5 @@ async function findLocationByGooglePlaceId(
     googlePlaceId,
   });
 
-  return documentToJson(location);
+  return documentToJSON(location);
 }

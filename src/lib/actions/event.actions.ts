@@ -14,7 +14,7 @@ import {
 import { handleError } from '@/lib/utils';
 import {
   checkAndReturnObjectId,
-  documentToJson,
+  documentToJSON,
 } from '@/lib/utils/mongoose.utils';
 
 import {
@@ -48,7 +48,7 @@ export async function createEvent({
 
     revalidatePath(path);
 
-    return documentToJson(newEvent);
+    return documentToJSON(newEvent);
   } catch (error) {
     handleError(error);
   }
@@ -117,7 +117,7 @@ export async function getEventById(
 
     if (!event) throw new Error('Event not found');
 
-    return documentToJson(event);
+    return documentToJSON(event);
   } catch (error) {
     handleError(error);
   }
@@ -148,7 +148,7 @@ export async function updateEvent({
 
     revalidatePath(path);
 
-    return documentToJson<IEvent>(updatedEvent);
+    return documentToJSON<IEvent>(updatedEvent);
   } catch (error) {
     handleError(error);
   }
@@ -255,7 +255,7 @@ async function queryAndReturnEvents(
   const eventsCount = await EventModel.countDocuments(conditions);
 
   return {
-    data: events ? documentToJson(events) : undefined,
+    data: events ? documentToJSON(events) : undefined,
     totalPages: Math.ceil(eventsCount / limit),
   };
 }

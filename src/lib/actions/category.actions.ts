@@ -8,7 +8,7 @@ import {
 } from '@/lib/database/models';
 import { ToJSON } from '@/types/utility.types';
 import { handleError } from '../utils';
-import { documentToJson } from '@/lib/utils/mongoose.utils';
+import { documentToJSON } from '@/lib/utils/mongoose.utils';
 
 export const createCategory = async ({
   name,
@@ -20,7 +20,7 @@ export const createCategory = async ({
       name,
     });
 
-    return documentToJson(newCategory);
+    return documentToJSON(newCategory);
   } catch (error) {
     handleError(error);
   }
@@ -34,7 +34,7 @@ export const getAllCategories = async (): Promise<
 
     const categories = await CategoryModel.find();
 
-    return documentToJson(categories);
+    return documentToJSON(categories);
   } catch (error) {
     handleError(error);
     return undefined;

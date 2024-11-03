@@ -2,10 +2,12 @@ import { seedUserLocationAndCategory } from '@test/seeds';
 import { genCreateEventActionParams } from '@test/data/event.data';
 import { createEvent, getEventById } from '@/lib/actions/event.actions';
 import { faker } from '@faker-js/faker';
-import { EventModel } from '@/lib/database/models';
+import { EventModel, LocationModel, UserModel } from '@/lib/database/models';
 import { revalidatePath } from 'next/cache';
 import { setupDatabaseTest } from '@test/utils/setupDatabaseTest';
-import { ToJSON } from '@/types/utility.types';
+import { seedEvent } from '@test/seeds/event.seed';
+import { Types } from 'mongoose';
+import { documentToJSON } from '@/lib/utils/mongoose.utils';
 
 jest.mock('next/cache');
 // https://stackoverflow.com/questions/48759035/mock-dependency-in-jest-with-typescript
@@ -17,10 +19,6 @@ describe('Event Actions', () => {
   beforeEach(() => {
     revalidatePathMock.mockReset();
   });
-
-  function convertMockToJSON<T>(object: T): ToJSON<T> {
-    return JSON.parse(JSON.stringify(object));
-  }
 
   describe('createEvent()', () => {
     async function setupCreateEventTest() {
@@ -59,7 +57,7 @@ describe('Event Actions', () => {
       expect(allEvents).toHaveLength(1);
       expect(allEvents[0]).toMatchObject({ ...restEventMock });
       expect(createEventRes).toMatchObject({
-        ...convertMockToJSON(restEventMock),
+        ...documentToJSON(restEventMock),
       });
     });
 
@@ -72,6 +70,77 @@ describe('Event Actions', () => {
   });
 
   describe('getEventById()', () => {
-    it('should return event in JSON format if event exists', async () => {});
+    describe('returns populated event', () => {
+      it('should return populated location field', async () => {
+        const { eventSeedModel, locationSeedModel } = await seedEvent();
+        const locationJSON = documentToJSON(locationSeedModel);
+
+        const getEventByIdRes = await getEventById(
+          eventSeedModel._id.toString()
+        );
+
+        expect(getEventByIdRes?.location).toMatchObject(locationJSON);
+        expect(getEventByIdRes).not.toBeInstanceOf(LocationModel);
+      });
+
+      it('should return populated organizer field', async () => {
+        const { eventSeedModel, userSeedModel } = await seedEvent();
+        const userJSON = documentToJSON(userSeedModel);
+
+        const getEventByIdRes = await getEventById(
+          eventSeedModel._id.toString()
+        );
+
+        if (!getEventByIdRes) {
+          throw new Error('No Event Returned');
+        }
+
+        expect(userJSON).toMatchObject(getEventByIdRes?.organizer);
+        expect(getEventByIdRes?.organizer);
+        expect(getEventByIdRes).not.toBeInstanceOf(UserModel);
+      });
+
+      it('should return populated category field', async () => {
+        const { eventSeedModel, categorySeedModel } = await seedEvent();
+        const categoryJSON = documentToJSON(categorySeedModel);
+
+        const getEventByIdRes = await getEventById(
+          eventSeedModel._id.toString()
+        );
+
+        if (!getEventByIdRes) {
+          throw new Error('No Event Returned');
+        }
+
+        expect(categoryJSON).toMatchObject(getEventByIdRes?.category);
+        expect(getEventByIdRes.organizer).not.toBeInstanceOf(UserModel);
+      });
+
+      it('unpopulated fields should remain', async () => {
+        const { eventSeedModel } = await seedEvent();
+        const eventSeedJSON = documentToJSON(eventSeedModel);
+
+        const getEventByIdRes = await getEventById(
+          eventSeedModel._id.toString()
+        );
+
+        if (!getEventByIdRes) {
+          throw new Error('No Event Returned');
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { organizer, location, category, ...restEventRes } =
+          getEventByIdRes;
+
+        expect(eventSeedJSON).toMatchObject(restEventRes);
+        expect(getEventByIdRes).not.toBeInstanceOf(EventModel);
+      });
+    });
+
+    it('should throw an error if event does not exist', async () => {
+      const mockId = new Types.ObjectId().toString();
+
+      await expect(getEventById(mockId)).rejects.toThrow();
+    });
   });
 });

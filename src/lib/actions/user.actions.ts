@@ -16,7 +16,7 @@ import { JwtPayload } from '@clerk/types';
 import { ToJSON } from '@/types/utility.types';
 import {
   checkAndReturnObjectId,
-  documentToJson,
+  documentToJSON,
 } from '@/lib/utils/mongoose.utils';
 import { Types } from 'mongoose';
 
@@ -27,7 +27,7 @@ export async function createUser(
     await connectToDatabase();
 
     const newUser = await UserModel.create(user);
-    return documentToJson(newUser);
+    return documentToJSON(newUser);
   } catch (error) {
     handleError(error);
   }
@@ -45,7 +45,7 @@ export async function getUserById(
 
     if (!user) throw new Error('User not found');
 
-    return documentToJson(user);
+    return documentToJSON(user);
   } catch (error) {
     handleError(error);
   }
@@ -64,7 +64,7 @@ export async function updateUserByClerkId(
 
     if (!updatedUser) throw new Error('User update failed');
 
-    return documentToJson(updatedUser);
+    return documentToJSON(updatedUser);
   } catch (error) {
     handleError(error);
   }
@@ -99,7 +99,7 @@ export async function deleteUser(
 
     revalidatePath('/');
 
-    return documentToJson<IUser>(deletedUser);
+    return documentToJSON<IUser>(deletedUser);
   } catch (error) {
     handleError(error);
   }
