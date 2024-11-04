@@ -13,11 +13,11 @@ const locationSchema = new Schema({
 
 locationSchema.index({ googlePlaceId: 1 });
 
-export type CreateLocationParams = InferSchemaType<typeof locationSchema>;
+export type CreateLocationMongoParams = InferSchemaType<typeof locationSchema>;
 
-export type ILocation = CreateLocationParams & {
+export type ILocation = CreateLocationMongoParams & {
   _id: Types.ObjectId;
 };
 
-export const Location: Model<ILocation> =
+export const LocationModel: Model<ILocation> =
   models.Location || model<ILocation>('Location', locationSchema);

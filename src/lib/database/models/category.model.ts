@@ -4,11 +4,11 @@ const categorySchema = new Schema({
   name: { type: String, required: true, unique: true },
 });
 
-export type CreateCategoryParams = InferSchemaType<typeof categorySchema>;
+export type CreateCategoryMongoParams = InferSchemaType<typeof categorySchema>;
 
-export type ICategory = CreateCategoryParams & {
+export type ICategory = CreateCategoryMongoParams & {
   _id: Types.ObjectId;
 };
 
-export const Category: Model<ICategory> =
+export const CategoryModel: Model<ICategory> =
   models.Category || model<ICategory>('Category', categorySchema);

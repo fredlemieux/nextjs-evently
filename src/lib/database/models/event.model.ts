@@ -6,15 +6,15 @@ import { IUser } from '@/lib/database/models/user.model';
 export const eventSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now, required: false },
   location: {
     type: Schema.Types.ObjectId,
     ref: 'Location',
     required: true,
   },
   imageUrl: { type: String, default: '' },
-  startDateTime: { type: Date, default: Date.now },
-  endDateTime: { type: Date, default: Date.now },
+  startDateTime: { type: Date, required: true },
+  endDateTime: { type: Date, required: true },
   price: { type: String, default: '' },
   isFree: { type: Boolean, default: false },
   url: { type: String, default: '' },
@@ -22,9 +22,9 @@ export const eventSchema = new Schema({
   organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
-export type CreateEventParams = InferSchemaType<typeof eventSchema>;
+export type CreateEventModelParams = InferSchemaType<typeof eventSchema>;
 
-export type IEvent = CreateEventParams & {
+export type IEvent = CreateEventModelParams & {
   _id: Types.ObjectId;
 };
 
@@ -35,4 +35,4 @@ export interface IEventPopulated
   organizer: IUser;
 }
 
-export const Event = models.Event || model<IEvent>('Event', eventSchema);
+export const EventModel = models.Event || model<IEvent>('Event', eventSchema);

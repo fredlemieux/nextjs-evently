@@ -1,7 +1,11 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { UserJSON, WebhookEvent, clerkClient } from '@clerk/nextjs/server';
-import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions';
+import {
+  createUser,
+  deleteUser,
+  updateUserByClerkId,
+} from '@/lib/actions/user.actions';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -75,7 +79,7 @@ export async function POST(req: Request) {
   if (eventType === 'user.updated') {
     const { clerkId, ...user } = createUpdateUserObject(evt.data);
 
-    const updatedUser = await updateUser(clerkId, user);
+    const updatedUser = await updateUserByClerkId(clerkId, user);
 
     return NextResponse.json({ message: 'OK', user: updatedUser });
   }

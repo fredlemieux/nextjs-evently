@@ -2,25 +2,25 @@
 
 import { connectToDatabase } from '../database';
 import {
-  Category,
-  CreateCategoryParams,
+  CategoryModel,
+  CreateCategoryMongoParams,
   ICategory,
 } from '@/lib/database/models';
 import { ToJSON } from '@/types/utility.types';
 import { handleError } from '../utils';
-import { documentToJson } from '@/lib/utils/mongoose.utils';
+import { documentToJSON } from '@/lib/utils/mongoose.utils';
 
 export const createCategory = async ({
   name,
-}: CreateCategoryParams): Promise<ToJSON<ICategory> | undefined> => {
+}: CreateCategoryMongoParams): Promise<ToJSON<ICategory> | undefined> => {
   try {
     await connectToDatabase();
 
-    const newCategory = await Category.create({
+    const newCategory = await CategoryModel.create({
       name,
     });
 
-    return documentToJson(newCategory);
+    return documentToJSON(newCategory);
   } catch (error) {
     handleError(error);
   }
@@ -32,11 +32,15 @@ export const getAllCategories = async (): Promise<
   try {
     await connectToDatabase();
 
-    const categories = await Category.find();
+    const categories = await CategoryModel.find();
 
-    return documentToJson(categories);
+    return documentToJSON(categories);
   } catch (error) {
     handleError(error);
     return undefined;
   }
+};
+
+export const getCategoryByName = async (name: string) => {
+  return CategoryModel.findOne({ name: { $regex: name, $options: 'i' } });
 };

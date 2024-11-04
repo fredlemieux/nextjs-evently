@@ -1,5 +1,4 @@
 // ====== VENUE PARAMS
-
 export interface CreateLocationParams {
   googlePlaceId: string;
   name: string;
@@ -12,51 +11,21 @@ export interface CreateLocationParams {
 }
 
 // ====== USER PARAMS
-export type CreateUserParams = {
-  clerkId: string;
-  firstName: string;
-  lastName: string;
-  username: string;
-  email: string;
-  photo: string;
-};
-
-export type UpdateUserParams = {
-  firstName: string;
-  lastName: string;
-  username: string;
-  photo: string;
-};
 
 // ====== EVENT PARAMS
-export type CreateEventParams = {
-  userId: string;
-  event: {
-    title: string;
-    description: string;
-    location: string;
-    imageUrl: string;
-    startDateTime: Date;
-    endDateTime: Date;
-    categoryId: string;
-    price: string;
-    isFree: boolean;
-    url: string;
-  };
-  path: string;
-};
 
-export type UpdateEventParams = {
+export type UpdateEventActionParams = {
   userId: string;
   event: {
     _id: string;
+    locationId: string;
+    categoryId: string;
+    organizerId: string;
     title: string;
     imageUrl: string;
     description: string;
-    location: string;
     startDateTime: Date;
     endDateTime: Date;
-    categoryId: string;
     price: string;
     isFree: boolean;
     url: string;

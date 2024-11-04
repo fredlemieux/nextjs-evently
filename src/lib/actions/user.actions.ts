@@ -3,58 +3,68 @@
 import { revalidatePath } from 'next/cache';
 
 import { connectToDatabase } from '@/lib/database';
-import { User, Event, IUser } from '@/lib/database/models';
+import {
+  UserModel,
+  EventModel,
+  IUser,
+  CreateUserMongoParams,
+} from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 
-import { CreateUserParams, UpdateUserParams } from '@/types/parameters.types';
 import { auth } from '@clerk/nextjs/server';
 import { JwtPayload } from '@clerk/types';
 import { ToJSON } from '@/types/utility.types';
-import { documentToJson } from '@/lib/utils/mongoose.utils';
+import {
+  checkAndReturnObjectId,
+  documentToJSON,
+} from '@/lib/utils/mongoose.utils';
+import { Types } from 'mongoose';
 
 export async function createUser(
-  user: CreateUserParams
+  user: CreateUserMongoParams
 ): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
-    const newUser = await User.create(user);
-    return documentToJson(newUser);
+    const newUser = await UserModel.create(user);
+    return documentToJSON(newUser);
   } catch (error) {
     handleError(error);
   }
 }
 
 export async function getUserById(
-  userId: string
+  userId: string | Types.ObjectId
 ): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
-    const user = await User.findById(userId);
+    const userObjectId = checkAndReturnObjectId(userId);
+
+    const user = await UserModel.findById(userObjectId);
 
     if (!user) throw new Error('User not found');
 
-    return documentToJson(user);
+    return documentToJSON(user);
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function updateUser(
+export async function updateUserByClerkId(
   clerkId: string,
-  user: UpdateUserParams
+  user: Partial<CreateUserMongoParams>
 ): Promise<ToJSON<IUser> | undefined> {
   try {
     await connectToDatabase();
 
-    const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
+    const updatedUser = await UserModel.findOneAndUpdate({ clerkId }, user, {
       new: true,
     });
 
     if (!updatedUser) throw new Error('User update failed');
 
-    return documentToJson(updatedUser);
+    return documentToJSON(updatedUser);
   } catch (error) {
     handleError(error);
   }
@@ -67,7 +77,7 @@ export async function deleteUser(
     await connectToDatabase();
 
     // Find user to delete
-    const userToDelete = await User.findOne({ clerkId });
+    const userToDelete = await UserModel.findOne({ clerkId });
 
     if (!userToDelete) {
       throw new Error('User not found');
@@ -76,20 +86,20 @@ export async function deleteUser(
     // Unlink relationships
     await Promise.all([
       // Update the 'events' collection to remove references to the user
-      Event.updateMany(
+      EventModel.updateMany(
         { organizer: { $in: userToDelete._id } },
         { $pull: { organizer: userToDelete._id } }
       ),
     ]);
 
     // Delete user
-    const deletedUser = await User.findByIdAndDelete(userToDelete._id);
+    const deletedUser = await UserModel.findByIdAndDelete(userToDelete._id);
 
     if (!deletedUser) throw new Error('Problem deleting user');
 
     revalidatePath('/');
 
-    return documentToJson<IUser>(deletedUser);
+    return documentToJSON<IUser>(deletedUser);
   } catch (error) {
     handleError(error);
   }
@@ -114,7 +124,7 @@ export async function getUserIdFromSessionClaims(
   if (!sessionClaims?.sub) return null;
 
   const clerkId = sessionClaims.sub;
-  const user = await User.findOne({ clerkId });
+  const user = await UserModel.findOne({ clerkId });
 
   if (!user) return null;
 

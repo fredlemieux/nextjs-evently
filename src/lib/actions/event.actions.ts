@@ -3,62 +3,85 @@
 import { revalidatePath } from 'next/cache';
 import { connectToDatabase } from '@/lib/database';
 import {
-  Event,
+  EventModel,
   IEvent,
-  Category,
-  User,
-  Location,
+  CategoryModel,
+  UserModel,
+  LocationModel,
   IEventPopulated,
+  CreateEventModelParams,
 } from '@/lib/database/models';
 import { handleError } from '@/lib/utils';
 import {
   checkAndReturnObjectId,
-  documentToJson,
+  documentToJSON,
 } from '@/lib/utils/mongoose.utils';
 
-import type {
-  CreateEventParams,
-  UpdateEventParams,
+import {
+  UpdateEventActionParams,
   DeleteEventParams,
   GetAllEventsParams,
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
 } from '@/types/parameters.types';
-import type { ToJSON } from '@/types/utility.types';
+import { ToJSON, TransformObjectIdKeys } from '@/types/utility.types';
 import type { Query, RootFilterQuery } from 'mongoose';
+import { getCategoryByName } from '@/lib/actions/category.actions';
 
-const getCategoryByName = async (name: string) => {
-  return Category.findOne({ name: { $regex: name, $options: 'i' } });
+export type CreateEventActionParams = {
+  event: CreateEventParams;
+  path: string;
 };
 
+export type CreateEventParams = TransformObjectIdKeys<CreateEventModelParams>;
+export type UpdateEventParams = TransformObjectIdKeys<IEvent>;
+
 export async function createEvent({
-  userId,
   event,
   path,
-}: CreateEventParams): Promise<ToJSON<IEvent> | undefined> {
+}: CreateEventActionParams): Promise<ToJSON<IEvent> | undefined> {
   try {
     await connectToDatabase();
 
-    const userObjectId = checkAndReturnObjectId(userId);
+    const createEventModelParams = await getCreateEventModelParams(event);
 
-    const organizer = await User.findById(userObjectId);
-
-    if (!organizer) throw new Error('Organizer not found');
-
-    const newEvent: IEvent = await Event.create({
-      ...event,
-      category: checkAndReturnObjectId(event.categoryId),
-      organizer: userObjectId,
-    });
+    const newEvent: IEvent = await EventModel.create(createEventModelParams);
 
     revalidatePath(path);
 
-    return documentToJson(newEvent);
+    return documentToJSON(newEvent);
   } catch (error) {
     handleError(error);
   }
 }
 
+async function getCreateEventModelParams(
+  event: CreateEventParams
+): Promise<CreateEventModelParams> {
+  const { organizerId, categoryId, locationId, ...restEvent } = event;
+
+  if (!organizerId || !categoryId || !locationId) {
+    throw new Error('organizerId, categoryId and locationId are required!');
+  }
+
+  const organizerObjectId = checkAndReturnObjectId(organizerId);
+  const categoryObjectId = checkAndReturnObjectId(categoryId);
+  const locationObjectId = checkAndReturnObjectId(locationId);
+
+  const organizer = await UserModel.findById(organizerObjectId);
+
+  if (!organizer) throw new Error('Organizer not found');
+
+  return {
+    ...restEvent,
+    category: categoryObjectId,
+    organizer: organizerObjectId,
+    location: locationObjectId,
+  };
+}
+
+// TODO! Fetching new page for related event fetches event data again...
+// Seperate?
 export async function getEventDetailsData(
   eventId: string,
   searchParams: { [key: string]: string | string[] | undefined }
@@ -76,7 +99,7 @@ export async function getEventDetailsData(
   const relatedEvents = await getRelatedEventsByCategory({
     eventId: event._id,
     categoryId: event.category._id,
-    page: searchParams.page as string, // TODO! Type properly
+    page: searchParams?.page as string,
   });
 
   return { event, relatedEvents };
@@ -90,12 +113,12 @@ export async function getEventById(
 
     const eventObjectId = checkAndReturnObjectId(eventId);
 
-    const query = Event.findById(eventObjectId);
+    const query = EventModel.findById(eventObjectId);
     const event = await populateEvents(query);
 
     if (!event) throw new Error('Event not found');
 
-    return documentToJson(event);
+    return documentToJSON(event);
   } catch (error) {
     handleError(error);
   }
@@ -105,28 +128,32 @@ export async function updateEvent({
   userId,
   event,
   path,
-}: UpdateEventParams): Promise<ToJSON<IEvent> | undefined> {
+}: UpdateEventActionParams): Promise<ToJSON<IEvent> | undefined> {
   try {
     await connectToDatabase();
 
     const eventObjectId = checkAndReturnObjectId(event._id);
-    const userObjectId = checkAndReturnObjectId(userId);
 
-    const eventToUpdate = await Event.findById(eventObjectId);
+    const eventToUpdate = await EventModel.findById(eventObjectId);
 
-    if (!eventToUpdate || eventToUpdate.organizer !== userObjectId) {
+    if (!eventToUpdate || eventToUpdate.organizer.toString() !== userId) {
       throw new Error('Unauthorized or event not found');
     }
 
-    const updatedEvent = await Event.findByIdAndUpdate(
+    const updatedEvent = await EventModel.findByIdAndUpdate(
       eventObjectId,
-      { ...event, category: event.categoryId },
+      {
+        ...event,
+        category: event.categoryId,
+        organizer: event.organizerId,
+        location: event.locationId,
+      },
       { new: true }
     );
 
     revalidatePath(path);
 
-    return documentToJson<IEvent>(updatedEvent);
+    return documentToJSON<IEvent>(updatedEvent);
   } catch (error) {
     handleError(error);
   }
@@ -139,7 +166,7 @@ export async function deleteEvent({
   try {
     await connectToDatabase();
 
-    const deletedEvent = await Event.findByIdAndDelete(eventId);
+    const deletedEvent = await EventModel.findByIdAndDelete(eventId);
     if (deletedEvent) revalidatePath(path);
   } catch (error) {
     handleError(error);
@@ -223,17 +250,17 @@ async function queryAndReturnEvents(
   skipAmount: number,
   limit: number
 ): Promise<{ data?: ToJSON<IEventPopulated>[]; totalPages: number }> {
-  const eventsQuery = Event.find(conditions)
+  const eventsQuery = EventModel.find(conditions)
     .sort({ createdAt: 'desc' })
     .skip(skipAmount)
     .limit(limit);
 
   const events = await populateEvents(eventsQuery);
 
-  const eventsCount = await Event.countDocuments(conditions);
+  const eventsCount = await EventModel.countDocuments(conditions);
 
   return {
-    data: events ? documentToJson(events) : undefined,
+    data: events ? documentToJSON(events) : undefined,
     totalPages: Math.ceil(eventsCount / limit),
   };
 }
@@ -250,15 +277,15 @@ function populateEvents(
   return query
     .populate({
       path: 'organizer',
-      model: User,
+      model: UserModel,
       select: '_id firstName lastName',
     })
     .populate({
       path: 'category',
-      model: Category,
+      model: CategoryModel,
       select: '_id name',
     })
-    .populate({ path: 'location', model: Location })
+    .populate({ path: 'location', model: LocationModel })
     .lean<IEventPopulated>()
     .exec();
 }

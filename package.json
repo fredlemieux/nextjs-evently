@@ -38,10 +38,12 @@
     "svix": "^1.37.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "ts-node": "^10.9.2",
     "uploadthing": "^7.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.1.0",
     "@types/jest": "^29.5.13",
     "@types/node": "^20",
     "@types/react": "^18",
