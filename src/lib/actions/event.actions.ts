@@ -18,7 +18,7 @@ import {
 } from '@/lib/utils/mongoose.utils';
 
 import {
-  UpdateEventParams,
+  UpdateEventActionParams,
   DeleteEventParams,
   GetAllEventsParams,
   GetEventsByUserParams,
@@ -34,6 +34,7 @@ export type CreateEventActionParams = {
 };
 
 export type CreateEventParams = TransformObjectIdKeys<CreateEventModelParams>;
+export type UpdateEventParams = TransformObjectIdKeys<IEvent>;
 
 export async function createEvent({
   event,
