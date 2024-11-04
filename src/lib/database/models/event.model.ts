@@ -15,7 +15,7 @@ export const eventSchema = new Schema({
   imageUrl: { type: String, default: '' },
   startDateTime: { type: Date, required: true },
   endDateTime: { type: Date, required: true },
-  price: { type: Number, default: null },
+  price: { type: String, default: '' },
   isFree: { type: Boolean, default: false },
   url: { type: String, default: '' },
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },

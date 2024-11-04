@@ -128,22 +128,26 @@ export async function updateEvent({
   userId,
   event,
   path,
-}: UpdateEventParams): Promise<ToJSON<IEvent> | undefined> {
+}: UpdateEventActionParams): Promise<ToJSON<IEvent> | undefined> {
   try {
     await connectToDatabase();
 
     const eventObjectId = checkAndReturnObjectId(event._id);
-    const userObjectId = checkAndReturnObjectId(userId);
 
     const eventToUpdate = await EventModel.findById(eventObjectId);
 
-    if (!eventToUpdate || eventToUpdate.organizer !== userObjectId) {
+    if (!eventToUpdate || eventToUpdate.organizer.toString() !== userId) {
       throw new Error('Unauthorized or event not found');
     }
 
     const updatedEvent = await EventModel.findByIdAndUpdate(
       eventObjectId,
-      { ...event, category: event.categoryId },
+      {
+        ...event,
+        category: event.categoryId,
+        organizer: event.organizerId,
+        location: event.locationId,
+      },
       { new: true }
     );
 
