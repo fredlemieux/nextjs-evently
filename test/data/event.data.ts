@@ -46,7 +46,7 @@ export function genCreateEventActionParams({
     startDateTime: new Date(),
     endDateTime: faker.date.future(),
     isFree: faker.datatype.boolean(),
-    price: faker.number.int({ min: 1, max: 20 }),
+    price: String(faker.number.int({ min: 1, max: 20 })),
     title: faker.word.words(),
     url: faker.internet.url(),
   };

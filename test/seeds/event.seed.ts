@@ -10,7 +10,6 @@ import { seedUser } from '@test/seeds/user.seed';
 import { seedCategory } from '@test/seeds/category.seed';
 import { seedLocation } from '@test/seeds/location.seed';
 import { genEventMock } from '@test/data/event.data';
-import { ca } from 'date-fns/locale';
 
 export async function seedEvent({
   categoryModel,
@@ -20,7 +19,7 @@ export async function seedEvent({
   userModel?: IUser;
   categoryModel?: ICategory;
   locationModel?: ILocation;
-}): Promise<{
+} = {}): Promise<{
   userSeedModel: IUser;
   eventMock: CreateEventModelParams;
   eventSeedModel: IEvent;
