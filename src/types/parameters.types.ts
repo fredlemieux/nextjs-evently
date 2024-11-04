@@ -14,17 +14,18 @@ export interface CreateLocationParams {
 
 // ====== EVENT PARAMS
 
-export type UpdateEventParams = {
+export type UpdateEventActionParams = {
   userId: string;
   event: {
     _id: string;
+    locationId: string;
+    categoryId: string;
+    organizerId: string;
     title: string;
     imageUrl: string;
     description: string;
-    location: string;
     startDateTime: Date;
     endDateTime: Date;
-    categoryId: string;
     price: string;
     isFree: boolean;
     url: string;
