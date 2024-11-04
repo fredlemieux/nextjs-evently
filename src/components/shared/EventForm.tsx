@@ -110,9 +110,9 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
       inputRef.current,
       options
     );
+
     autocomplete.addListener('place_changed', () => {
       const placeResult = autocomplete.getPlace();
-      console.log('PLACE:', placeResult);
 
       if (placeResult.formatted_address) {
         setPlace(placeResult);
@@ -174,10 +174,10 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         const newEvent = await createEvent({
           event: {
             ...values,
-            location: location._id,
+            locationId: location._id,
+            organizerId: userId,
             imageUrl: uploadedImageUrl,
           },
-          userId,
           path: '/profile',
         });
 
@@ -189,10 +189,23 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
       }
     }
 
-    if (type === 'Update') {
+    // TODO! We can remove the type from props, not necessary
+    if (type === 'Update' && event) {
       if (!eventId) {
         router.back();
         return;
+      }
+
+      let locationId;
+
+      if (form.getFieldState('location').isDirty) {
+        if (!place) throw new Error('No location selected!!');
+        const locationParams = await getLocationParamsFromPlace(place);
+        const location = await createLocationIfNotExists(locationParams);
+        if (!location) throw new Error('No location could be created');
+        locationId = location._id;
+      } else {
+        locationId = event?.location._id;
       }
 
       try {
@@ -200,8 +213,10 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           userId,
           event: {
             ...values,
-            imageUrl: uploadedImageUrl,
             _id: eventId,
+            locationId,
+            organizerId: userId,
+            imageUrl: uploadedImageUrl,
           },
           path: `/events/${eventId}`,
         });
@@ -314,7 +329,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                       onBlur={onBlur}
                       onChange={onChange}
                       disabled={disabled}
-                      placeholder='Event location or Online'
+                      placeholder='Event location'
                       className='input-field'
                     />
                   </div>
