@@ -84,7 +84,7 @@ async function getCreateEventModelParams(
 // Seperate?
 export async function getEventDetailsData(
   eventId: string,
-  searchParams: { page: string } | undefined
+  searchParams: { [key: string]: string | string[] | undefined }
 ): Promise<{
   event: ToJSON<IEventPopulated>;
   relatedEvents?: {
