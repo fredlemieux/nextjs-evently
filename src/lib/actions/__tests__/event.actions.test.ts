@@ -4,14 +4,21 @@ import {
   createEvent,
   deleteEvent,
   getEventById,
+  updateEvent,
 } from '@/lib/actions/event.actions';
 import { faker } from '@faker-js/faker';
-import { EventModel, LocationModel, UserModel } from '@/lib/database/models';
+import {
+  EventModel,
+  IEvent,
+  LocationModel,
+  UserModel,
+} from '@/lib/database/models';
 import { revalidatePath } from 'next/cache';
 import { setupDatabaseTest } from '@test/utils/setupDatabaseTest';
 import { seedEvent } from '@test/seeds/event.seed';
 import { Types } from 'mongoose';
 import { documentToJSON } from '@/lib/utils/mongoose.utils';
+import { seedUser } from '@test/seeds/user.seed';
 
 jest.mock('next/cache');
 // https://stackoverflow.com/questions/48759035/mock-dependency-in-jest-with-typescript
@@ -180,6 +187,121 @@ describe('Event Actions', () => {
         await expect(getEventById(mockId)).rejects.toThrow(
           'Error: Event not found'
         );
+      });
+    });
+
+    describe('updateEvent()', () => {
+      async function setupUpdateEventTest() {
+        const { userSeedModel, eventSeedModel } = await seedEvent();
+        const createEventParamsMock = genCreateEventActionParams({
+          userId: userSeedModel._id,
+        });
+
+        const originalEventData = await EventModel.find({});
+
+        const updateEventParamsMock = {
+          _id: eventSeedModel._id.toString(),
+          ...createEventParamsMock,
+        };
+        return {
+          userSeedModel,
+          eventSeedModel,
+          originalEventData,
+          updateEventParamsMock,
+        };
+      }
+
+      it('should update event with new data', async () => {
+        const {
+          userSeedModel,
+          eventSeedModel,
+          originalEventData,
+          updateEventParamsMock,
+        } = await setupUpdateEventTest();
+
+        await updateEvent({
+          userId: userSeedModel._id.toString(),
+          event: updateEventParamsMock,
+          path: '/any',
+        });
+
+        const {
+          organizerId,
+          locationId: updatedLocationId,
+          categoryId: updateCategoryId,
+          ...restUpdateEventParams
+        } = updateEventParamsMock;
+
+        const updatedEventData: IEvent[] = await EventModel.find({});
+        const updatedEventDataJSON = documentToJSON(updatedEventData);
+
+        // Assert the original data is correct
+        expect(originalEventData).toHaveLength(1);
+        expect(documentToJSON(originalEventData[0])).toEqual(
+          documentToJSON(eventSeedModel)
+        );
+        // Assert the updated data is correct
+        expect(updatedEventData).toHaveLength(1);
+        expect(updatedEventDataJSON[0]).toMatchObject(
+          documentToJSON(restUpdateEventParams)
+        );
+        expect(updatedEventDataJSON[0].location).toEqual(updatedLocationId);
+        expect(updatedEventDataJSON[0].category).toEqual(updateCategoryId);
+        expect(updatedEventDataJSON[0].organizer).toEqual(organizerId);
+      });
+
+      it('should should call revalidatePath with correct path', async () => {
+        const { userSeedModel, updateEventParamsMock } =
+          await setupUpdateEventTest();
+
+        const pathMock = `/${faker.internet.domainWord()}`;
+
+        await updateEvent({
+          userId: userSeedModel._id.toString(),
+          event: updateEventParamsMock,
+          path: pathMock,
+        });
+
+        expect(revalidatePath).toHaveBeenCalledTimes(1);
+        expect(revalidatePath).toHaveBeenCalledWith(pathMock);
+      });
+
+      describe('Handle Errors', () => {
+        it('should throw an error if the USER is not found', async () => {
+          const mockCreateEventParams = genCreateEventActionParams();
+          const mockUserId = new Types.ObjectId();
+
+          await expect(
+            updateEvent({
+              userId: mockUserId.toString(),
+              event: {
+                ...mockCreateEventParams,
+                _id: new Types.ObjectId().toString(),
+              },
+              path: '/any',
+            })
+          ).rejects.toThrow();
+        });
+
+        it('should throw an error if the EVENT is not found', async () => {
+          const { _id: userId } = await seedUser();
+
+          const mockCreateEventParams = genCreateEventActionParams({
+            userId,
+          });
+          const mockUserId = new Types.ObjectId();
+
+          await expect(
+            updateEvent({
+              userId: mockUserId.toString(),
+              event: {
+                ...mockCreateEventParams,
+                _id: new Types.ObjectId().toString(),
+              },
+              path: '/any',
+            })
+          ).rejects.toThrow();
+        });
       });
     });
   });
