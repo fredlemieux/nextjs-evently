@@ -73,42 +73,37 @@ export async function updateUserByClerkId(
 export async function deleteUser(
   clerkId: string
 ): Promise<ToJSON<IUser> | undefined> {
-  try {
-    await connectToDatabase();
+  await connectToDatabase();
 
-    // Find user to delete
-    const userToDelete = await UserModel.findOne({ clerkId });
+  // Find user to delete
+  const userToDelete = await UserModel.findOne({ clerkId });
 
-    if (!userToDelete) {
-      throw new Error('User not found');
-    }
-
-    // Unlink relationships
-    await Promise.all([
-      // Update the 'events' collection to remove references to the user
-      EventModel.updateMany(
-        { createdBy: { $in: userToDelete._id } },
-        { $pull: { createdBy: userToDelete._id } }
-      ),
-    ]);
-
-    // Delete user
-    const deletedUser = await UserModel.findByIdAndDelete(userToDelete._id);
-
-    if (!deletedUser) throw new Error('Problem deleting user');
-
-    revalidatePath('/');
-
-    return documentToJSON<IUser>(deletedUser);
-  } catch (error) {
-    handleError(error);
+  if (!userToDelete) {
+    throw new Error('User not found');
   }
+
+  // Unlink relationships
+  // Update the 'events' collection to remove references to the user
+  const updatedEvents = await EventModel.updateMany(
+    { createdBy: { $in: userToDelete._id } },
+    { $unset: { createdBy: null } } // or use $unset to remove the field
+  );
+
+  // Delete user
+  const deletedUser = await UserModel.findByIdAndDelete(userToDelete._id);
+
+  if (!deletedUser) throw new Error('Problem deleting user');
+
+  revalidatePath('/');
+
+  return documentToJSON<IUser>(deletedUser);
 }
 
 // This is one of the main arguments to move away from Clerk, new users don't always have the
 // userId in the sessions claims as it requires the webhook to complete before getting userId
 export async function getSessionUserId(): Promise<string | null> {
   const { sessionClaims } = await auth();
+
   if (!sessionClaims) return null;
 
   return await getUserIdFromSessionClaims(sessionClaims);
