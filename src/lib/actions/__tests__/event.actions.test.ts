@@ -19,10 +19,18 @@ import { seedEvent } from '@test/seeds/event.seed';
 import { Types } from 'mongoose';
 import { documentToJSON } from '@/lib/utils/mongoose.utils';
 import { seedUser } from '@test/seeds/user.seed';
+import { auth } from '@clerk/nextjs/server';
+import { genClerkJwtAuth } from '@test/data/clerk.data';
 
 jest.mock('next/cache');
 // https://stackoverflow.com/questions/48759035/mock-dependency-in-jest-with-typescript
 const revalidatePathMock = <jest.Mock<typeof revalidatePath>>revalidatePath;
+
+// jest.MockedFunction<typeof auth> causes problems as we'd have to mock the Auth object which isn't exported
+const authMock = auth as unknown as jest.Mock;
+jest.mock('@clerk/nextjs/server', () => ({
+  auth: jest.fn(),
+}));
 
 describe('Event Actions', () => {
   setupDatabaseTest();
@@ -191,7 +199,9 @@ describe('Event Actions', () => {
     });
 
     describe('updateEvent()', () => {
-      async function setupUpdateEventTest() {
+      async function setupUpdateEventTest({
+        mockAuth = true,
+      }: { mockAuth?: boolean } = {}) {
         const { userSeedModel, eventSeedModel } = await seedEvent();
         const createEventParamsMock = genCreateEventActionParams({
           userId: userSeedModel._id,
@@ -203,6 +213,14 @@ describe('Event Actions', () => {
           _id: eventSeedModel._id.toString(),
           ...createEventParamsMock,
         };
+
+        if (mockAuth) {
+          const sessionClaimMock = genClerkJwtAuth({
+            userId: userSeedModel._id.toString(),
+          });
+          authMock.mockResolvedValueOnce(sessionClaimMock);
+        }
+
         return {
           userSeedModel,
           eventSeedModel,
@@ -212,15 +230,10 @@ describe('Event Actions', () => {
       }
 
       it('should update event with new data', async () => {
-        const {
-          userSeedModel,
-          eventSeedModel,
-          originalEventData,
-          updateEventParamsMock,
-        } = await setupUpdateEventTest();
+        const { eventSeedModel, originalEventData, updateEventParamsMock } =
+          await setupUpdateEventTest();
 
         await updateEvent({
-          userId: userSeedModel._id.toString(),
           event: updateEventParamsMock,
           path: '/any',
         });
@@ -251,13 +264,11 @@ describe('Event Actions', () => {
       });
 
       it('should should call revalidatePath with correct path', async () => {
-        const { userSeedModel, updateEventParamsMock } =
-          await setupUpdateEventTest();
+        const { updateEventParamsMock } = await setupUpdateEventTest();
 
         const pathMock = `/${faker.internet.domainWord()}`;
 
         await updateEvent({
-          userId: userSeedModel._id.toString(),
           event: updateEventParamsMock,
           path: pathMock,
         });
@@ -268,39 +279,44 @@ describe('Event Actions', () => {
 
       describe('Handle Errors', () => {
         it('should throw an error if the USER is not found', async () => {
+          const { eventSeedModel } = await setupUpdateEventTest({
+            mockAuth: false,
+          });
           const mockCreateEventParams = genCreateEventActionParams();
-          const mockUserId = new Types.ObjectId();
+          const sessionClaimMock = genClerkJwtAuth();
+          authMock.mockResolvedValueOnce(sessionClaimMock);
 
           await expect(
             updateEvent({
-              userId: mockUserId.toString(),
               event: {
                 ...mockCreateEventParams,
-                _id: new Types.ObjectId().toString(),
+                _id: eventSeedModel._id.toString(),
               },
               path: '/any',
             })
-          ).rejects.toThrow();
+          ).rejects.toThrow('Unauthorized');
         });
 
         it('should throw an error if the EVENT is not found', async () => {
           const { _id: userId } = await seedUser();
+          const sessionClaimMock = genClerkJwtAuth({
+            userId: userId.toString(),
+          });
+          authMock.mockResolvedValueOnce(sessionClaimMock);
 
           const mockCreateEventParams = genCreateEventActionParams({
             userId,
           });
-          const mockUserId = new Types.ObjectId();
 
           await expect(
             updateEvent({
-              userId: mockUserId.toString(),
               event: {
                 ...mockCreateEventParams,
                 _id: new Types.ObjectId().toString(),
               },
               path: '/any',
             })
-          ).rejects.toThrow();
+          ).rejects.toThrow('Event not found');
         });
       });
     });

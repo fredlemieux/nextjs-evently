@@ -15,7 +15,6 @@ export interface CreateLocationParams {
 // ====== EVENT PARAMS
 
 export type UpdateEventActionParams = {
-  userId: string;
   event: {
     _id: string;
     locationId: string;
