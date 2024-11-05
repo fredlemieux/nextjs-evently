@@ -199,7 +199,9 @@ describe('Event Actions', () => {
     });
 
     describe('updateEvent()', () => {
-      async function setupUpdateEventTest() {
+      async function setupUpdateEventTest({
+        mockAuth = true,
+      }: { mockAuth?: boolean } = {}) {
         const { userSeedModel, eventSeedModel } = await seedEvent();
         const createEventParamsMock = genCreateEventActionParams({
           userId: userSeedModel._id,
@@ -211,6 +213,14 @@ describe('Event Actions', () => {
           _id: eventSeedModel._id.toString(),
           ...createEventParamsMock,
         };
+
+        if (mockAuth) {
+          const sessionClaimMock = genClerkJwtAuth({
+            userId: userSeedModel._id.toString(),
+          });
+          authMock.mockResolvedValueOnce(sessionClaimMock);
+        }
+
         return {
           userSeedModel,
           eventSeedModel,
