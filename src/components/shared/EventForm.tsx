@@ -210,7 +210,6 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
 
       try {
         const updatedEvent = await updateEvent({
-          userId,
           event: {
             ...values,
             _id: eventId,
