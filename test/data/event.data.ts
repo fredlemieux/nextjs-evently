@@ -16,7 +16,7 @@ export function genEventMock({
   return {
     category: categoryId,
     imageUrl: faker.internet.url(),
-    organizer: userId,
+    createdBy: userId,
     description: faker.word.words(),
     startDateTime: new Date(),
     endDateTime: faker.date.future(),
@@ -39,7 +39,7 @@ export function genCreateEventActionParams({
 } = {}): CreateEventParams {
   return {
     locationId: locationId.toString(),
-    organizerId: userId.toString(),
+    createdById: userId.toString(),
     categoryId: categoryId.toString(),
     imageUrl: faker.internet.url(),
     description: faker.word.words(),

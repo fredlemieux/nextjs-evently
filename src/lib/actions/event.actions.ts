@@ -58,24 +58,24 @@ export async function createEvent({
 async function getCreateEventModelParams(
   event: CreateEventParams
 ): Promise<CreateEventModelParams> {
-  const { organizerId, categoryId, locationId, ...restEvent } = event;
+  const { createdById, categoryId, locationId, ...restEvent } = event;
 
-  if (!organizerId || !categoryId || !locationId) {
-    throw new Error('organizerId, categoryId and locationId are required!');
+  if (!createdById || !categoryId || !locationId) {
+    throw new Error('createdById, categoryId and locationId are required!');
   }
 
-  const organizerObjectId = checkAndReturnObjectId(organizerId);
+  const createdByObjectId = checkAndReturnObjectId(createdById);
   const categoryObjectId = checkAndReturnObjectId(categoryId);
   const locationObjectId = checkAndReturnObjectId(locationId);
 
-  const organizer = await UserModel.findById(organizerObjectId);
+  const createdBy = await UserModel.findById(createdByObjectId);
 
-  if (!organizer) throw new Error('Organizer not found');
+  if (!createdBy) throw new Error('createdBy not found');
 
   return {
     ...restEvent,
     category: categoryObjectId,
-    organizer: organizerObjectId,
+    createdBy: createdByObjectId,
     location: locationObjectId,
   };
 }
@@ -136,7 +136,7 @@ export async function updateEvent({
 
     const eventToUpdate = await EventModel.findById(eventObjectId);
 
-    if (!eventToUpdate || eventToUpdate.organizer.toString() !== userId) {
+    if (!eventToUpdate || eventToUpdate.createdBy.toString() !== userId) {
       throw new Error('Unauthorized or event not found');
     }
 
@@ -145,7 +145,7 @@ export async function updateEvent({
       {
         ...event,
         category: event.categoryId,
-        organizer: event.organizerId,
+        createdBy: event.createdById,
         location: event.locationId,
       },
       { new: true }
@@ -210,7 +210,7 @@ export async function getEventsByUser({
   try {
     await connectToDatabase();
 
-    const conditions = { organizer: userId };
+    const conditions = { createdBy: userId };
     const skipAmount = (page - 1) * limit;
 
     return await queryAndReturnEvents(conditions, skipAmount, limit);
@@ -276,7 +276,7 @@ function populateEvents(
 ): Promise<IEventPopulated | null | IEventPopulated[]> {
   return query
     .populate({
-      path: 'organizer',
+      path: 'createdBy',
       model: UserModel,
       select: '_id firstName lastName',
     })

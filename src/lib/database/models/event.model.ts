@@ -19,7 +19,7 @@ export const eventSchema = new Schema({
   isFree: { type: Boolean, default: false },
   url: { type: String, default: '' },
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
-  organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 export type CreateEventModelParams = InferSchemaType<typeof eventSchema>;
@@ -29,10 +29,10 @@ export type IEvent = CreateEventModelParams & {
 };
 
 export interface IEventPopulated
-  extends Omit<IEvent, 'location' | 'category' | 'organizer'> {
+  extends Omit<IEvent, 'location' | 'category' | 'createdBy'> {
   location: ILocation;
   category: ICategory;
-  organizer: IUser;
+  createdBy: IUser;
 }
 
 export const EventModel = models.Event || model<IEvent>('Event', eventSchema);

@@ -17,7 +17,7 @@ const EventDetails = async ({
   const eventDetailsData = await getEventDetailsData(id, searchParams);
   const { event, relatedEvents } = eventDetailsData;
 
-  const isEventCreator = userId === event.organizer._id;
+  const isEventCreator = userId === event.createdBy._id;
 
   return (
     <>
@@ -57,7 +57,7 @@ const EventDetails = async ({
                 <p className='p-medium-18 ml-2 mt-2 sm:mt-0'>
                   by{' '}
                   <span className='text-primary-500'>
-                    {event.organizer.firstName} {event.organizer.lastName}
+                    {event.createdBy.firstName} {event.createdBy.lastName}
                   </span>
                 </p>
               </div>

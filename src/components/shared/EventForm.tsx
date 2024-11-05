@@ -175,7 +175,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           event: {
             ...values,
             locationId: location._id,
-            organizerId: userId,
+            createdById: userId,
             imageUrl: uploadedImageUrl,
           },
           path: '/profile',
@@ -215,7 +215,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             ...values,
             _id: eventId,
             locationId,
-            organizerId: userId,
+            createdById: userId,
             imageUrl: uploadedImageUrl,
           },
           path: `/events/${eventId}`,
