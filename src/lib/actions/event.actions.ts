@@ -27,6 +27,7 @@ import {
 import { ToJSON, TransformObjectIdKeys } from '@/types/utility.types';
 import type { Query, RootFilterQuery } from 'mongoose';
 import { getCategoryByName } from '@/lib/actions/category.actions';
+import { getSessionUserId } from '@/lib/actions/user.actions';
 
 export type CreateEventActionParams = {
   event: CreateEventParams;
@@ -81,7 +82,7 @@ async function getCreateEventModelParams(
 }
 
 // TODO! Fetching new page for related event fetches event data again...
-// Seperate?
+// Separate?
 export async function getEventDetailsData(
   eventId: string,
   searchParams: { [key: string]: string | string[] | undefined }
@@ -125,38 +126,39 @@ export async function getEventById(
 }
 
 export async function updateEvent({
-  userId,
   event,
   path,
 }: UpdateEventActionParams): Promise<ToJSON<IEvent> | undefined> {
-  try {
-    await connectToDatabase();
+  await connectToDatabase();
 
-    const eventObjectId = checkAndReturnObjectId(event._id);
+  const eventObjectId = checkAndReturnObjectId(event._id);
 
-    const eventToUpdate = await EventModel.findById(eventObjectId);
+  const eventToUpdate = await EventModel.findById(eventObjectId);
 
-    if (!eventToUpdate || eventToUpdate.createdBy.toString() !== userId) {
-      throw new Error('Unauthorized or event not found');
-    }
-
-    const updatedEvent = await EventModel.findByIdAndUpdate(
-      eventObjectId,
-      {
-        ...event,
-        category: event.categoryId,
-        createdBy: event.createdById,
-        location: event.locationId,
-      },
-      { new: true }
-    );
-
-    revalidatePath(path);
-
-    return documentToJSON<IEvent>(updatedEvent);
-  } catch (error) {
-    handleError(error);
+  if (!eventToUpdate) {
+    throw new Error('Event not found');
   }
+
+  const userId = await getSessionUserId();
+
+  if (eventToUpdate.createdBy.toString() !== userId) {
+    throw new Error('Unauthorized');
+  }
+
+  const updatedEvent = await EventModel.findByIdAndUpdate(
+    eventObjectId,
+    {
+      ...event,
+      category: event.categoryId,
+      createdBy: event.createdById,
+      location: event.locationId,
+    },
+    { new: true }
+  );
+
+  revalidatePath(path);
+
+  return documentToJSON<IEvent>(updatedEvent);
 }
 
 export async function deleteEvent({
