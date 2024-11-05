@@ -20,7 +20,7 @@ export type UpdateEventActionParams = {
     _id: string;
     locationId: string;
     categoryId: string;
-    organizerId: string;
+    createdById: string;
     title: string;
     imageUrl: string;
     description: string;
@@ -69,7 +69,7 @@ export type Event = {
   startDateTime: Date;
   endDateTime: Date;
   url: string;
-  organizer: {
+  createdBy: {
     _id: string;
     firstName: string;
     lastName: string;

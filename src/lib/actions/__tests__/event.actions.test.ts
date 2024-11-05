@@ -36,7 +36,7 @@ describe('Event Actions', () => {
       const { locationSeed, categorySeed, userSeed } =
         await seedUserLocationAndCategory();
 
-      const { locationId, categoryId, organizerId, ...restEventMock } =
+      const { locationId, categoryId, createdById, ...restEventMock } =
         genCreateEventActionParams({
           locationId: locationSeed._id,
           categoryId: categorySeed._id,
@@ -46,7 +46,7 @@ describe('Event Actions', () => {
       const pathMock = `/${faker.internet.domainWord()}`;
 
       const createEventRes = await createEvent({
-        event: { locationId, categoryId, organizerId, ...restEventMock },
+        event: { locationId, categoryId, createdById, ...restEventMock },
         path: pathMock,
       });
 
@@ -54,7 +54,7 @@ describe('Event Actions', () => {
         pathMock,
         locationId,
         categoryId,
-        organizerId,
+        createdById,
         restEventMock,
         createEventRes,
       };
@@ -125,7 +125,7 @@ describe('Event Actions', () => {
         expect(getEventByIdRes).not.toBeInstanceOf(LocationModel);
       });
 
-      it('should return populated organizer field', async () => {
+      it('should return populated createdBy field', async () => {
         const { eventSeedModel, userSeedModel } = await seedEvent();
         const userJSON = documentToJSON(userSeedModel);
 
@@ -137,8 +137,8 @@ describe('Event Actions', () => {
           throw new Error('No Event Returned');
         }
 
-        expect(userJSON).toMatchObject(getEventByIdRes?.organizer);
-        expect(getEventByIdRes?.organizer);
+        expect(userJSON).toMatchObject(getEventByIdRes?.createdBy);
+        expect(getEventByIdRes?.createdBy);
         expect(getEventByIdRes).not.toBeInstanceOf(UserModel);
       });
 
@@ -155,7 +155,7 @@ describe('Event Actions', () => {
         }
 
         expect(categoryJSON).toMatchObject(getEventByIdRes?.category);
-        expect(getEventByIdRes.organizer).not.toBeInstanceOf(UserModel);
+        expect(getEventByIdRes.createdBy).not.toBeInstanceOf(UserModel);
       });
 
       it('unpopulated fields should remain', async () => {
@@ -171,7 +171,7 @@ describe('Event Actions', () => {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { organizer, location, category, ...restEventRes } =
+        const { createdBy, location, category, ...restEventRes } =
           getEventByIdRes;
 
         expect(eventSeedJSON).toMatchObject(restEventRes);
@@ -226,7 +226,7 @@ describe('Event Actions', () => {
         });
 
         const {
-          organizerId,
+          createdById,
           locationId: updatedLocationId,
           categoryId: updateCategoryId,
           ...restUpdateEventParams
@@ -247,7 +247,7 @@ describe('Event Actions', () => {
         );
         expect(updatedEventDataJSON[0].location).toEqual(updatedLocationId);
         expect(updatedEventDataJSON[0].category).toEqual(updateCategoryId);
-        expect(updatedEventDataJSON[0].organizer).toEqual(organizerId);
+        expect(updatedEventDataJSON[0].createdBy).toEqual(createdById);
       });
 
       it('should should call revalidatePath with correct path', async () => {

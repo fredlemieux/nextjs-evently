@@ -15,7 +15,7 @@ const Card = async ({ event }: CardProps) => {
   const { sessionClaims } = await auth();
   const userId = sessionClaims?.userId;
 
-  const isEventCreator = userId === event.organizer._id;
+  const isEventCreator = userId === event.createdBy._id;
 
   return (
     <div className='group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-md bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]'>
@@ -53,7 +53,7 @@ const Card = async ({ event }: CardProps) => {
 
         <div className='flex-between w-full'>
           <p className='p-medium-14 md:p-medium-16 text-grey-600'>
-            {event.organizer.firstName} {event.organizer.lastName}
+            {event.createdBy.firstName} {event.createdBy.lastName}
           </p>
         </div>
       </div>
