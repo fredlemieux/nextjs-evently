@@ -19,10 +19,18 @@ import { seedEvent } from '@test/seeds/event.seed';
 import { Types } from 'mongoose';
 import { documentToJSON } from '@/lib/utils/mongoose.utils';
 import { seedUser } from '@test/seeds/user.seed';
+import { auth } from '@clerk/nextjs/server';
+import { genClerkJwtAuth } from '@test/data/clerk.data';
 
 jest.mock('next/cache');
 // https://stackoverflow.com/questions/48759035/mock-dependency-in-jest-with-typescript
 const revalidatePathMock = <jest.Mock<typeof revalidatePath>>revalidatePath;
+
+// jest.MockedFunction<typeof auth> causes problems as we'd have to mock the Auth object which isn't exported
+const authMock = auth as unknown as jest.Mock;
+jest.mock('@clerk/nextjs/server', () => ({
+  auth: jest.fn(),
+}));
 
 describe('Event Actions', () => {
   setupDatabaseTest();
