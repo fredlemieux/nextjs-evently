@@ -230,15 +230,10 @@ describe('Event Actions', () => {
       }
 
       it('should update event with new data', async () => {
-        const {
-          userSeedModel,
-          eventSeedModel,
-          originalEventData,
-          updateEventParamsMock,
-        } = await setupUpdateEventTest();
+        const { eventSeedModel, originalEventData, updateEventParamsMock } =
+          await setupUpdateEventTest();
 
         await updateEvent({
-          userId: userSeedModel._id.toString(),
           event: updateEventParamsMock,
           path: '/any',
         });
@@ -269,13 +264,11 @@ describe('Event Actions', () => {
       });
 
       it('should should call revalidatePath with correct path', async () => {
-        const { userSeedModel, updateEventParamsMock } =
-          await setupUpdateEventTest();
+        const { updateEventParamsMock } = await setupUpdateEventTest();
 
         const pathMock = `/${faker.internet.domainWord()}`;
 
         await updateEvent({
-          userId: userSeedModel._id.toString(),
           event: updateEventParamsMock,
           path: pathMock,
         });
@@ -286,39 +279,44 @@ describe('Event Actions', () => {
 
       describe('Handle Errors', () => {
         it('should throw an error if the USER is not found', async () => {
+          const { eventSeedModel } = await setupUpdateEventTest({
+            mockAuth: false,
+          });
           const mockCreateEventParams = genCreateEventActionParams();
-          const mockUserId = new Types.ObjectId();
+          const sessionClaimMock = genClerkJwtAuth();
+          authMock.mockResolvedValueOnce(sessionClaimMock);
 
           await expect(
             updateEvent({
-              userId: mockUserId.toString(),
               event: {
                 ...mockCreateEventParams,
-                _id: new Types.ObjectId().toString(),
+                _id: eventSeedModel._id.toString(),
               },
               path: '/any',
             })
-          ).rejects.toThrow();
+          ).rejects.toThrow('Unauthorized');
         });
 
         it('should throw an error if the EVENT is not found', async () => {
           const { _id: userId } = await seedUser();
+          const sessionClaimMock = genClerkJwtAuth({
+            userId: userId.toString(),
+          });
+          authMock.mockResolvedValueOnce(sessionClaimMock);
 
           const mockCreateEventParams = genCreateEventActionParams({
             userId,
           });
-          const mockUserId = new Types.ObjectId();
 
           await expect(
             updateEvent({
-              userId: mockUserId.toString(),
               event: {
                 ...mockCreateEventParams,
                 _id: new Types.ObjectId().toString(),
               },
               path: '/any',
             })
-          ).rejects.toThrow();
+          ).rejects.toThrow('Event not found');
         });
       });
     });
