@@ -16,16 +16,15 @@ import { revalidatePath } from 'next/cache';
 import { seedEvent } from '@test/seeds/event.seed';
 
 jest.mock('next/cache');
-jest.mock('@clerk/nextjs/server', () => ({
-  auth: jest.fn(),
-}));
-
 const revalidatePathMock = revalidatePath as jest.MockedFunction<
   typeof revalidatePath
 >;
 
 // jest.MockedFunction<typeof auth> causes problems as we'd have to mock the Auth object which isn't exported
 const authMock = auth as unknown as jest.Mock;
+jest.mock('@clerk/nextjs/server', () => ({
+  auth: jest.fn(),
+}));
 
 afterEach(() => {
   authMock.mockReset();
