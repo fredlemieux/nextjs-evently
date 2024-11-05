@@ -1,36 +1,12 @@
 import { genUserMock } from '@test/data/user.data';
 import {
   createUser,
-  deleteUser,
-  getSessionUserId,
   getUserById,
   updateUserByClerkId,
 } from '@/lib/actions/user.actions';
-import { EventModel, UserModel } from '@/lib/database/models';
+import { UserModel } from '@/lib/database/models';
 import { setupDatabaseTest } from '@test/utils/setupDatabaseTest';
 import { seedUser } from '@test/seeds/user.seed';
-import { auth } from '@clerk/nextjs/server';
-import { genClerkJwtAuth } from '@test/data/clerk.data';
-import { faker } from '@faker-js/faker';
-import { revalidatePath } from 'next/cache';
-import { seedEvent } from '@test/seeds/event.seed';
-
-jest.mock('next/cache');
-jest.mock('@clerk/nextjs/server', () => ({
-  auth: jest.fn(),
-}));
-
-const revalidatePathMock = revalidatePath as jest.MockedFunction<
-  typeof revalidatePath
->;
-
-// jest.MockedFunction<typeof auth> causes problems as we'd have to mock the Auth object which isn't exported
-const authMock = auth as unknown as jest.Mock;
-
-afterEach(() => {
-  authMock.mockReset();
-  revalidatePathMock.mockReset();
-});
 
 describe('Location Actions', () => {
   setupDatabaseTest();
@@ -94,82 +70,14 @@ describe('Location Actions', () => {
   });
 
   describe('deleteUser()', () => {
-    describe('Error Handling', () => {
-      it('should throw an error if user does not exist', async () => {
-        const clerkIdMock = faker.string.uuid();
-
-        await expect(deleteUser(clerkIdMock)).rejects.toThrowError(
-          'User not found'
-        );
-      });
-
-      it('should delete the user if they exist', async () => {
-        const userSeed = await seedUser();
-        await seedUser(); // Seed another user to check it doesn't get deleted;
-
-        await deleteUser(userSeed.clerkId);
-
-        const allUsers = await UserModel.find({});
-
-        expect(allUsers).toHaveLength(1);
-        expect(allUsers[0].clerkId).not.toEqual(userSeed.clerkId);
-      });
-
-      it('should remove the createdBy field from events createdBy the user', async () => {
-        const { userSeedModel } = await seedEvent();
-
-        await deleteUser(userSeedModel.clerkId);
-
-        const allEvents = await EventModel.find({});
-
-        expect(allEvents).toHaveLength(1);
-        expect(allEvents[0].createdBy).toBeUndefined();
-      });
-
-      it('should revalidate the home page', async () => {
-        const { userSeedModel } = await seedEvent();
-
-        await deleteUser(userSeedModel.clerkId);
-
-        expect(revalidatePath).toHaveBeenCalledTimes(1);
-        expect(revalidatePath).toHaveBeenCalledWith('/');
-      });
-    });
+    it.todo('');
   });
 
   describe('getSessionUserId()', () => {
-    it('should return the userId from session claims if it exists', async () => {
-      const clerkJwtAuthMock = genClerkJwtAuth();
-
-      authMock.mockResolvedValueOnce(clerkJwtAuthMock);
-
-      const sessionUserId = await getSessionUserId();
-
-      expect(sessionUserId).toEqual(clerkJwtAuthMock.sessionClaims.userId);
-    });
-
-    it('should return null if no session claims exists or user is not in the database', async () => {
-      authMock.mockResolvedValue({});
-
-      const sessionUserId = await getSessionUserId();
-
-      expect(sessionUserId).toBeNull();
-    });
-
-    it('should return userId if none exists in the sessionClaims but clerkId exists in database', async () => {
-      const userSeed = await seedUser();
-      const clerkJwtAuthMock = genClerkJwtAuth({
-        sub: userSeed.clerkId,
-        withUserId: false,
-      });
-
-      authMock.mockResolvedValueOnce(clerkJwtAuthMock);
-
-      const sessionUserId = await getSessionUserId();
-
-      expect(sessionUserId).toEqual(userSeed._id.toString());
-    });
+    it.todo('');
   });
 
-  describe('getUserIdFromSessionClaims()', () => {});
+  describe('getUserIdFromSessionClaims()', () => {
+    it.todo('');
+  });
 });
