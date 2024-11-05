@@ -82,14 +82,12 @@ export async function deleteUser(
     throw new Error('User not found');
   }
 
-  // Unlink relationships
   // Update the 'events' collection to remove references to the user
-  const updatedEvents = await EventModel.updateMany(
+  await EventModel.updateMany(
     { createdBy: { $in: userToDelete._id } },
     { $unset: { createdBy: null } } // or use $unset to remove the field
   );
 
-  // Delete user
   const deletedUser = await UserModel.findByIdAndDelete(userToDelete._id);
 
   if (!deletedUser) throw new Error('Problem deleting user');
