@@ -11,13 +11,13 @@ const EditAndDeleteEventButtons = ({
   eventId,
 }: EditAndDeleteEventButtonsProps) => {
   return (
-    <>
+    <div className='flex flex-row gap-1'>
       <Link href={`/events/${eventId}/update`}>
         <PencilIcon className='stroke-purple h-5 w-5' />
       </Link>
 
       <DeleteConfirmation eventId={eventId} />
-    </>
+    </div>
   );
 };
 
