@@ -6,6 +6,7 @@ import EditAndDeleteEventButtons from '@/components/shared/EditAndDeleteEventBut
 import { getEventDetailsData } from '@/lib/actions/event.actions';
 import { areDatesTheSame, formatDateTime } from '@/lib/utils';
 import type { SearchParamProps } from '@/types/parameters.types';
+import { CalendarRangeIcon, LinkIcon, MapPinIcon } from 'lucide-react';
 
 const EventDetails = async ({
   params: { id },
@@ -65,12 +66,7 @@ const EventDetails = async ({
 
             <div className='flex flex-col gap-5'>
               <div className='flex gap-2 md:gap-3'>
-                <Image
-                  src='/assets/icons/calendar.svg'
-                  alt='calendar'
-                  width={32}
-                  height={32}
-                />
+                <CalendarRangeIcon className='h-7 w-7 stroke-primary-500' />
                 <div className='p-medium-16 lg:p-regular-20 flex flex-wrap items-center'>
                   {areDatesTheSame(event.startDateTime, event.endDateTime) ? (
                     <p>
@@ -95,12 +91,7 @@ const EventDetails = async ({
                 href={event.location.url}
                 className='p-regular-20 flex items-center gap-3'
               >
-                <Image
-                  src='/assets/icons/location.svg'
-                  alt='location'
-                  width={32}
-                  height={32}
-                />
+                <MapPinIcon className='h-7 w-7 stroke-primary-500' />
                 <p className='p-medium-16 lg:p-regular-20'>
                   {event.location.name}
                 </p>
@@ -111,12 +102,7 @@ const EventDetails = async ({
                   href={event.url}
                   className='p-regular-20 flex items-center gap-3'
                 >
-                  <Image
-                    src='/assets/icons/link-coloured.svg'
-                    alt='location'
-                    width={32}
-                    height={32}
-                  />
+                  <LinkIcon className='h-7 w-7 stroke-primary-500' />
                   <p className='p-medium-16 lg:p-regular-18 truncate text-primary-500 underline'>
                     {event.url}
                   </p>

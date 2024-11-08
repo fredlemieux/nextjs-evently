@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { DeleteConfirmation } from '@/components/shared/DeleteConfirmation';
+import { PencilIcon } from 'lucide-react';
 
 interface EditAndDeleteEventButtonsProps {
   eventId: string;
@@ -11,13 +11,13 @@ const EditAndDeleteEventButtons = ({
   eventId,
 }: EditAndDeleteEventButtonsProps) => {
   return (
-    <>
+    <div className='flex flex-row gap-1'>
       <Link href={`/events/${eventId}/update`}>
-        <Image src='/assets/icons/edit.svg' alt='edit' width={20} height={20} />
+        <PencilIcon className='stroke-purple h-5 w-5' />
       </Link>
 
       <DeleteConfirmation eventId={eventId} />
-    </>
+    </div>
   );
 };
 

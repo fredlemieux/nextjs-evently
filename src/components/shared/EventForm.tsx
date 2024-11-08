@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -31,6 +30,12 @@ import { createLocationIfNotExists } from '@/lib/actions/location.actions';
 import { getLocationParamsFromPlace } from '@/lib/utils';
 import type { IEventPopulated } from '@/lib/database/models/event.model';
 import type { ToJSON } from '@/types/utility.types';
+import {
+  CalendarRangeIcon,
+  EuroIcon,
+  LinkIcon,
+  MapPinIcon,
+} from 'lucide-react';
 
 type EventFormProps = {
   userId: string;
@@ -314,13 +319,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               <FormItem className='w-full'>
                 <FormControl>
                   <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
-                    <Image
-                      src='/assets/icons/location-grey.svg'
-                      alt='calendar'
-                      width={24}
-                      height={24}
-                    />
-
+                    <MapPinIcon className='filter-grey h-6 w-6' />
                     <Input
                       ref={inputRef}
                       name={name}
@@ -347,13 +346,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               <FormItem className='w-full'>
                 <FormControl>
                   <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
-                    <Image
-                      src='/assets/icons/calendar.svg'
-                      alt='calendar'
-                      width={24}
-                      height={24}
-                      className='filter-grey'
-                    />
+                    <CalendarRangeIcon className='filter-grey h-6 w-6' />
                     <p className='ml-3 whitespace-nowrap text-grey-600'>
                       Start Date:
                     </p>
@@ -379,13 +372,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               <FormItem className='w-full'>
                 <FormControl>
                   <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
-                    <Image
-                      src='/assets/icons/calendar.svg'
-                      alt='calendar'
-                      width={24}
-                      height={24}
-                      className='filter-grey'
-                    />
+                    <CalendarRangeIcon className='filter-grey h-6 w-6' />
                     <p className='ml-3 whitespace-nowrap text-grey-600'>
                       End Date:
                     </p>
@@ -413,13 +400,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               <FormItem className='w-full'>
                 <FormControl>
                   <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
-                    <Image
-                      src='/assets/icons/euro.svg'
-                      alt='dollar'
-                      width={24}
-                      height={24}
-                      className='filter-grey'
-                    />
+                    <EuroIcon className='filter-grey h-8 w-8' />
                     <Input
                       type='number'
                       placeholder='Price'
@@ -464,12 +445,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               <FormItem className='w-full'>
                 <FormControl>
                   <div className='flex-center h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2'>
-                    <Image
-                      src='/assets/icons/link.svg'
-                      alt='link'
-                      width={24}
-                      height={24}
-                    />
+                    <LinkIcon className='filter-grey h-6 w-6' />
 
                     <Input
                       placeholder='URL'

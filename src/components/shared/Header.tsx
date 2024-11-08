@@ -13,7 +13,8 @@ const Header = () => {
           <Image
             src={'/assets/images/logo.png'}
             width={48}
-            height={48}
+            height={48} // TODO! required height and width
+            className='h-10 w-10'
             alt='Logo Eventos Rincon'
           />
           <h1 className='h3-bold ml-2'>Eventos Rincon</h1>

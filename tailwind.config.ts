@@ -22,7 +22,7 @@ module.exports = withUt({
       colors: {
         primary: {
           500: '#FA776C',
-          50: ' #F6F8FD',
+          50: '#F6F8FD',
           DEFAULT: '#FA776C',
           foreground: 'hsl(var(--primary-foreground))',
         },
@@ -38,6 +38,7 @@ module.exports = withUt({
         },
         black: '#000000',
         white: '#FFFFFF',
+        purple: '#877EFF',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

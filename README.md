@@ -32,15 +32,22 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 
 ## TODOS
 
-- [ ] Update event not working correctly
-- [ ] Duplicate Event name issue.  Maybe we have repeat event with the same name. Remove?
+- [ ] Duplicate Event name issue.  Maybe we have repeat event with the same name.
+  - Duplicate event should be event with same name, same locations and same time....
 - [ ] Setup Multi Stage build for Docker
 - [ ] Clean up dev environment (clear db and users)
 - [ ] Highlight active Form item
 - [ ] Map out app architecture
-- [ ] Testing setup
+- [ ] E2E Testing setup
 - [ ] Github actions for tests
+- [ ] Accessibility
+- [ ] Add to calendar
+- [ ] Use Lucide for all icons
+- [ ] Resizing icons in mobile view (see Event Details)
 - [ ] Plan next steps
+- [ ] Add sort imports
+- [ ] Multi language
+- [ ] Accessibility
 
 ## Project Structure
 
