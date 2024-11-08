@@ -22,7 +22,8 @@ services:
     env_file:
       - ./.env.local
     environment:
-      MONGODB_URI: mongodb://root:example@mongo:27017/
+      # authSource=admin required when setting database name in URI
+      MONGODB_URI: mongodb://root:example@mongo:27017/eventos-rincon?authSource=admin
     depends_on:
       - mongo
 
