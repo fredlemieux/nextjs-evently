@@ -1,13 +1,3 @@
-<!-- Each section is ENTIRELY OPTIONAL, please add useful details,
-but don't be slowed down by 'Overhead' -->
-
-## References
-
-<!-- Uncomment the line below and add link to ticket if not automatically added -->
-<!-- - [This is the ticket](TBC) -->
-
-Shortcut ticket should automatically be added in the pull request below.
-
 ## Description
 
 <!-- Detail anything to help the review process, -->
