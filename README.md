@@ -43,6 +43,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - [ ] Accessibility
 - [ ] Add to calendar
 - [ ] Use Lucide for all icons
+- [ ] Resizing icons in mobile view (see Event Details)
 - [ ] Plan next steps
 
 ## Project Structure
