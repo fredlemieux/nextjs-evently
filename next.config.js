@@ -7,12 +7,12 @@ const nextConfig = {
     'filter-obj',
   ],
   images: {
-    domains: ['utfs.io'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'utfs.io',
         port: '',
+        pathname: '/**',
       },
     ],
   },
