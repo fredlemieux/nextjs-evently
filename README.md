@@ -37,6 +37,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - [ ] Setup Multi Stage build for Docker
 - [ ] Clean up dev environment (clear db and users)
 - [ ] Highlight active Form item
+- [ ] focus input for datepicker
 - [ ] Map out app architecture
 - [ ] E2E Testing setup
 - [ ] Github actions for tests

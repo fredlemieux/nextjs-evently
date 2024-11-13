@@ -209,8 +209,8 @@ body {
     @apply p-regular-16 h-[54px] w-full rounded-md border-none bg-grey-50 px-5 py-3 placeholder:text-grey-500 focus:ring-transparent focus-visible:ring-transparent !important;
   }
 
-  .input-field {
-    @apply p-regular-16 h-[54px] rounded-md border-none bg-grey-50 px-4 py-3 placeholder:text-grey-500 focus-visible:ring-transparent focus-visible:ring-offset-0 !important;
+  .input-wrapper {
+    @apply h-[54px] w-full overflow-hidden rounded-md bg-grey-50 px-4 py-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2
   }
 
   .textarea {
