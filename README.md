@@ -37,6 +37,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - [ ] Setup Multi Stage build for Docker
 - [ ] Add barrelsby for shared and ui components for cleaner import
 - [ ] Clean up dev environment (clear db and users)
+- [ ] bigger header user Icon
 - [ ] Improve Edit and Delete buttons for mobile users
 - [ ] Model for Event Image click
 - [ ] focus input for datepicker
