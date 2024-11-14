@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { auth } from '@clerk/nextjs/server';
 import Collection from '@/components/shared/Collection';
 import EditAndDeleteEventButtons from '@/components/shared/EditAndDeleteEventButtons';
+import AddToCalendarButtonClient from '@/components/shared/AddToCalendarButtonClient';
 import { getEventDetailsData } from '@/lib/actions/event.actions';
 import { areDatesTheSame, formatDateTime } from '@/lib/utils';
 import type { SearchParamProps } from '@/types/parameters.types';
@@ -55,12 +56,14 @@ const EventDetails = async ({
                   </p>
                 </div>
 
-                <p className='p-medium-18 ml-2 mt-2 sm:mt-0'>
-                  by{' '}
-                  <span className='text-primary-500'>
-                    {event.createdBy.firstName} {event.createdBy.lastName}
-                  </span>
-                </p>
+                  <p className='p-medium-18 ml-2 mt-2 sm:mt-0'>
+                    by{' '}
+                    <span className='text-primary-500'>
+                      {event.createdBy.firstName} {event.createdBy.lastName}
+                    </span>
+                  </p>
+                </div>
+                <AddToCalendarButtonClient event={event} />
               </div>
             </div>
 
