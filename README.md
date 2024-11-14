@@ -35,15 +35,14 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - [ ] Duplicate Event name issue.  Maybe we have repeat event with the same name.
   - Duplicate event should be event with same name, same locations and same time....
 - [ ] Setup Multi Stage build for Docker
+- [ ] Add barrelsby for shared and ui components for cleaner import
 - [ ] Clean up dev environment (clear db and users)
-- [ ] Highlight active Form item
+- [ ] Improve Edit and Delete buttons for mobile users
+- [ ] Model for Event Image click
 - [ ] focus input for datepicker
 - [ ] Map out app architecture
 - [ ] E2E Testing setup
 - [ ] Github actions for tests
-- [ ] Accessibility
-- [ ] Add to calendar
-- [ ] Use Lucide for all icons
 - [ ] Resizing icons in mobile view (see Event Details)
 - [ ] Plan next steps
 - [ ] Add sort imports
