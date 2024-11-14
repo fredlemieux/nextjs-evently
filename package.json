@@ -24,6 +24,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@react-google-maps/api": "^2.20.3",
     "@uploadthing/react": "^7.1.1",
+    "add-to-calendar-button-react": "^2.7.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.456.0",

@@ -102,6 +102,8 @@ export async function getEventDetailsData(
     categoryId: event.category._id,
     page: searchParams?.page as string,
   });
+  console.log('EVENT_START_DATE_TIME:', event.startDateTime);
+  console.log('EVENT_END_DATE_TIME:', event.endDateTime);
 
   return { event, relatedEvents };
 }

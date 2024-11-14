@@ -20,7 +20,7 @@ export const formatDateTime = (dateString: Date | string) => {
     day: 'numeric', // numeric day of the month (e.g., '25')
     hour: 'numeric', // numeric hour (e.g., '8')
     minute: 'numeric', // numeric minute (e.g., '30')
-    hour12: true, // use 12-hour clock (true) or 24-hour clock (false)
+    hour12: false, // use 12-hour clock (true) or 24-hour clock (false)
   };
 
   const dateOptions: Intl.DateTimeFormatOptions = {
@@ -33,28 +33,32 @@ export const formatDateTime = (dateString: Date | string) => {
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric', // numeric hour (e.g., '8')
     minute: 'numeric', // numeric minute (e.g., '30')
-    hour12: true, // use 12-hour clock (true) or 24-hour clock (false)
+    hour12: false, // use 12-hour clock (true) or 24-hour clock (false)
+    timeZone: 'Europe/Madrid',
   };
 
   const formattedDateTime: string = new Date(dateString).toLocaleString(
-    'en-UK',
+    'en-GB',
     dateTimeOptions
   );
 
   const formattedDate: string = new Date(dateString).toLocaleString(
-    'en-UK',
+    'en-GB',
     dateOptions
   );
 
   const formattedTime: string = new Date(dateString).toLocaleString(
-    'en-US',
+    'en-GB',
     timeOptions
   );
+
+  const [extractIsoDate] = new Date(dateString).toISOString().split('T');
 
   return {
     dateTime: formattedDateTime,
     dateOnly: formattedDate,
     timeOnly: formattedTime,
+    dateIso: extractIsoDate,
   };
 };
 

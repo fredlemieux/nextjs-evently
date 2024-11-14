@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { auth } from '@clerk/nextjs/server';
 import Collection from '@/components/shared/Collection';
 import EditAndDeleteEventButtons from '@/components/shared/EditAndDeleteEventButtons';
+import AddToCalendarButtonClient from '@/components/shared/AddToCalendarButtonClient';
 import { getEventDetailsData } from '@/lib/actions/event.actions';
 import { areDatesTheSame, formatDateTime } from '@/lib/utils';
 import type { SearchParamProps } from '@/types/parameters.types';
@@ -27,14 +28,14 @@ const EventDetails = async ({
           {event.imageUrl && (
             <Image
               src={event.imageUrl}
-              alt='hero image'
+              alt={`${event.title} Image`}
               width={1000}
               height={1000}
               className='h-full min-h-[300px] object-cover object-center'
             />
           )}
 
-          <div className='flex w-full flex-col gap-8 p-5 md:p-10'>
+          <div className='flex w-full flex-col gap-6 p-5 md:p-10'>
             <div className='flex flex-col gap-6'>
               <div className='flex-between flex flex-row'>
                 <h2 className='h2-bold'>{event.title}</h2>
@@ -45,22 +46,23 @@ const EventDetails = async ({
                 )}
               </div>
 
-              <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-                <div className='flex gap-3'>
+              <div className='flex-between flex flex-row flex-wrap content-start gap-3 sm:items-center'>
+                <div className='flex flex-wrap items-center gap-3'>
                   <p className='p-bold-20 rounded-md bg-green-500/10 px-5 py-2 text-green-700'>
                     {event.isFree ? 'FREE' : `€${event.price}`}
                   </p>
                   <p className='p-medium-16 whitespace-nowrap rounded-md bg-grey-500/10 px-4 py-2.5 text-grey-500'>
                     {event.category.name}
                   </p>
-                </div>
 
-                <p className='p-medium-18 ml-2 mt-2 sm:mt-0'>
-                  by{' '}
-                  <span className='text-primary-500'>
-                    {event.createdBy.firstName} {event.createdBy.lastName}
-                  </span>
-                </p>
+                  <p className='p-medium-18 ml-2 mt-2 sm:mt-0'>
+                    by{' '}
+                    <span className='text-primary-500'>
+                      {event.createdBy.firstName} {event.createdBy.lastName}
+                    </span>
+                  </p>
+                </div>
+                <AddToCalendarButtonClient event={event} />
               </div>
             </div>
 
