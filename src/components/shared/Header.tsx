@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import NavItems from './NavItems';
 import MobileNav from './MobileNav';
+import LanguageNav from '@/components/shared/LanguageNav';
 
 const Header = () => {
   return (
@@ -27,8 +28,9 @@ const Header = () => {
         </SignedIn>
 
         <div className='flex w-32 justify-end gap-3'>
+          <LanguageNav />
           <SignedIn>
-            <UserButton afterSignOutUrl='/'></UserButton>
+            <UserButton />
             <MobileNav />
           </SignedIn>
 
