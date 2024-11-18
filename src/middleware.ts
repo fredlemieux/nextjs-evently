@@ -1,23 +1,19 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-//
-// export default clerkMiddleware({
-//   // debug: true, // Use to debug Auth issues
-//   publicRoutes: ['/', 'events/:id', '/api/webhook/clerk', '/api/uploadthing'],
-//   ignoredRoutes: ['/api/webhook/clerk'],
-// });
-//
-// export const config = {
-//   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-// };
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
 
 const isProtectedRoute = createRouteMatcher([
-  '/events/create',
-  '/events/(.*)/update',
-  '/profile',
+  ':local/events/create',
+  ':local/events/(.*)/update',
+  ':local/profile',
 ]);
+
+const handleI18nRouting = createMiddleware(routing);
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) await auth.protect();
+
+  return handleI18nRouting(req);
 });
 
 export const config = {
