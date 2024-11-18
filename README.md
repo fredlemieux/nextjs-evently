@@ -26,6 +26,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - **Vercel:** Hosting platform for serverless deployment of web applications.
 - **Clerk:** Clerk provides a set of hooks and helpers that you can use to access the active
   session and user data in the application.
+- **[Next-Intl:](https://next-intl-docs.vercel.app/)** for internationalisation (multiple languages)
 - **MongoDB:** NoSQL database for data storage
 - **Docker:** For the development environment, but feel free to just run the app locally too
 - **Google Maps API:** Using the places API for autocompletion of Event locations
