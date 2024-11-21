@@ -1,5 +1,12 @@
 {
   "Header": {
-    "hello": "world"
+    "login": "Login",
+    "home": "Home",
+    "create": "Create Event",
+    "profile": "My Profile"
+  },
+  "Landing": {
+    "title": "Discover what’s happening in Rincon de la Victoria",
+    "sub": "Your guide to live music, theater, club nights, and more, all in one place."
   }
 }

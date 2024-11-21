@@ -1,0 +1,12 @@
+{
+  "Header": {
+    "login": "Acceso",
+    "home": "Hogar",
+    "create": "Crear evento",
+    "profile": "Mi perfil"
+  },
+  "Landing": {
+    "title": "Descubre lo que está pasando en Rincón de la Victoria",
+    "sub": "Tu guía de música en vivo, teatro, noches de discoteca y más, todo en un solo lugar."
+  }
+}

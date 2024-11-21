@@ -5,8 +5,11 @@ import { Button } from '../ui/button';
 import NavItems from './NavItems';
 import MobileNav from './MobileNav';
 import LanguageNav from '@/components/shared/LanguageNav';
+import { useTranslations } from 'next-intl';
 
 const Header = () => {
+  const t = useTranslations('Header');
+
   return (
     <header className='w-full border-b'>
       <div className='wrapper flex items-center justify-between'>
@@ -36,7 +39,7 @@ const Header = () => {
 
           <SignedOut>
             <Button asChild className='rounded-md' size={'lg'}>
-              <Link href={'/sign-in'}>Login</Link>
+              <Link href={'/sign-in'}>{t('login')}</Link>
             </Button>
           </SignedOut>
         </div>
