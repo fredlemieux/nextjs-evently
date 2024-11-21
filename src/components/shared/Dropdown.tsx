@@ -25,6 +25,7 @@ import {
 
 import type { ToJSON } from '@/types/utility.types';
 import type { ICategory } from '@/lib/database/models/category.model';
+import { useTranslations } from 'next-intl';
 
 type DropdownProps = {
   value?: string;
@@ -36,6 +37,8 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const [newCategory, setNewCategory] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations('CreateForm');
+  const tActions = useTranslations('Actions');
 
   const handleAddCategory = () =>
     startTransition(() => {
@@ -72,7 +75,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   return (
     <Select onValueChange={onChangeHandler} defaultValue={value}>
       <SelectTrigger className='input-wrapper'>
-        <SelectValue placeholder='Category' />
+        <SelectValue placeholder={t('category')} />
       </SelectTrigger>
       <SelectContent>
         {categories.length > 0 &&
@@ -88,12 +91,12 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
 
         <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <AlertDialogTrigger className='p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500'>
-            Add new category
+            {t('category-add')}
           </AlertDialogTrigger>
 
           <AlertDialogContent className='bg-white'>
             <AlertDialogHeader>
-              <AlertDialogTitle>New Category</AlertDialogTitle>
+              <AlertDialogTitle>{t('category-new')}</AlertDialogTitle>
               <AlertDialogDescription>
                 <Input
                   ref={inputRef}
@@ -108,9 +111,9 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>{tActions('cancel')}</AlertDialogCancel>
               <AlertDialogAction onClick={() => handleAddCategory()}>
-                Add
+                {tActions('add')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
