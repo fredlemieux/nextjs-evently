@@ -7,6 +7,28 @@
   },
   "Landing": {
     "title": "Discover what’s happening in Rincon de la Victoria",
-    "sub": "Your guide to live music, theater, club nights, and more, all in one place."
+    "sub": "Your guide to live music, theater, club nights, and more, all in one place.",
+    "explore": "Explore Now"
+  },
+  "CreateForm": {
+    "name": "Event name",
+    "category": "Category",
+    "description": "Description",
+    "drag":"Drag photo here",
+    "select": "Select from device",
+    "location": "Event location",
+    "start": "Start date",
+    "end": "End date",
+    "price": "Price",
+    "url": "URL",
+    "category-select": "category",
+    "category-new": "New Category",
+    "category-add": "Add new category",
+    "create": "Create Event",
+    "update": "Update Event"
+  },
+  "Actions": {
+    "cancel": "Cancel",
+    "add": "Add"
   }
 }

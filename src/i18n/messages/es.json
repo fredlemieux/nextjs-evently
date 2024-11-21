@@ -7,6 +7,28 @@
   },
   "Landing": {
     "title": "Descubre lo que está pasando en Rincón de la Victoria",
-    "sub": "Tu guía de música en vivo, teatro, noches de discoteca y más, todo en un solo lugar."
+    "sub": "Tu guía de música en vivo, teatro, noches de discoteca y más, todo en un solo lugar.",
+    "explore": "Explora ahora"
+  },
+  "CreateForm": {
+    "title": "Nombre del evento",
+    "category": "Categoría",
+    "description": "Descripción",
+    "drag": "Arrastra la foto aquí",
+    "select": "Seleccionar desde el dispositivo",
+    "location": "Ubicación del evento",
+    "start": "Fecha de inicio",
+    "end": "Fecha de finalización",
+    "price": "Precio",
+    "url": "URL",
+    "category-select": "categoría",
+    "category-new": "Nueva categoría",
+    "category-add": "Agregar nueva categoría",
+    "create": "Crear evento",
+    "update": "Evento de actualización"
+  },
+  "Actions": {
+    "cancel": "Cancelar",
+    "add": "Agregar"
   }
 }
