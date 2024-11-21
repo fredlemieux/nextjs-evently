@@ -36,6 +36,7 @@ import {
   LinkIcon,
   MapPinIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 type EventFormProps = {
   userId: string;
@@ -51,6 +52,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
     libraries,
   });
+  const t = useTranslations('CreateForm');
 
   const [place, setPlace] = useState<
     google.maps.places.PlaceResult | undefined
@@ -248,7 +250,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               <FormItem className='w-full'>
                 <FormControl>
                   <Input
-                    placeholder='Event title'
+                    placeholder={t('name')}
                     {...field}
                     className='input-field'
                   />
@@ -460,7 +462,9 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           disabled={form.formState.isSubmitting}
           className='button col-span-2 w-full'
         >
-          {form.formState.isSubmitting ? 'Submitting...' : `${type} Event `}
+          {form.formState.isSubmitting
+            ? 'Submitting...'
+            : `${type === 'Create' ? t('create') : t('update')}`}
         </Button>
       </form>
     </Form>
