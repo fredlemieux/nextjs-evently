@@ -33,6 +33,8 @@
   },
   "Profile": {
     "title": "Eventos organizados",
-    "create": "Crear nuevo evento"
+    "create": "Crear nuevo evento",
+    "collection-title": "Aún no se han creado eventos",
+    "collection-sub": "Ve a crear algunos ahora"
   }
 }
