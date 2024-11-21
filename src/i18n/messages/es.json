@@ -11,7 +11,7 @@
     "explore": "Explora ahora"
   },
   "CreateForm": {
-    "title": "Nombre del evento",
+    "name": "Nombre del evento",
     "category": "Categoría",
     "description": "Descripción",
     "drag": "Arrastra la foto aquí",

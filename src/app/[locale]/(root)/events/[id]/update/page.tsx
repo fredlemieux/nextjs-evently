@@ -1,6 +1,7 @@
 import EventForm from '@/components/shared/EventForm';
 import { getEventById } from '@/lib/actions/event.actions';
 import { auth } from '@clerk/nextjs/server';
+import { getTranslations } from 'next-intl/server';
 
 type UpdateEventProps = {
   params: {
@@ -10,7 +11,7 @@ type UpdateEventProps = {
 
 const UpdateEvent = async ({ params: { id } }: UpdateEventProps) => {
   const { sessionClaims } = await auth();
-
+  const t = await getTranslations('CreateForm');
   const userId = sessionClaims?.userId as string;
   const event = await getEventById(id);
 
@@ -18,7 +19,7 @@ const UpdateEvent = async ({ params: { id } }: UpdateEventProps) => {
     <>
       <section className='bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10'>
         <h3 className='wrapper h3-bold text-center sm:text-left'>
-          Update Event
+          {t('update')}
         </h3>
       </section>
 
