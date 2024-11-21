@@ -1,5 +1,40 @@
 {
   "Header": {
-    "hello": "mundo"
+    "login": "Acceso",
+    "home": "Hogar",
+    "create": "Crear evento",
+    "profile": "Mi perfil"
+  },
+  "Landing": {
+    "title": "Descubre lo que está pasando en Rincón de la Victoria",
+    "sub": "Tu guía de música en vivo, teatro, noches de discoteca y más, todo en un solo lugar.",
+    "explore": "Explora ahora"
+  },
+  "CreateForm": {
+    "name": "Nombre del evento",
+    "category": "Categoría",
+    "description": "Descripción",
+    "drag": "Arrastra la foto aquí",
+    "select": "Seleccionar desde el dispositivo",
+    "location": "Ubicación del evento",
+    "start": "Fecha de inicio",
+    "end": "Fecha de finalización",
+    "price": "Precio",
+    "url": "URL",
+    "category-select": "categoría",
+    "category-new": "Nueva categoría",
+    "category-add": "Agregar nueva categoría",
+    "create": "Crear evento",
+    "update": "Evento de actualización"
+  },
+  "Actions": {
+    "cancel": "Cancelar",
+    "add": "Agregar"
+  },
+  "Profile": {
+    "title": "Eventos organizados",
+    "create": "Crear nuevo evento",
+    "collection-title": "Aún no se han creado eventos",
+    "collection-sub": "Ve a crear algunos ahora"
   }
 }

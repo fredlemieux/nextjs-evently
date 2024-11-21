@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { isValidLocale } from '@/i18n/utils';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -30,7 +31,7 @@ export default async function RootLayout({
   params: { locale: string };
 }) {
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as 'en' | 'es')) {
+  if (!isValidLocale(locale, routing.locales)) {
     notFound();
   }
   // Providing all messages to the client
@@ -40,7 +41,7 @@ export default async function RootLayout({
   return (
     <ClerkProvider afterSignOutUrl='/'>
       <NextIntlClientProvider messages={messages}>
-        <html lang='en'>
+        <html lang={locale}>
           <body className={poppins.variable}>{children}</body>
         </html>
       </NextIntlClientProvider>

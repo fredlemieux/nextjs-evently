@@ -49,7 +49,7 @@ export const LanguageNav = async () => {
                   alt='Spanish flag'
                 />
               </div>
-              <p>Switch to Spanish</p>
+              <p>Cambiar al español</p>
             </>
           ) : (
             <>

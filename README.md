@@ -43,6 +43,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 - [ ] Model for Event Image click
 - [ ] focus input for datepicker
 - [ ] Map out app architecture
+- [ ] Translation to clark
 - [ ] E2E Testing setup
 - [ ] Github actions for tests
 - [ ] Resizing icons in mobile view (see Event Details)
