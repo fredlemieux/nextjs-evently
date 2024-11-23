@@ -10,7 +10,7 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, icon, trailingIcon, ...props }, ref) => {
     return (
-      <div className={cn('input-wrapper flex-center', className)}>
+      <div className={cn('input-wrapper', className)}>
         {icon && <span className='mr-2 text-muted-foreground'>{icon}</span>}
         <input
           type={type}
