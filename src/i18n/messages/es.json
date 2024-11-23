@@ -8,7 +8,9 @@
   "Landing": {
     "title": "Descubre lo que está pasando en Rincón de la Victoria",
     "sub": "Tu guía de música en vivo, teatro, noches de discoteca y más, todo en un solo lugar.",
-    "explore": "Explora ahora"
+    "explore": "Explora ahora",
+    "collection-title": "No se encontraron eventos",
+    "collection-sub": "Vuelve más tarde"
   },
   "CreateForm": {
     "name": "Nombre del evento",
