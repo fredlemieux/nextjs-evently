@@ -3,8 +3,12 @@ import { Separator } from '../ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import NavItems from './NavItems';
 import { MenuIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { SignOutButton } from '@clerk/nextjs';
+import { getTranslations } from 'next-intl/server';
 
-const MobileNav = () => {
+const MobileNav = async () => {
+  const t = await getTranslations('Actions');
   return (
     <nav className='md:hidden'>
       <Sheet>
@@ -25,7 +29,13 @@ const MobileNav = () => {
           </div>
 
           <Separator className='border border-gray-50'></Separator>
-          <NavItems />
+
+          <div className='flex flex-1 flex-col justify-between'>
+            <NavItems />
+            <SignOutButton>
+              <Button>{t('sign-out')}</Button>
+            </SignOutButton>
+          </div>
         </SheetContent>
       </Sheet>
     </nav>

@@ -8,10 +8,9 @@ import { useTranslations } from 'next-intl';
 const NavItems = () => {
   const pathName = usePathname();
   const t = useTranslations('Header');
-  console.log('T_HELLO_:', t('hello'));
 
   return (
-    <ul className='md:flex-between item-start flex w-full flex-col gap-5 md:flex-row'>
+    <ul className='md:flex-between item-start flex w-full flex-col gap-5 px-2 md:flex-row'>
       {headerLinks.map((link) => {
         const isActive = pathName == link.route;
         return (

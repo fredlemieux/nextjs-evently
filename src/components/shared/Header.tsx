@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <header className='w-full border-b'>
       <div className='wrapper flex items-center justify-between'>
-        <Link href={'/'} className='flex flex-row'>
+        <Link href={'/'} className='flex flex-row items-center'>
           <Image
             src={'/assets/images/logo.png'}
             width={48}
@@ -30,10 +30,12 @@ const Header = () => {
           </nav>
         </SignedIn>
 
-        <div className='flex w-32 justify-end gap-3'>
+        <div className='flex items-center justify-end gap-3'>
           <LanguageNav />
           <SignedIn>
-            <UserButton />
+            <div className='md:flex-center hidden'>
+              <UserButton />
+            </div>
             <MobileNav />
           </SignedIn>
 

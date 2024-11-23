@@ -9,8 +9,8 @@
     "title": "Discover what’s happening in Rincon de la Victoria",
     "sub": "Your guide to live music, theater, club nights, and more, all in one place.",
     "explore": "Explore Now",
-    "collection-title": "No se encontraron eventos",
-    "collection-sub": "Vuelve más tarde"
+    "collection-title": "No events found",
+    "collection-sub": "Come back later"
   },
   "CreateForm": {
     "name": "Event name",
@@ -31,7 +31,8 @@
   },
   "Actions": {
     "cancel": "Cancel",
-    "add": "Add"
+    "add": "Add",
+    "sign-out": "Sign out"
   },
   "Profile": {
     "title": "Events Organised",
