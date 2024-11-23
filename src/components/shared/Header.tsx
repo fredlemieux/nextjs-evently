@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <header className='w-full border-b'>
       <div className='wrapper flex items-center justify-between'>
-        <Link href={'/'} className='flex flex-row'>
+        <Link href={'/'} className='flex flex-row items-center'>
           <Image
             src={'/assets/images/logo.png'}
             width={48}
