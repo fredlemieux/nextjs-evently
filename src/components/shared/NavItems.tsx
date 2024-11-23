@@ -4,14 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { headerLinks } from '@/constants';
 import { useTranslations } from 'next-intl';
-import { SignOutButton } from '@clerk/nextjs';
 
 const NavItems = () => {
   const pathName = usePathname();
   const t = useTranslations('Header');
 
   return (
-    <ul className='md:flex-between item-start flex w-full flex-col gap-5 md:flex-row'>
+    <ul className='md:flex-between item-start flex w-full flex-col gap-5 px-2 md:flex-row'>
       {headerLinks.map((link) => {
         const isActive = pathName == link.route;
         return (
