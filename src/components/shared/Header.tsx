@@ -30,10 +30,12 @@ const Header = () => {
           </nav>
         </SignedIn>
 
-        <div className='flex w-32 justify-end gap-3'>
+        <div className='flex items-center justify-end gap-3'>
           <LanguageNav />
           <SignedIn>
-            <UserButton />
+            <div className='flex-center hidden items-center md:flex'>
+              <UserButton />
+            </div>
             <MobileNav />
           </SignedIn>
 
