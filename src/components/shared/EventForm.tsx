@@ -249,11 +249,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormControl>
-                  <Input
-                    placeholder={t('name')}
-                    {...field}
-                    className='input-field'
-                  />
+                  <Input placeholder={t('name')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -286,7 +282,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                   <Textarea
                     placeholder='Description'
                     {...field}
-                    className='textarea rounded-md'
+                    className='w-full'
                   />
                 </FormControl>
                 <FormMessage />
