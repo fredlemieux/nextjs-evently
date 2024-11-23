@@ -53,7 +53,7 @@ const CategoryFilter = () => {
 
   return (
     <Select onValueChange={(value: string) => onSelectCategory(value)}>
-      <SelectTrigger className='select-field'>
+      <SelectTrigger className='input-wrapper'>
         <SelectValue placeholder='Category' />
       </SelectTrigger>
       <SelectContent>
