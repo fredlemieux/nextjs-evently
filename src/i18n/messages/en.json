@@ -31,7 +31,8 @@
   },
   "Actions": {
     "cancel": "Cancel",
-    "add": "Add"
+    "add": "Add",
+    "sign-out": "Sign out"
   },
   "Profile": {
     "title": "Events Organised",
