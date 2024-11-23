@@ -33,7 +33,7 @@ const Header = () => {
         <div className='flex items-center justify-end gap-3'>
           <LanguageNav />
           <SignedIn>
-            <div className='flex-center hidden items-center md:flex'>
+            <div className='md:flex-center hidden'>
               <UserButton />
             </div>
             <MobileNav />
