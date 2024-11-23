@@ -3,6 +3,8 @@ import { Separator } from '../ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import NavItems from './NavItems';
 import { MenuIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { SignOutButton } from '@clerk/nextjs';
 
 const MobileNav = () => {
   return (
@@ -25,7 +27,13 @@ const MobileNav = () => {
           </div>
 
           <Separator className='border border-gray-50'></Separator>
-          <NavItems />
+
+          <div className='flex flex-1 flex-col justify-between'>
+            <NavItems />
+            <SignOutButton>
+              <Button />
+            </SignOutButton>
+          </div>
         </SheetContent>
       </Sheet>
     </nav>
