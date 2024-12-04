@@ -28,7 +28,7 @@ const EventDetails = async ({
           {event.imageUrl && (
             <Image
               src={event.imageUrl}
-              alt={`${event.title} Image`}
+              alt={`${event.name} Image`}
               width={1000}
               height={1000}
               className='h-full min-h-[300px] object-cover object-center'
@@ -38,7 +38,7 @@ const EventDetails = async ({
           <div className='flex w-full flex-col gap-6 p-5 md:p-10'>
             <div className='flex flex-col gap-6'>
               <div className='flex-between flex flex-row'>
-                <h2 className='h2-bold'>{event.title}</h2>
+                <h2 className='h2-bold'>{event.name}</h2>
                 {isEventCreator && (
                   <div className='flex flex-row'>
                     <EditAndDeleteEventButtons eventId={event._id} />

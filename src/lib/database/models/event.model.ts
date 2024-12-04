@@ -4,7 +4,7 @@ import { ICategory } from './category.model';
 import { IUser } from '@/lib/database/models/user.model';
 
 export const eventSchema = new Schema({
-  title: { type: String, required: true },
+  name: { type: String, required: true },
   description: { type: String, required: true },
   createdAt: { type: Date, default: Date.now, required: false },
   location: {
