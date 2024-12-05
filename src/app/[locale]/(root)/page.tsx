@@ -10,12 +10,14 @@ import { getTranslations } from 'next-intl/server';
 
 export default async function Home({ searchParams }: SearchParamProps) {
   const page = Number(searchParams?.page) || 1;
-  const searchText = (searchParams?.query as string) || '';
+  const from = String(searchParams?.from) || '';
+  const to = String(searchParams?.to) || '';
   const category = (searchParams?.category as string) || '';
 
   const events = await getAllEvents({
-    query: searchText,
     category,
+    from,
+    to,
     page,
     limit: 6,
   });
@@ -49,7 +51,6 @@ export default async function Home({ searchParams }: SearchParamProps) {
         className='wrapper my-8 flex flex-col gap-8 md:gap-12'
       >
         <div className='flex w-full flex-col gap-5 md:flex-row'>
-          <Search />
           <CategoryFilter />
         </div>
 
