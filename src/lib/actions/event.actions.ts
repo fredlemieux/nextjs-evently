@@ -11,7 +11,7 @@ import {
   IEventPopulated,
   CreateEventModelParams,
 } from '@/lib/database/models';
-import { handleError } from '@/lib/utils';
+import { formatDateTime, handleError } from '@/lib/utils';
 import {
   checkAndReturnObjectId,
   documentToJSON,
@@ -176,23 +176,22 @@ export async function deleteEvent({
 }
 
 export async function getAllEvents({
-  query,
   limit = 6,
   page,
   category,
+  from = formatDateTime().dateIso,
+  to,
 }: GetAllEventsParams) {
   try {
     await connectToDatabase();
 
-    const titleCondition = query
-      ? { title: { $regex: query, $options: 'i' } }
-      : {};
     const categoryCondition = category
       ? await getCategoryByName(category)
       : null;
     const conditions = {
       $and: [
-        titleCondition,
+        from ? { startDateTime: { $gte: from } } : {},
+        to ? { startDateTime: { $lte: to } } : {},
         categoryCondition ? { category: categoryCondition._id } : {},
       ],
     };
