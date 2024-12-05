@@ -24,7 +24,7 @@ export const eventSchema = new Schema({
 
 // Create a compound index to enforce uniqueness
 eventSchema.index(
-  { startDateTime: 1, location: 1, name: 1, endDateTime: 1 },
+  { location: 1, startDateTime: 1, title: 1, endDateTime: 1 },
   { unique: true }
 );
 
