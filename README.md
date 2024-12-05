@@ -34,7 +34,7 @@ Evently at [https://nextjs-evently-sabir.vercel.app/](https://nextjs-evently-sab
 ## TODOS
 
 - [ ] Duplicate Event name issue.  Maybe we have repeat event with the same name.
-  - Duplicate event should be event with same name, same locations and same time....
+- [ ] Duplicate event should be event with same name, same locations and same time....
 - [ ] Setup Multi Stage build for Docker
 - [ ] Add barrelsby for shared and ui components for cleaner import
 - [ ] Clean up dev environment (clear db and users)

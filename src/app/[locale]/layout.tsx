@@ -16,7 +16,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Eventos Rincon',
+  name: 'Eventos Rincon',
   description: 'Discover what’s happening in Rincon de la Victoria',
   icons: {
     icon: '/assets/images/logo.png',

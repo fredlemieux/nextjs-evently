@@ -17,7 +17,7 @@ const AddToCalendarButtonClient = ({ event }: Props) => {
 
   return (
     <AddToCalendarButton
-      name={event.title}
+      name={event.name}
       description={event.description}
       startDate={start.dateIso}
       startTime={start.timeOnly}
@@ -26,7 +26,7 @@ const AddToCalendarButtonClient = ({ event }: Props) => {
       location={`${event.location.name}, ${event.location.address}`}
       options="['Google','Apple','iCal','Microsoft365','Outlook.com','Yahoo']"
       timeZone='Europe/Madrid'
-      iCalFileName={event.title}
+      iCalFileName={event.name}
     />
   );
 };

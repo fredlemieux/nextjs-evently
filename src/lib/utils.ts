@@ -21,6 +21,7 @@ export const formatDateTime = (dateString: Date | string) => {
     hour: 'numeric', // numeric hour (e.g., '8')
     minute: 'numeric', // numeric minute (e.g., '30')
     hour12: false, // use 12-hour clock (true) or 24-hour clock (false)
+    timeZone: 'Europe/Madrid',
   };
 
   const dateOptions: Intl.DateTimeFormatOptions = {

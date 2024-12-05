@@ -20,7 +20,7 @@ export type UpdateEventActionParams = {
     locationId: string;
     categoryId: string;
     createdById: string;
-    title: string;
+    name: string;
     imageUrl: string;
     description: string;
     startDateTime: Date;
