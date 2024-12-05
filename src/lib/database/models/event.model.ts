@@ -22,6 +22,16 @@ export const eventSchema = new Schema({
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
+// Create a compound index to enforce uniqueness
+eventSchema.index(
+  { location: 1, startDateTime: 1, title: 1, endDateTime: 1 },
+  { unique: true }
+);
+
+eventSchema.index({ startDateTime: 1, category: 1 });
+
+eventSchema.index({ category: 1 });
+
 export type CreateEventModelParams = InferSchemaType<typeof eventSchema>;
 
 export type IEvent = CreateEventModelParams & {
