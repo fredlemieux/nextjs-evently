@@ -1,4 +1,4 @@
-import CategoryFilter from '@/components/shared/CategoryFilter';
+import FilterCategory from '@/components/shared/FilterCategory';
 import Collection from '@/components/shared/Collection';
 import Search from '@/components/shared/Search';
 import { Button } from '@/components/ui/button';
@@ -51,7 +51,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
         className='wrapper my-8 flex flex-col gap-8 md:gap-12'
       >
         <div className='flex w-full flex-col gap-5 md:flex-row'>
-          <CategoryFilter />
+          I want <FilterCategory /> events for{' '}
         </div>
 
         <Collection
