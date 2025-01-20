@@ -15,7 +15,11 @@ import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 import type { ICategory } from '@/lib/database/models/category.model';
 import type { ToJSON } from '@/types/utility.types';
 
-const FilterCategory = () => {
+interface Props {
+  className: string;
+}
+
+const FilterCategory = ({ className }: Props) => {
   const [categories, setCategories] = useState<ToJSON<ICategory>[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,8 +57,8 @@ const FilterCategory = () => {
 
   return (
     <Select onValueChange={(value: string) => onSelectCategory(value)}>
-      <SelectTrigger className='input-wrapper'>
-        <SelectValue placeholder='Category' />
+      <SelectTrigger className={`input-wrapper ${className}`}>
+        <SelectValue placeholder='All' />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value='All' className='select-item p-regular-14'>
