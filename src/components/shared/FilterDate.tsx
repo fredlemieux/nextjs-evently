@@ -1,50 +1,36 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { getAllCategories } from '@/lib/actions/category.actions';
-import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
+import { formatDateTime, formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 
-import type { ICategory } from '@/lib/database/models/category.model';
-import type { ToJSON } from '@/types/utility.types';
+import DatePicker from 'react-datepicker';
+import { CalendarRangeIcon } from 'lucide-react';
 
-const FilterCategory = () => {
-  const [categories, setCategories] = useState<ToJSON<ICategory>[]>([]);
+interface Props {
+  urlParam: 'to' | 'from';
+  className?: string;
+}
+const FilterCategory = ({ urlParam, className }: Props) => {
+  const [date, setDate] = useState<Date | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const getCategories = async () => {
-      const categoryList = await getAllCategories();
+  const onSelectDate = (date: Date | null) => {
+    let newUrl: string;
 
-      if (categoryList) {
-        setCategories(categoryList);
-      }
-    };
+    setDate(date);
 
-    getCategories();
-  }, []);
-
-  const onSelectCategory = (category: string) => {
-    let newUrl = '';
-
-    if (category && category !== 'All') {
+    if (date) {
       newUrl = formUrlQuery({
         params: searchParams.toString(),
-        key: 'category',
-        value: category,
+        key: urlParam,
+        value: formatDateTime(date).dateIso,
       });
     } else {
       newUrl = removeKeysFromQuery({
         params: searchParams.toString(),
-        keysToRemove: ['category'],
+        keysToRemove: [urlParam],
       });
     }
 
@@ -52,26 +38,18 @@ const FilterCategory = () => {
   };
 
   return (
-    <Select onValueChange={(value: string) => onSelectCategory(value)}>
-      <SelectTrigger className='input-wrapper'>
-        <SelectValue placeholder='Category' />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value='All' className='select-item p-regular-14'>
-          All
-        </SelectItem>
-
-        {categories.map((category) => (
-          <SelectItem
-            value={category.name}
-            key={category._id}
-            className='select-item p-regular-14'
-          >
-            {category.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <>
+      <div className={`input-wrapper ${className}`}>
+        <CalendarRangeIcon className='filter-grey h-6 w-6' />
+        <DatePicker
+          selected={date}
+          onChange={(date: Date | null) => onSelectDate(date)}
+          timeInputLabel='Time:'
+          dateFormat='dd/MM/yyyy'
+          wrapperClassName='datePicker'
+        />
+      </div>
+    </>
   );
 };
 
